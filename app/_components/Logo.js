@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@/app/public/vinyl_album.png";
+import logo from "@/app/public/vinyl-record.png";
 import { Rubik_Doodle_Shadow } from "next/font/google";
 
 const rubikDoodleShadow = Rubik_Doodle_Shadow({
@@ -10,7 +10,7 @@ const rubikDoodleShadow = Rubik_Doodle_Shadow({
 
 function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-4 z-10">
+    <Link href="/" className="flex items-center gap-4 z-10 mr-1">
       {/* Image 1) automatically serves correctly sized images
       in modern formats (WebP) on demand, 2) Prevents layout 
       shifts by requiring exact height and width, and 3) automatically
@@ -27,7 +27,7 @@ function Logo() {
         alt="Kick Start Records Logo"
       />
       <span
-        className={`${rubikDoodleShadow.className} text-5xl font-semibold text-primary-100`}
+        className={`${rubikDoodleShadow.className} text-4xl font-semibold text-primary-100`}
       >
         KICK START RECORDS
       </span>

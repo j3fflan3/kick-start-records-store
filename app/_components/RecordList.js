@@ -1,5 +1,7 @@
-import { getRecords } from "@/app/_library/data-service";
+import { getRecords } from "@/app/_library/dataService";
 import RecordCard from "./RecordCard";
+
+export const revalidate = 0;
 
 export default async function RecordList() {
   const records = await getRecords();

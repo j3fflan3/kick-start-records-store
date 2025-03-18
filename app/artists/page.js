@@ -1,5 +1,5 @@
 function Page() {
-  return <div>Clothing</div>;
+  return <div>Artists!</div>;
 }
 
 export default Page;

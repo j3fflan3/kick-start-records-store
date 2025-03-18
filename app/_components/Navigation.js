@@ -1,7 +1,9 @@
 import Link from "next/link";
+import CartIcon from "./CartIcon";
+
 // import { auth } from "../_lib/auth";
 
-export default async function Navigation() {
+export default function Navigation() {
   //   const session = await auth();
   // session = { user: { name, email, image }, expires }
   const session = false;
@@ -15,10 +17,10 @@ export default async function Navigation() {
         </li>
         <li>
           <Link
-            href="/clothing"
+            href="/merchandise"
             className="hover:text-accent-400 transition-colors"
           >
-            Clothing
+            Merch
           </Link>
         </li>
         <li>
@@ -61,6 +63,9 @@ export default async function Navigation() {
             </Link>
           )}
         </li>
+        <li>
+          <CartIcon />
+        </li>{" "}
       </ul>
     </nav>
   );
