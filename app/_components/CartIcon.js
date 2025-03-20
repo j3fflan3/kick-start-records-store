@@ -22,11 +22,7 @@ function CartIcon() {
         // I really don't like this right now, but for now it works.
         // Come back and refactor
         if (!guestId || !cartId) return;
-        const { data, error } = await dbGetCart(guestId, cartId);
-        if (error) {
-          console.log(error.message);
-          throw new Error("There was a problem retrieving your cart");
-        }
+        const { data } = await dbGetCart(guestId, cartId);
         if (!data) return;
         const newCartCount = data.reduce((sum, item) => sum + item.count, 0);
         try {

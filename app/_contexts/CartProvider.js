@@ -1,10 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { dbAddToCart, dbGetCart } from "../_library/serverActions";
+import { useWebStorage } from "../_hooks/useWebStorage";
 import { CartID } from "../_library/loadWebStorage";
-import { useWebStorageState } from "../_hooks/useWebStorageState";
+import { dbAddToCart, dbUpdateCart } from "../_library/serverActions";
 
 const CartContext = createContext();
 
@@ -18,31 +18,63 @@ function CartProvider({ children }) {
   // useLocalStorage will check first for the existence of the local storage key.
   // If it does not exist, it will create it and store the value returned by
   // createLocalCart
-  const [localCartIds, setLocalCartIds] = useWebStorageState(
-    createLocalCart,
-    localCartKey
+  const [localCartIds, setLocalCartIds] = useWebStorage(
+    localCartKey,
+    createLocalCart
   );
+  const { guestId, cartId } = localCartIds;
 
   const [cartCount, setCartCount] = useState(0);
   function setCount(data) {
-    const newCartCount = data.reduce((sum, item) => sum + item.count, 0);
+    // If data comes back null, set to 0
+    const newCartCount = !data
+      ? 0
+      : data.reduce((sum, item) => sum + item.count, 0);
     setCartCount(newCartCount);
   }
+
   async function addToCart(catalogId, count = 1) {
     const { data, error } = await dbAddToCart(
-      localCartIds.guestId,
-      localCartIds.cartId,
+      guestId,
+      cartId,
       catalogId,
       count
     );
-    if (error)
-      throw new Error("There was a problem adding the item to your cart");
+    if (error) {
+      console.log(error);
+      return;
+    }
+    setCount(data);
+  }
+
+  async function updateCart(catalogId, count, email = null) {
+    const { data, error } = await dbUpdateCart(
+      guestId,
+      cartId,
+      catalogId,
+      count,
+      email
+    );
+    if (error) {
+      console.log(error);
+      return;
+    }
+    console.log(data);
+    console.log("CartProvider: finishing updateCart");
     setCount(data);
   }
 
   return (
     <CartContext.Provider
-      value={{ addToCart, setCartCount, cartCount, localCartIds }}
+      value={{
+        addToCart,
+        updateCart,
+        setLocalCartIds,
+        createLocalCart,
+        setCartCount,
+        cartCount,
+        localCartIds,
+      }}
     >
       {children}
     </CartContext.Provider>
