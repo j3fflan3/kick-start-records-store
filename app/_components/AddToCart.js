@@ -3,8 +3,7 @@
 import { useCart } from "../_contexts/CartProvider";
 
 function AddToCart({ catalogId, disabled }) {
-  const context = useCart();
-  const { addToCart } = context;
+  const { addToCart } = useCart();
 
   function handleAddToCart() {
     addToCart(catalogId);

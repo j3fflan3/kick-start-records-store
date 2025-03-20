@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { formatDecimal, printRecordFormat } from "../_library/utilities";
 import CartCounter from "./CartCounter";
+import { Suspense } from "react";
+import SpinnerMini from "./SpinnerMini";
 
 function CartItem({ item }) {
   const {
@@ -40,7 +42,7 @@ function CartItem({ item }) {
           </div>
           <div className="flex flex-row">
             <div className="w-30 flex-none">
-              <CartCounter count={count} />
+              <CartCounter catalogId={catalogId} count={count} />
             </div>
             <div className="w-40 pl-2 grow justify-start">
               <span className="text-primary-500">Item Subtotal:</span> $

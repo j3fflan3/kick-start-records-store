@@ -1,7 +1,7 @@
 // Returns either local or session storage (both implement Storage interface)
-// Throws an error if neither are available
+// returns null if neither are available
 export function getWebStorage() {
-  // From MDN.  Detects if localStorage is both supported and available
+  // This func is from MDN.  Detects if localStorage is both supported and available
   function storageAvailable(type) {
     let storage;
     try {
