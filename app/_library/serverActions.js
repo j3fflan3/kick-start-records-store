@@ -45,4 +45,14 @@ async function dbUpdateCart(guestId, cartId, catalogId, count, email = null) {
   revalidatePath("/cart");
   return { data, error };
 }
-export { dbGetCart, dbAddToCart, dbUpdateCart };
+async function dbGetRecords(id = null, limit = 10) {
+  const { data, error } = await supabase.rpc("get_records", {
+    _catalog_id: id,
+    _max_results: limit,
+  });
+  if (error) {
+    console.error(error.message);
+  }
+  return data;
+}
+export { dbGetRecords, dbGetCart, dbAddToCart, dbUpdateCart };

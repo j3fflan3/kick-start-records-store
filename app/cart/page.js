@@ -19,7 +19,7 @@ async function Page({ searchParams }) {
   if (!data) return <CartIsEmpty />;
   return (
     <Suspense fallback={<Spinner />}>
-      <Cart cart={data} />
+      <Cart cart={data} guestId={guestId} cartId={cartId} />
     </Suspense>
   );
 }

@@ -36,7 +36,7 @@ function CartCounter({ count, catalogId }) {
       <div className="inline-block h-6 w-8 aspect-square text-center">
         {isPending ? (
           <span className="cart-count">
-            <SpinnerMini css="relative" />
+            <SpinnerMini />
           </span>
         ) : (
           <span className="cart-count">{count}</span>
