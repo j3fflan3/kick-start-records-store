@@ -19,11 +19,14 @@ function formatDecimal(intCents) {
   return Number(parseFloat(intCents));
 }
 
-const subtotal = (arrToReduce) => {
-  const subtotal = arrToReduce.reduce(
-    (sum, item) => sum + item.count * item.price,
-    0
-  );
+const cartSubtotal = (cart) => {
+  const subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
   return formatDecimal(subtotal / 100);
 };
-export { printRecordFormat, formatDecimal, subtotal };
+
+const cartItemCount = (cart) => {
+  return cart.reduce((sum, item) => {
+    return sum + item.count;
+  }, 0);
+};
+export { printRecordFormat, formatDecimal, cartSubtotal, cartItemCount };

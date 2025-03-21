@@ -9,7 +9,7 @@ function RecordCard({ record }) {
   const usd = Number(parseFloat(price / 100));
 
   return (
-    <div className="flex border-primary-800 border rounded-sm">
+    <div className="flex border-primary-800 border rounded-md">
       <div className="flex-auto relative aspect-square">
         <Image
           src={image.url}

@@ -19,8 +19,6 @@ function CartIcon() {
   useEffect(
     function () {
       async function getCartCount(guestId, cartId) {
-        // I really don't like this right now, but for now it works.
-        // Come back and refactor
         if (!guestId || !cartId) return;
         const { data } = await dbGetCart(guestId, cartId);
         if (!data) return;
