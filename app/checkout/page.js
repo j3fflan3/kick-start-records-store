@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { dbGetCart } from "../_library/serverActions";
 import Spinner from "../_components/Spinner";
+import Checkout from "../_components/Checkout";
 
 // Note to self: in NextJS 14 and earlier, searchParams and params were synchronous props.
 // Starting in version 15, they are async.  For back compatibility, you can still
@@ -11,11 +12,13 @@ import Spinner from "../_components/Spinner";
 */
 async function Page({ searchParams }) {
   const { guestId, cartId } = searchParams;
-  const { data } = await dbGetCart(guestId, cartId);
+  console.log(`guestId: ${guestId}, cartId: ${cartId}`);
+  const { cart } = await dbGetCart(guestId, cartId);
+  console.log(cart);
   // How do we want to handle expired carts?  Not sure.
   return (
     <Suspense fallback={<Spinner />}>
-      <div>Checkout</div>
+      <Checkout cart={cart} />
     </Suspense>
   );
 }
