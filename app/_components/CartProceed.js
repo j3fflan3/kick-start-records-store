@@ -13,7 +13,7 @@ function CartProceed({ cart, guestId, cartId }) {
       </div>
       <Link
         href={`/checkout?guestId=${guestId}&cartId=${cartId}`}
-        className="bg-accent-500 p-2  m-2 rounded-md cursor-pointer active:bg-accent-200 active:text-primary-800"
+        className="bg-accent-500 p-2 font-bold m-2 rounded-md cursor-pointer active:bg-accent-200 active:text-primary-800"
       >
         Proceed to Checkout &rarr;
       </Link>

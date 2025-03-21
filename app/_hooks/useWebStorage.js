@@ -21,9 +21,6 @@ export function useWebStorage(key, initialState) {
 
   useEffect(() => {
     if (value === undefined) return;
-    console.log(
-      `useWebStorage::useEffect -> key: ${key}, value: ${typeof value}`
-    );
     const storage = getWebStorage();
     const item =
       value instanceof Function
