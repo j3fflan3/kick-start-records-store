@@ -4,6 +4,7 @@ import { useCart } from "../_contexts/CartProvider";
 import { useEffect } from "react";
 import Link from "next/link";
 import { dbGetCart } from "../_library/serverActions";
+import Error from "../error";
 
 export const revalidate = 0;
 
@@ -20,7 +21,11 @@ function CartIcon() {
     function () {
       async function getCartCount(guestId, cartId) {
         if (!guestId || !cartId) return;
-        const { data } = await dbGetCart(guestId, cartId);
+        const { data, error } = await dbGetCart(guestId, cartId);
+        if (error) {
+          console.log(error);
+          return <Error error={"There was a problem updating the cart."} />;
+        }
         if (!data) return;
         const newCartCount = data.reduce((sum, item) => sum + item.count, 0);
         try {
