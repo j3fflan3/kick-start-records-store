@@ -1,3 +1,5 @@
+import CartItem from "./CartItem";
+
 function Checkout({ cart }) {
   return (
     <div>
