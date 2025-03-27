@@ -1,22 +1,16 @@
 import { Suspense } from "react";
+import CartIsEmpty from "../_components/CartIsEmpty";
 import Checkout from "../_components/Checkout";
 import Spinner from "../_components/Spinner";
 import { dbGetCart } from "../_library/serverActions";
 import Error from "../error";
-import { notFound } from "next/navigation";
-import CartIsEmpty from "../_components/CartIsEmpty";
 
 export const revalidate = 0;
-// Note to self: in NextJS 14 and earlier, searchParams and params were synchronous props.
-// Starting in version 15, they are async.  For back compatibility, you can still
-// access them synchronously, but the behavior will be deprecated in the future.
-// As soon as you upgrade to v15 or greater, change the below code to this:
-/*
-    const { guestId, cartId } = await searchParams;
-*/
-async function Page({ searchParams }) {
+
+async function Page(props) {
+  const searchParams = await props.searchParams;
   const { guestId, cartId } = searchParams;
-  console.log(`guestId: ${guestId}, cartId: ${cartId}`);
+  // console.log(`guestId: ${guestId}, cartId: ${cartId}`);
   const { data: cart, error } = await dbGetCart(guestId, cartId);
   if (error) {
     console.log(error);
