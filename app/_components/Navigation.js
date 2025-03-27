@@ -23,7 +23,9 @@ export default function Navigation() {
             Merch
           </Link>
         </li>
-        <li>
+        {/* Considering having links to these pages in the products themselves rather
+        than having a menu link for them.   */}
+        {/* <li>
           <Link
             href="/artists"
             className="hover:text-accent-400 transition-colors"
@@ -38,7 +40,7 @@ export default function Navigation() {
           >
             Labels
           </Link>
-        </li>
+        </li> */}
         <li>
           {/* {session?.user?.image ? ( */}
           {session ? (
@@ -62,6 +64,14 @@ export default function Navigation() {
               About
             </Link>
           )}
+        </li>
+        <li>
+          <Link
+            href="/login"
+            className="hover:text-accent-400 transition-colors"
+          >
+            Log In
+          </Link>
         </li>
         <li>
           <CartIcon />

@@ -30,3 +30,12 @@ const cartItemCount = (cart) => {
   }, 0);
 };
 export { printRecordFormat, formatDecimal, cartSubtotal, cartItemCount };
+
+const validatePassword = (pwd) => {
+  // Password must be at least 8 characters in length and
+  // contain at least one of the following: Uppercase letter, lowercase letter,
+  // number, and special character (#?!@$%^&*-)
+  return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
+    pwd
+  );
+};

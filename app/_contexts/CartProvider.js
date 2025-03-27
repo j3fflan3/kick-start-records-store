@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useWebStorage } from "../_hooks/useWebStorage";
 import { CartID } from "../_library/loadWebStorage";
-import { dbAddToCart, dbUpdateCart } from "../_library/serverActions";
+import { dbAddToCart, dbUpdateCart } from "../_library/clientActions";
 
 const CartContext = createContext();
 

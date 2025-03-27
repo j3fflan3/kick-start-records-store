@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^1.12.0",
     "@heroicons/react": "^2.2.0",
-    "@supabase/supabase-js": "^2.49.1",
+    "@supabase/auth-js": "^2.69.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.2",
     "date-fns": "^4.1.0",
-    "next": "14.2.24",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "^14.2.25",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "server-only": "^0.0.1",
     "uuid": "^11.1.0"
   },

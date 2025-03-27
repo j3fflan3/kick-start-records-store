@@ -4,6 +4,7 @@ import Spinner from "../_components/Spinner";
 import { dbGetCart } from "../_library/serverActions";
 import Error from "../error";
 import { notFound } from "next/navigation";
+import CartIsEmpty from "../_components/CartIsEmpty";
 
 export const revalidate = 0;
 // Note to self: in NextJS 14 and earlier, searchParams and params were synchronous props.
@@ -22,7 +23,7 @@ async function Page({ searchParams }) {
     return <Error error="There was an error retrieving your cart" />;
   }
   if (!cart) {
-    notFound();
+    return <CartIsEmpty />;
   }
   // How do we want to handle expired carts?  Not sure.
   return (
