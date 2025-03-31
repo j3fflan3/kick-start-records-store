@@ -57,11 +57,15 @@ async function dbGetRecords(id = null, limit = 10) {
   }
   return data;
 }
-async function dbSignUp(formData) {
+async function dbSignUp(prevState, formData) {
   const firstName = formData.get("firstName");
   const lastName = formData.get("lastName");
   const password = formData.get("password");
   const email = formData.get("email");
+  const captchaToken = formData.get("captchaToken");
+  console.log(captchaToken);
+  const supabase = await createClient();
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -69,6 +73,7 @@ async function dbSignUp(formData) {
       data: {
         firstName,
         lastName,
+        captchaToken,
       },
     },
   });
@@ -77,4 +82,18 @@ async function dbSignUp(formData) {
   }
   return { data, error };
 }
-export { dbAddToCart, dbGetCart, dbGetRecords, dbUpdateCart, dbSignUp };
+
+async function dbVerifySignUp({ type, token_hash }) {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.verifyOtp({ type, token_hash });
+  return error;
+}
+
+export {
+  dbAddToCart,
+  dbGetCart,
+  dbGetRecords,
+  dbUpdateCart,
+  dbSignUp,
+  dbVerifySignUp,
+};

@@ -3,6 +3,7 @@ import { Rubik_Doodle_Shadow } from "next/font/google";
 import "@/app/_styles/global.css";
 import Header from "@/app/_components/Header";
 import { CartProvider } from "./_contexts/CartProvider";
+import { SessionProvider } from "./_contexts/SessionProvider";
 
 const rubikDoodleShadow = Rubik_Doodle_Shadow({
   weight: "400",
@@ -31,12 +32,14 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${rubikDoodleShadow.variable} antialiased`}
       >
-        <CartProvider>
-          <Header />
-          <div className="flex-1 px-8 py-12 grid">
-            <main className="max-w-7xl mx-auto w-full">{children}</main>
-          </div>
-        </CartProvider>
+        <SessionProvider>
+          <CartProvider>
+            <Header />
+            <div className="flex-1 px-8 py-12 grid">
+              <main className="max-w-7xl mx-auto w-full">{children}</main>
+            </div>
+          </CartProvider>
+        </SessionProvider>
       </body>
     </html>
   );

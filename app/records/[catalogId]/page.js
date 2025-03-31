@@ -6,9 +6,8 @@ import { Suspense } from "react";
 
 export const revalidate = 0;
 
-export default async function Page(props) {
-  const params = await props.params;
-  const { catalogId } = params;
+export default async function Page({ params }) {
+  const { catalogId } = await params;
   const records = await dbGetRecords(catalogId, 10);
   if (!records.length) return notFound();
   return (

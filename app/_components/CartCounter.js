@@ -11,12 +11,12 @@ function CartCounter({ count, catalogId }) {
   const [isPending, startTransition] = useTransition();
   async function handleUpdateCart(count) {
     startTransition(async () => {
-      console.log("CartCounter: calling updateCart");
+      // console.log("CartCounter: calling updateCart");
       await updateCart(catalogId, count);
-      console.log("CartCounter: end of updateCart");
+      // console.log("CartCounter: end of updateCart");
     });
   }
-  console.log(`Loading CartCounter -> catalogId:${catalogId}, count:${count}`);
+  // console.log(`Loading CartCounter -> catalogId:${catalogId}, count:${count}`);
   return (
     <div className="border-primary-400 bg-primary-800 border-2 rounded-lg px-3 py-1 relative">
       <button

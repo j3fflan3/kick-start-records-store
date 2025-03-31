@@ -7,9 +7,8 @@ import Error from "../error";
 
 export const revalidate = 0;
 
-async function Page(props) {
-  const searchParams = await props.searchParams;
-  const { guestId, cartId } = searchParams;
+async function Page({ searchParams }) {
+  const { guestId, cartId } = await searchParams;
   // console.log(`guestId: ${guestId}, cartId: ${cartId}`);
   const { data: cart, error } = await dbGetCart(guestId, cartId);
   if (error) {

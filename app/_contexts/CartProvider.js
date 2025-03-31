@@ -44,6 +44,7 @@ function CartProvider({ children }) {
       console.log(error);
       return;
     }
+    console.log(`data: ${JSON.stringify(data)}`);
     setCount(data);
   }
 
@@ -59,7 +60,7 @@ function CartProvider({ children }) {
       console.log(error);
       return;
     }
-    console.log(data);
+    console.log(`data: ${JSON.stringify(data)}`);
     console.log("CartProvider: finishing updateCart");
     setCount(data);
   }

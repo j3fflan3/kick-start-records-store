@@ -6,9 +6,8 @@ import CartIsEmpty from "../_components/CartIsEmpty";
 
 export const revalidate = 0;
 
-async function Page({ props }) {
-  const searchParams = await props.searchParams;
-  const { guestId, cartId } = searchParams;
+async function Page({ searchParams }) {
+  const { guestId, cartId } = await searchParams;
   const { data } = await dbGetCart(guestId, cartId);
   // How do we want to handle expired carts?  Not sure.
   if (!data) return <CartIsEmpty />;

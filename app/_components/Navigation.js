@@ -1,12 +1,12 @@
+"use client";
 import Link from "next/link";
 import CartIcon from "./CartIcon";
+import { useSession } from "../_contexts/SessionProvider";
 
 // import { auth } from "../_lib/auth";
 
 export default function Navigation() {
-  //   const session = await auth();
-  // session = { user: { name, email, image }, expires }
-  const session = false;
+  const session = useSession();
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
@@ -23,55 +23,27 @@ export default function Navigation() {
             Merch
           </Link>
         </li>
-        {/* Considering having links to these pages in the products themselves rather
-        than having a menu link for them.   */}
-        {/* <li>
+        <li>
           <Link
-            href="/artists"
+            href="/about"
             className="hover:text-accent-400 transition-colors"
           >
-            Artists
+            About
           </Link>
         </li>
         <li>
-          <Link
-            href="/labels"
-            className="hover:text-accent-400 transition-colors"
-          >
-            Labels
-          </Link>
-        </li> */}
-        <li>
-          {/* {session?.user?.image ? ( */}
           {session ? (
-            <Link
-              href="/account"
-              className="hover:text-accent-400 transition-colors flex items-center gap-4"
-            >
-              <img
-                className="h-8 rounded-full"
-                src={session.user.image}
-                alt={session.user.name}
-                referrerPolicy="no-referrer"
-              />
-              <span>Guest Area</span>
+            <Link href="/profile">
+              Hi, {session.user.user_metadata.firstName}!
             </Link>
           ) : (
             <Link
-              href="/about"
+              href="/login"
               className="hover:text-accent-400 transition-colors"
             >
-              About
+              Log In
             </Link>
           )}
-        </li>
-        <li>
-          <Link
-            href="/login"
-            className="hover:text-accent-400 transition-colors"
-          >
-            Log In
-          </Link>
         </li>
         <li>
           <CartIcon />

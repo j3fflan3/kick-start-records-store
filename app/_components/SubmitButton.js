@@ -2,10 +2,15 @@
 
 import { useFormStatus } from "react-dom";
 
-function SubmitButton({ cssClasses, children }) {
+function SubmitButton({ cssClasses, disabled, children }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className={`${cssClasses}`} aria-disabled={pending}>
+    <button
+      type="submit"
+      disabled={disabled}
+      className={`${cssClasses}`}
+      aria-disabled={pending}
+    >
       {children}
     </button>
   );
