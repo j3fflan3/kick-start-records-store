@@ -15,7 +15,7 @@ function RecordCard({ record }) {
           src={image.url}
           alt={title}
           fill
-          className="flex-1 border-r border-primary-800 object-cover"
+          className="flex-1 border-r rounded-sm border-primary-800 object-contain"
         />
       </div>
       <div className="flex-grow">
@@ -52,7 +52,7 @@ function RecordCard({ record }) {
         </div>
 
         <div className="bg-primary-950 border-t border-t-primary-800 text-right">
-          <AddToCart catalogId={catalogId} disabled={false} />
+          <AddToCart catalogId={catalogId} />
           <Link
             href={`/records/${catalogId}`}
             className="border-l border-primary-800 py-4 px-6 inline-block hover:bg-accent-600 transition-all hover:text-primary-950"

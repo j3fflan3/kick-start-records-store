@@ -23,7 +23,7 @@ const geistMono = localFont({
 export const metadata = {
   title: "Kick Start Records",
   description:
-    "Online record store specializing in Metal and Rock, featuring Indie and Unsigned bands 🤘🏻",
+    "Online record store featuring Indie and Unsigned Metal, Punk, and Rock music. Horns Up! 🤘🏻",
 };
 
 export default function RootLayout({ children }) {

@@ -42,10 +42,11 @@ function CartProvider({ children }) {
     );
     if (error) {
       console.log(error);
-      return;
+      return { data, error };
     }
     console.log(`data: ${JSON.stringify(data)}`);
     setCount(data);
+    return { data, error };
   }
 
   async function updateCart(catalogId, count, email = null) {
@@ -58,11 +59,12 @@ function CartProvider({ children }) {
     );
     if (error) {
       console.log(error);
-      return;
+      return { data, error };
     }
     console.log(`data: ${JSON.stringify(data)}`);
     console.log("CartProvider: finishing updateCart");
     setCount(data);
+    return { data, error };
   }
 
   return (
