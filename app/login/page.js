@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LoginForm from "../_components/LoginForm";
 
 function Page() {
   return (
@@ -15,23 +16,7 @@ function Page() {
             Start here.
           </Link>
         </p>
-        <form>
-          <div className="grid-flow-row">
-            <div className="form-row">
-              <label htmlFor="email">Email:&nbsp;</label>
-              <input id="email" type="email" className="rounded-md" />
-            </div>
-            <div className="form-row">
-              <label htmlFor="password">Password:&nbsp;</label>
-              <input id="password" type="password" className="rounded-md" />
-            </div>
-            <div className="">
-              <button className="rounded-md bg-yellow-600 font-bold p-2 w-1/2 hover:bg-accent-600 active:bg-yellow-500">
-                Log In
-              </button>
-            </div>
-          </div>
-        </form>
+        <LoginForm />
       </div>
       <div className="w-1/3"></div>
     </div>

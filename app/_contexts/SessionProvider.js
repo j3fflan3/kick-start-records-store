@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "../_library/supabase/client";
-import { dbSignOut } from "../_library/serverActions";
+import { dbSignInWithEmail, dbSignOut } from "../_library/serverActions";
 
 const SessionContext = createContext(null);
 
@@ -26,6 +26,10 @@ function SessionProvider({ children }) {
 
   async function signOut() {
     await dbSignOut();
+  }
+
+  async function signIn({ email, password }) {
+    await dbSignInWithEmail({ email, password });
   }
 
   return (

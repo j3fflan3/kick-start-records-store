@@ -52,15 +52,14 @@ function CartIcon() {
             className="shoppingCartIcon h-11  w-11  text-primary-200 z-50"
           />
         </div>
-        {itemCount > 0 && (
-          <div className="shoppingCartCount">
-            <div className=" text-center align-top w-8">
-              <span className="text-accent-700 text-lg">
-                <strong>{itemCount}</strong>
-              </span>
-            </div>
+
+        <div className="shoppingCartCount">
+          <div className=" text-center align-top w-8">
+            <span className="text-accent-700 text-lg">
+              <strong>{itemCount}</strong>
+            </span>
           </div>
-        )}
+        </div>
       </div>
     </Link>
   );

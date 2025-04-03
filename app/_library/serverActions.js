@@ -89,8 +89,18 @@ async function dbVerifySignUp({ type, token_hash }) {
   return error;
 }
 
+async function dbSignIn({ email, password }) {
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) console.log(error);
+  return error;
+}
+
 async function dbSignInWithEmail({ email, password }) {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -110,9 +120,10 @@ export {
   dbAddToCart,
   dbGetCart,
   dbGetRecords,
-  dbUpdateCart,
-  dbSignUp,
-  dbVerifySignUp,
-  dbSignOut,
+  dbSignIn,
   dbSignInWithEmail,
+  dbSignOut,
+  dbSignUp,
+  dbUpdateCart,
+  dbVerifySignUp,
 };

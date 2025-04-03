@@ -1,18 +1,19 @@
 "use client";
 import Link from "next/link";
-import CartIcon from "./CartIcon";
 import { useSession } from "../_contexts/SessionProvider";
-import { dbSignOut } from "../_library/serverActions";
-
-// import { auth } from "../_lib/auth";
+import CartIcon from "./CartIcon";
+import { useRouter } from "next/navigation";
 
 export default function Navigation() {
   const context = useSession();
   const { session, signOut } = context;
+  const router = useRouter();
+
   async function handleSignOut() {
-    // no need to await this for now
     await signOut();
+    router.push("/");
   }
+
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
