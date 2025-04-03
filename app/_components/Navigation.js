@@ -2,11 +2,17 @@
 import Link from "next/link";
 import CartIcon from "./CartIcon";
 import { useSession } from "../_contexts/SessionProvider";
+import { dbSignOut } from "../_library/serverActions";
 
 // import { auth } from "../_lib/auth";
 
 export default function Navigation() {
-  const session = useSession();
+  const context = useSession();
+  const { session, signOut } = context;
+  async function handleSignOut() {
+    // no need to await this for now
+    await signOut();
+  }
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
@@ -45,6 +51,7 @@ export default function Navigation() {
             </Link>
           )}
         </li>
+        <li>{session && <button onClick={handleSignOut}>Log Out</button>}</li>
         <li>
           <CartIcon />
         </li>{" "}

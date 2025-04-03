@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "../_library/supabase/client";
+import { dbSignOut } from "../_library/serverActions";
 
 const SessionContext = createContext(null);
 
@@ -23,8 +24,12 @@ function SessionProvider({ children }) {
     };
   }, [supabase.auth]);
 
+  async function signOut() {
+    await dbSignOut();
+  }
+
   return (
-    <SessionContext.Provider value={session}>
+    <SessionContext.Provider value={{ session, signOut }}>
       {children}
     </SessionContext.Provider>
   );

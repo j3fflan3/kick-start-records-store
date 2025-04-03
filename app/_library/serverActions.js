@@ -89,6 +89,23 @@ async function dbVerifySignUp({ type, token_hash }) {
   return error;
 }
 
+async function dbSignInWithEmail({ email, password }) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) console.log(error);
+  return error;
+}
+
+async function dbSignOut() {
+  const supabase = await createClient();
+  // scope: "local" only kills the user's current session.
+  // Other sessions on other devices remain logged in.
+  const { error } = await supabase.auth.signOut({ scope: "local" });
+  if (error) console.log(error);
+}
 export {
   dbAddToCart,
   dbGetCart,
@@ -96,4 +113,6 @@ export {
   dbUpdateCart,
   dbSignUp,
   dbVerifySignUp,
+  dbSignOut,
+  dbSignInWithEmail,
 };
