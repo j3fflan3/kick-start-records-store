@@ -40,12 +40,12 @@ export default function Navigation() {
         </li>
         <li>
           {session ? (
-            <Link href="/profile">
+            <Link href="/account/profile">
               Hi, {session.user.user_metadata.firstName}!
             </Link>
           ) : (
             <Link
-              href="/login"
+              href="/account/login"
               className="hover:text-accent-400 transition-colors"
             >
               Log In

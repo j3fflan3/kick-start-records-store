@@ -28,6 +28,7 @@ export async function updateSession(request) {
       },
     }
   );
+  // IMPORTANT!  DO NOT REMOVE ANY OF THE COMMENTS IN THIS FILE. You'll thank me later 🙂
 
   // Do not run code between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -40,14 +41,18 @@ export async function updateSession(request) {
   } = await supabase.auth.getUser();
 
   if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !user
+    // &&
+    // !request.nextUrl.pathname.startsWith("/login") &&
+    // !request.nextUrl.pathname.startsWith("/auth")
   ) {
+    console.log("updateSession returned no user");
     // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    // In the case of our online store, we don't want to force people to sign up
+    // but allow them to checkout as a guest.
+    // const url = request.nextUrl.clone();
+    // url.pathname = "/login";
+    // return NextResponse.redirect(url);
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

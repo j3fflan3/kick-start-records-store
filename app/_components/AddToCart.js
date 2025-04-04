@@ -18,28 +18,24 @@ function AddToCart({ catalogId }) {
     setIsClient(true);
   }, []);
 
-  const addToCartToastCallback = function (item) {
-    return (t) => (
-      <AddToCartToast
-        item={item}
-        handleCartClick={() => {
-          toast.dismiss(t.id);
-          router.push(`/cart?guestId=${guestId}&cartId=${cartId}`);
-        }}
-        cssClasses={`${
-          t.visible ? "animate-enter" : "animate-leave"
-        } max-w-md w-full bg-primary-700 shadow-lg rounded-md pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-      />
-    );
-  };
-
   async function handleAddToCart() {
     startTransition(async () => {
       const { data, error } = await addToCart(catalogId);
       // console.log(data);
       const item = data.filter((item) => item.catalogId === catalogId);
       // console.log(item);
-      toast.custom(addToCartToastCallback(item[0]));
+      toast.custom((t) => (
+        <AddToCartToast
+          item={item[0]}
+          handleCartClick={() => {
+            toast.dismiss(t.id);
+            router.push(`/cart?guestId=${guestId}&cartId=${cartId}`);
+          }}
+          cssClasses={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } max-w-md w-full bg-primary-700 shadow-lg rounded-md pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+        />
+      ));
     });
   }
   return (

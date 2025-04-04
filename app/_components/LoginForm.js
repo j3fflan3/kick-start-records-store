@@ -1,18 +1,18 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { dbSignInWithEmail } from "../_library/serverActions";
+import { dbSignIn } from "../_library/serverActions";
 import SubmitButton from "./SubmitButton";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   message: "",
 };
 
 function LoginForm() {
-  const [state, formAction, isPending] = useActionState(
-    dbSignInWithEmail,
-    initialState
-  );
+  const router = useRouter();
+  const [state, formAction, isPending] = useActionState(dbSignIn, initialState);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,8 +20,19 @@ function LoginForm() {
   const isSubmittable = email !== "" && password !== "";
 
   useEffect(() => {
-    if (state) console.log(`state: ${JSON.stringify(state)}`);
-  }, [state]);
+    if (state) {
+      const { message } = state;
+      if (message === "success") {
+        router.push("/");
+      } else if (message === "error") {
+        setEmail("");
+        setPassword("");
+        toast.error(
+          "Log In failed.  Please verify your email or password and try again"
+        );
+      }
+    }
+  }, [state, setEmail, setPassword, router]);
 
   function handleEmail(e) {
     setEmail(e.target.value);
@@ -65,9 +76,10 @@ function LoginForm() {
           >
             Log In
           </SubmitButton>
-          <p aria-live="polite" role="status">
+          <Toaster position="top-right" />
+          {/* <p aria-live="polite" role="status">
             {state?.message}
-          </p>
+          </p> */}
         </div>
       </div>
     </form>

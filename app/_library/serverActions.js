@@ -83,30 +83,24 @@ async function dbSignUp(prevState, formData) {
   return { data, error };
 }
 
-async function dbVerifySignUp({ type, token_hash }) {
+async function dbVerifyOtp({ type, token_hash }) {
   const supabase = await createClient();
   const { error } = await supabase.auth.verifyOtp({ type, token_hash });
-  return error;
+  return { error };
 }
 
 async function dbSignIn({ email, password }) {
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
-
-  if (error) console.log(error);
-  return error;
-}
-
-async function dbSignInWithEmail({ email, password }) {
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) console.log(error);
-  return error;
+  let message = "success";
+  if (error) {
+    console.log(error);
+    message = "error";
+  }
+  return { message };
 }
 
 async function dbSignOut() {
@@ -116,14 +110,39 @@ async function dbSignOut() {
   const { error } = await supabase.auth.signOut({ scope: "local" });
   if (error) console.log(error);
 }
+
+async function serverResetPassword(prevState, formData) {
+  const email = formData.get("email");
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+  let message = "success";
+  if (error) {
+    console.log(error);
+    message = "error";
+  }
+  return { message };
+}
+
+async function serverUpdatePassword(prevState, formData) {
+  const new_password = formData.get("password");
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password: new_password });
+  let message = "success";
+  if (error) {
+    console.log(error);
+    message = "error";
+  }
+  return { message };
+}
 export {
   dbAddToCart,
   dbGetCart,
   dbGetRecords,
   dbSignIn,
-  dbSignInWithEmail,
   dbSignOut,
   dbSignUp,
   dbUpdateCart,
-  dbVerifySignUp,
+  dbVerifyOtp,
+  serverResetPassword,
+  serverUpdatePassword,
 };

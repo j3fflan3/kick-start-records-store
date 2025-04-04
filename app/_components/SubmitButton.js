@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
+import SpinnerMini from "./SpinnerMini";
 
 function SubmitButton({ cssClasses, disabled, children }) {
   const { pending } = useFormStatus();
@@ -11,7 +12,7 @@ function SubmitButton({ cssClasses, disabled, children }) {
       className={`${cssClasses}`}
       aria-disabled={pending}
     >
-      {children}
+      {pending ? <SpinnerMini /> : children}
     </button>
   );
 }

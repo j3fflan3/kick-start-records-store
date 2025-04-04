@@ -29,13 +29,28 @@ const cartItemCount = (cart) => {
     return sum + item.count;
   }, 0);
 };
-export { printRecordFormat, formatDecimal, cartSubtotal, cartItemCount };
 
-const validatePassword = (pwd) => {
+const validatePassword = (password, confirm) => {
   // Password must be at least 8 characters in length and
   // contain at least one of the following: Uppercase letter, lowercase letter,
   // number, and special character (#?!@$%^&*-)
-  return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
-    pwd
+  return (
+    password === confirm &&
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
+      password
+    )
   );
+};
+
+const validateEmail = (email) => {
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+};
+
+export {
+  printRecordFormat,
+  formatDecimal,
+  cartSubtotal,
+  cartItemCount,
+  validateEmail,
+  validatePassword,
 };
