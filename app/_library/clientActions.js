@@ -1,10 +1,10 @@
-"use server";
+"use client";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "./supabase/client";
 
 const supabase = createClient();
-async function dbAddToCart(guestId, cartId, catalogId, count = 1) {
+
+async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
   const { data, error } = await supabase.rpc("add_to_cart", {
     _guest_id: guestId,
     _cart_id: cartId,
@@ -15,12 +15,17 @@ async function dbAddToCart(guestId, cartId, catalogId, count = 1) {
   if (error) {
     console.log(error.message);
   }
-  revalidatePath("/cart");
   return { data, error };
 }
 
-async function dbUpdateCart(guestId, cartId, catalogId, count, email = null) {
-  // console.log(`dbUpdateCart -> count=${count}`);
+async function clientUpdateCart(
+  guestId,
+  cartId,
+  catalogId,
+  count,
+  email = null
+) {
+  // console.log(`clientUpdateCart -> count=${count}`);
   const { data, error } = await supabase.rpc("update_cart", {
     _guest_id: guestId,
     _cart_id: cartId,
@@ -29,10 +34,32 @@ async function dbUpdateCart(guestId, cartId, catalogId, count, email = null) {
     _email: email,
   });
   if (error) {
-    console.log(`dbUpdateCart error: ${error.message}`);
+    console.log(`clientUpdateCart error: ${error.message}`);
   }
-  revalidatePath("/cart");
   return { data, error };
 }
 
-export { dbAddToCart, dbUpdateCart };
+async function clientSignIn(currentState, formData) {
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  let message = "success";
+  if (error) {
+    console.error(error);
+    message = "error";
+  }
+  return { message };
+}
+
+async function clientSignOut() {
+  // scope: "local" only kills the user's current session.
+  // Other sessions on other devices remain logged in.
+  const { error } = await supabase.auth.signOut({ scope: "local" });
+  if (error) console.log(error);
+}
+
+export { clientAddToCart, clientUpdateCart, clientSignIn, clientSignOut };

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { printRecordFormat } from "../_library/utilities";
+import { printRecordFormat } from "@/app/_library/utilities";
 
 function AddToCartToast({ item, cssClasses, handleCartClick }) {
   console.log(cssClasses);

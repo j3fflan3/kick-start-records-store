@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { cartItemCount, cartSubtotal } from "../_library/utilities";
+import { cartItemCount, cartSubtotal } from "@/app/_library/utilities";
 
 function CartProceed({ cart, guestId, cartId }) {
   if (!cart) return null;

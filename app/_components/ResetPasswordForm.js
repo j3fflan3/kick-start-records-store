@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
-import { serverResetPassword } from "../_library/serverActions";
+import { serverResetPassword } from "@/app/_library/serverActions";
 import SpinnerMini from "./SpinnerMini";
-import { validateEmail } from "../_library/utilities";
+import { validateEmail } from "@/app/_library/utilities";
 import toast, { Toaster } from "react-hot-toast";
 const initialState = { message: "" };
 function ResetPasswordForm() {
@@ -20,7 +20,7 @@ function ResetPasswordForm() {
     if (state) {
       const { message } = state;
       if (message === "success") {
-        toast.success("✅ Check your email for password update instructions.");
+        toast.success("Check your email for password update instructions.");
       } else if (message === "error") {
         setEmail("");
         toast.error("🤒 There was an error resetting your password.");

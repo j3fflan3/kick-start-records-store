@@ -1,4 +1,4 @@
-import { cartItemCount, cartSubtotal } from "../_library/utilities";
+import { cartItemCount, cartSubtotal } from "@/app/_library/utilities";
 
 function CartFooter({ cart }) {
   if (!cart) return null;

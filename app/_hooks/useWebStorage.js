@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getWebStorage } from "../_library/loadWebStorage";
+import { getWebStorage } from "@/app/_library/loadWebStorage";
 
 // Right now, I'm kinda doing a catch all for the initialState / value
 // It should either be a function or an object

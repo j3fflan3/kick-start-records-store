@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { formatDecimal, printRecordFormat } from "../_library/utilities";
+import { formatDecimal, printRecordFormat } from "@/app/_library/utilities";
 import CartCounter from "./CartCounter";
 import { Suspense } from "react";
 import SpinnerMini from "./SpinnerMini";

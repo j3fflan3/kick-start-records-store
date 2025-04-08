@@ -1,11 +1,13 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { serverUpdatePassword } from "@/app/_library/serverActions";
+import { validatePassword } from "@/app/_library/utilities";
 import toast, { Toaster } from "react-hot-toast";
-import { serverUpdatePassword } from "../_library/serverActions";
-import { validatePassword } from "../_library/utilities";
 import SpinnerMini from "./SpinnerMini";
+
 const initialState = { message: "" };
+
 function UpdatePasswordForm() {
   const [state, formAction, isPending] = useActionState(
     serverUpdatePassword,
@@ -18,12 +20,17 @@ function UpdatePasswordForm() {
   useEffect(() => {
     if (state) {
       const { message } = state;
+      if (message === "") return;
       if (message === "success") {
-        toast.success("✅ You have successfully updated your password.");
-      } else if (message === "error") {
+        toast.success("You have successfully updated your password.");
+      } else {
         setPassword("");
         setConfirm("");
-        toast.error("🤒 There was an error resetting your password.");
+        if (message === "error")
+          toast.error(
+            "There was an error resetting your password. Contact support."
+          );
+        else toast.error(message);
       }
     }
   }, [state, setPassword, setConfirm]);

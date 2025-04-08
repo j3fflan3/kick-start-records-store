@@ -1,10 +1,10 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { dbSignIn } from "../_library/serverActions";
 import SubmitButton from "./SubmitButton";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { clientSignIn } from "@/app/_library/clientActions";
 
 const initialState = {
   message: "",
@@ -12,7 +12,10 @@ const initialState = {
 
 function LoginForm() {
   const router = useRouter();
-  const [state, formAction, isPending] = useActionState(dbSignIn, initialState);
+  const [state, formAction, isPending] = useActionState(
+    clientSignIn,
+    initialState
+  );
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

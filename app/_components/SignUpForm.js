@@ -1,14 +1,17 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { dbSignUp } from "../_library/serverActions";
+import { serverSignUp } from "@/app/_library/serverActions";
 import SubmitButton from "./SubmitButton";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 const initialState = {
   message: "",
 };
 function SignUpForm() {
-  const [state, formAction, isPending] = useActionState(dbSignUp, initialState);
+  const [state, formAction, isPending] = useActionState(
+    serverSignUp,
+    initialState
+  );
   const [token, setToken] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

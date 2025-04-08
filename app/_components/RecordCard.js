@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import AddToCart from "./AddToCart";
-import { printRecordFormat } from "../_library/utilities";
+import { printRecordFormat } from "@/app/_library/utilities";
 
 function RecordCard({ record }) {
   const { artist, catalogId, title, image, description, price, recordFormat } =

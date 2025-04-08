@@ -1,5 +1,7 @@
-import { dbVerifyOtp } from "@/app/_library/serverActions";
-import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+// The client you created from the Server-Side Auth instructions
+import { createClient } from "@/app/_library/supabase/server";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -8,13 +10,19 @@ export async function GET(request) {
   const next = searchParams.get("next") ?? "/";
   const redirectTo = request.nextUrl.clone();
   redirectTo.pathname = next;
+
   if (token_hash && type) {
-    console.log("verifying Otp");
-    const { error } = dbVerifyOtp(type, token_hash);
+    const supabase = await createClient();
+
+    const { error } = await supabase.auth.verifyOtp({
+      type,
+      token_hash,
+    });
     if (!error) {
       return NextResponse.redirect(redirectTo);
     }
   }
+
   // return the user to an error page with some instructions
   redirectTo.pathname = "/auth/auth-code-error";
   return NextResponse.redirect(redirectTo);

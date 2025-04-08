@@ -3,14 +3,17 @@ import Link from "next/link";
 import { useSession } from "../_contexts/SessionProvider";
 import CartIcon from "./CartIcon";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { clientSignOut } from "../_library/clientActions";
+import { Toaster } from "react-hot-toast";
 
 export default function Navigation() {
   const context = useSession();
-  const { session, signOut } = context;
+  const { session } = context;
   const router = useRouter();
 
   async function handleSignOut() {
-    await signOut();
+    await clientSignOut();
     router.push("/");
   }
 
@@ -57,6 +60,7 @@ export default function Navigation() {
           <CartIcon />
         </li>{" "}
       </ul>
+      <Toaster />
     </nav>
   );
 }
