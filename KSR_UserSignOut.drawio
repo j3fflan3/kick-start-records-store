@@ -64,6 +64,14 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-62" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-25" target="FAYgEQ3GZWzxIfLMmF-X-61">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-63" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FAYgEQ3GZWzxIfLMmF-X-62">
+          <mxGeometry x="-0.2571" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="FAYgEQ3GZWzxIfLMmF-X-25" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Is user anonymous?&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="340" y="290" width="80" height="80" as="geometry" />
         </mxCell>
@@ -101,10 +109,13 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="FAYgEQ3GZWzxIfLMmF-X-53" value="Replace local storage with new anon user id and new cart id" style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="480" y="430" width="120" height="60" as="geometry" />
+          <mxGeometry x="480" y="440" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="FAYgEQ3GZWzxIfLMmF-X-58" value="Note that the cart table in the database will have a maintenance routine that deletes carts for anonymous user ids after thirty days." style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
           <mxGeometry x="940" y="650" width="130" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-61" value="Add item to cart. &lt;i&gt;&amp;nbsp;See Cicks Sign In flow.&lt;/i&gt;" style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="320" y="440" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
