@@ -1,9 +1,10 @@
 "use client";
+
 import { ShoppingCartIcon } from "@heroicons/react/24/solid";
 import { useCart } from "../_contexts/CartProvider";
 import { useEffect } from "react";
+import { serverGetCart } from "@/app/_library/serverActions";
 import Link from "next/link";
-import { dbGetCart } from "../_library/serverActions";
 import Error from "../error";
 
 export const revalidate = 0;
@@ -21,7 +22,7 @@ function CartIcon() {
     function () {
       async function getCartCount(guestId, cartId) {
         if (!guestId || !cartId) return;
-        const { data, error } = await dbGetCart(guestId, cartId);
+        const { data, error } = await serverGetCart(guestId, cartId);
         if (error) {
           console.log(error);
           return <Error error={"There was a problem updating the cart."} />;
@@ -52,15 +53,14 @@ function CartIcon() {
             className="shoppingCartIcon h-11  w-11  text-primary-200 z-50"
           />
         </div>
-        {itemCount > 0 && (
-          <div className="shoppingCartCount">
-            <div className=" text-center align-top w-8">
-              <span className="text-accent-700 text-lg">
-                <strong>{itemCount}</strong>
-              </span>
-            </div>
+
+        <div className="shoppingCartCount">
+          <div className=" text-center align-top w-8">
+            <span className="text-accent-700 text-lg">
+              <strong>{itemCount}</strong>
+            </span>
           </div>
-        )}
+        </div>
       </div>
     </Link>
   );

@@ -1,6 +1,6 @@
 function Page() {
   return (
-    <main className="mt-24">
+    <>
       <div className="relative z-10 text-center">
         <div className="text-4xl text-primary-100 mb-10 tracking-tight font-normal">
           Welcome to Kick Start Records
@@ -12,7 +12,7 @@ function Page() {
         and merch, but they also get to choose whether they ship the goods
         themselves, or have us do the dirty work!
       </p>
-    </main>
+    </>
   );
 }
 

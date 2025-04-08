@@ -85,12 +85,22 @@ body {
 .cart-image {
   aspect-ratio: auto 1/1;
 }
-/* .shoppingCartContainer {
-  display: grid;
-}
 
-.shoppingCartIcon,
-.shoppingCartCount {
-  grid-column: 1;
-  grid-row: 1;
-} */
+.form-row {
+  display: flex;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+label {
+  width: 200px;
+  align-items: center;
+  font-size: 16px;
+}
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  flex-grow: 0.67;
+  padding: 5px;
+  background-color: lightgray;
+  color: #000;
+}

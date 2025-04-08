@@ -1,10 +1,11 @@
 "use client";
 
+import { clientAddToCart } from "@/app/_library/clientActions";
+import { CartID } from "@/app/_library/loadWebStorage";
 import { createContext, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useWebStorage } from "../_hooks/useWebStorage";
-import { CartID } from "../_library/loadWebStorage";
-import { dbAddToCart, dbUpdateCart } from "../_library/serverActions";
+import { serverUpdateCart } from "../_library/serverActions";
 
 const CartContext = createContext();
 
@@ -34,7 +35,7 @@ function CartProvider({ children }) {
   }
 
   async function addToCart(catalogId, count = 1) {
-    const { data, error } = await dbAddToCart(
+    const { data, error } = await clientAddToCart(
       guestId,
       cartId,
       catalogId,
@@ -42,13 +43,15 @@ function CartProvider({ children }) {
     );
     if (error) {
       console.log(error);
-      return;
+      return { data, error };
     }
+    console.log(`data: ${JSON.stringify(data)}`);
     setCount(data);
+    return { data, error };
   }
 
   async function updateCart(catalogId, count, email = null) {
-    const { data, error } = await dbUpdateCart(
+    const { data, error } = await serverUpdateCart(
       guestId,
       cartId,
       catalogId,
@@ -57,11 +60,12 @@ function CartProvider({ children }) {
     );
     if (error) {
       console.log(error);
-      return;
+      return { data, error };
     }
-    console.log(data);
+    console.log(`data: ${JSON.stringify(data)}`);
     console.log("CartProvider: finishing updateCart");
     setCount(data);
+    return { data, error };
   }
 
   return (

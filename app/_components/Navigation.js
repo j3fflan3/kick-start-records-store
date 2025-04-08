@@ -1,12 +1,22 @@
+"use client";
 import Link from "next/link";
+import { useSession } from "../_contexts/SessionProvider";
 import CartIcon from "./CartIcon";
-
-// import { auth } from "../_lib/auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { clientSignOut } from "../_library/clientActions";
+import { Toaster } from "react-hot-toast";
 
 export default function Navigation() {
-  //   const session = await auth();
-  // session = { user: { name, email, image }, expires }
-  const session = false;
+  const context = useSession();
+  const { session } = context;
+  const router = useRouter();
+
+  async function handleSignOut() {
+    await clientSignOut();
+    router.push("/");
+  }
+
   return (
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
@@ -25,48 +35,32 @@ export default function Navigation() {
         </li>
         <li>
           <Link
-            href="/artists"
+            href="/about"
             className="hover:text-accent-400 transition-colors"
           >
-            Artists
+            About
           </Link>
         </li>
         <li>
-          <Link
-            href="/labels"
-            className="hover:text-accent-400 transition-colors"
-          >
-            Labels
-          </Link>
-        </li>
-        <li>
-          {/* {session?.user?.image ? ( */}
           {session ? (
-            <Link
-              href="/account"
-              className="hover:text-accent-400 transition-colors flex items-center gap-4"
-            >
-              <img
-                className="h-8 rounded-full"
-                src={session.user.image}
-                alt={session.user.name}
-                referrerPolicy="no-referrer"
-              />
-              <span>Guest Area</span>
+            <Link href="/account/profile">
+              Hi, {session.user.user_metadata.firstName}!
             </Link>
           ) : (
             <Link
-              href="/about"
+              href="/account/login"
               className="hover:text-accent-400 transition-colors"
             >
-              About
+              Log In
             </Link>
           )}
         </li>
+        <li>{session && <button onClick={handleSignOut}>Log Out</button>}</li>
         <li>
           <CartIcon />
         </li>{" "}
       </ul>
+      <Toaster />
     </nav>
   );
 }
