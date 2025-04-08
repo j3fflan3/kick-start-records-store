@@ -18,27 +18,6 @@ async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
   return { data, error };
 }
 
-async function clientUpdateCart(
-  guestId,
-  cartId,
-  catalogId,
-  count,
-  email = null
-) {
-  // console.log(`clientUpdateCart -> count=${count}`);
-  const { data, error } = await supabase.rpc("update_cart", {
-    _guest_id: guestId,
-    _cart_id: cartId,
-    _catalog_id: catalogId,
-    _count: count,
-    _email: email,
-  });
-  if (error) {
-    console.log(`clientUpdateCart error: ${error.message}`);
-  }
-  return { data, error };
-}
-
 async function clientSignIn(currentState, formData) {
   const email = formData.get("email");
   const password = formData.get("password");
@@ -62,4 +41,17 @@ async function clientSignOut() {
   if (error) console.log(error);
 }
 
-export { clientAddToCart, clientUpdateCart, clientSignIn, clientSignOut };
+async function clientSignInAnonymously() {
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) {
+    console.log(error);
+  }
+  return { data, error };
+}
+
+export {
+  clientAddToCart,
+  clientSignIn,
+  clientSignOut,
+  clientSignInAnonymously,
+};
