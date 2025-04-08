@@ -47,7 +47,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-17" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Is user&amp;nbsp;&lt;br&gt;&lt;/div&gt;&lt;div&gt;signed in and not anon?&lt;br&gt;&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-17" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Is user&amp;nbsp;&lt;br&gt;&lt;/div&gt;&lt;div&gt;signed in?&lt;br&gt;&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="340" y="130" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="FAYgEQ3GZWzxIfLMmF-X-33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-19" target="FAYgEQ3GZWzxIfLMmF-X-32">
@@ -56,57 +56,55 @@
         <mxCell id="FAYgEQ3GZWzxIfLMmF-X-19" value="Sign in user Anonymously. Add anonymous id and generate new cart id. Save to local storage" style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="480" y="140" width="200" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-25" target="FAYgEQ3GZWzxIfLMmF-X-27">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-47" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-25" target="FAYgEQ3GZWzxIfLMmF-X-46">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-29" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FAYgEQ3GZWzxIfLMmF-X-28">
-          <mxGeometry x="-0.2333" y="-2" relative="1" as="geometry">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-50" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FAYgEQ3GZWzxIfLMmF-X-47">
+          <mxGeometry x="-0.125" y="-2" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-25" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;Cart has&amp;nbsp;&lt;div&gt;items and is anon?&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-25" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Is user anonymous?&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="340" y="290" width="80" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-27" target="FAYgEQ3GZWzxIfLMmF-X-36">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-27" value="Query DB for existence of cart with userId that is not expired or fulfilled" style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="480" y="300" width="160" height="60" as="geometry" />
         </mxCell>
         <mxCell id="FAYgEQ3GZWzxIfLMmF-X-35" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-32" target="FAYgEQ3GZWzxIfLMmF-X-34">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-32" value="Insert anon user, cartId and item(s) into database." style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-32" value="Insert/upsert anon user, cartId and item(s) into database." style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="720" y="140" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="FAYgEQ3GZWzxIfLMmF-X-34" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;Update UI to reflect cart count." style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="880" y="140" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-39" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-36" target="FAYgEQ3GZWzxIfLMmF-X-38">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.433;entryY=0.983;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-46" target="FAYgEQ3GZWzxIfLMmF-X-32">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="670" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-49" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FAYgEQ3GZWzxIfLMmF-X-48">
+          <mxGeometry x="-0.0277" y="-1" relative="1" as="geometry">
+            <mxPoint x="-87" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-54" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-46" target="FAYgEQ3GZWzxIfLMmF-X-53">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-40" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FAYgEQ3GZWzxIfLMmF-X-39">
-          <mxGeometry x="-0.2333" y="-4" relative="1" as="geometry">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-55" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="FAYgEQ3GZWzxIfLMmF-X-54">
+          <mxGeometry x="-0.3091" y="2" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-42" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-36" target="FAYgEQ3GZWzxIfLMmF-X-41">
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-46" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;Does local storage user id match anon user?" style="rhombus;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="500" y="290" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-53" target="FAYgEQ3GZWzxIfLMmF-X-32">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-36" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Cart already exists for user id?&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="740" y="290" width="80" height="80" as="geometry" />
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-53" value="Replace local storage with new anon user id and new cart id" style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="480" y="430" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-38" value="&lt;div&gt;Replace anonymous cart user id with signed in user id&lt;/div&gt;" style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="880" y="300" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-44" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-41" target="FAYgEQ3GZWzxIfLMmF-X-43">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-41" value="Merge anonymous cart data into existing cart for user id." style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="720" y="440" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-43" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;Update UI to reflect merged cart." style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
-          <mxGeometry x="880" y="440" width="120" height="60" as="geometry" />
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-58" value="Note that the cart table in the database will have a maintenance routine that deletes carts for anonymous user ids after thirty days." style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="940" y="650" width="130" height="130" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
