@@ -1,9 +1,24 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15" version="26.2.9">
   <diagram name="Page-1" id="9YGcP4kTieHBKAeo50qU">
-    <mxGraphModel>
+    <mxGraphModel dx="1290" dy="1082" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-2" target="FAYgEQ3GZWzxIfLMmF-X-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-2" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="FAYgEQ3GZWzxIfLMmF-X-8" target="FAYgEQ3GZWzxIfLMmF-X-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-8" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Clicks Sign Out&lt;/div&gt;" style="whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="105" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="FAYgEQ3GZWzxIfLMmF-X-10" value="&lt;div&gt;Remove &quot;kickStartRecordsCart&quot; item from local storage.&lt;br&gt;&lt;/div&gt;" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="310" y="40" width="170" height="60" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
