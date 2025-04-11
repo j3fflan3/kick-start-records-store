@@ -18,7 +18,7 @@ function CartCounter({ count, catalogId }) {
   }
   // console.log(`Loading CartCounter -> catalogId:${catalogId}, count:${count}`);
   return (
-    <div className="border-primary-400 bg-primary-800 border-2 rounded-lg px-3 py-1 relative">
+    <div className="border-primary-300 bg-primary-700 border-2 rounded-lg px-3 py-1 relative">
       <button
         className="cursor-pointer"
         onClick={() => {

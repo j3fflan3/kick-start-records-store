@@ -4,6 +4,10 @@ import { createClient } from "./supabase/client";
 
 const supabase = createClient();
 
+async function clientGetUserId() {
+  return await supabase.rpc("get_user_id");
+}
+
 async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
   const { data, error } = await supabase.rpc("add_to_cart", {
     _guest_id: guestId,
@@ -50,6 +54,7 @@ async function clientSignInAnonymously() {
 }
 
 export {
+  clientGetUserId,
   clientAddToCart,
   clientSignIn,
   clientSignOut,

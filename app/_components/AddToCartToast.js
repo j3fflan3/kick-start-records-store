@@ -6,13 +6,13 @@ function AddToCartToast({ item, cssClasses, handleCartClick }) {
   console.log(cssClasses);
   return (
     <div className={cssClasses}>
-      <div className="flex-1 w-0 p-4">
+      <div className="flex-1 p-4">
         <div className="flex items-start">
-          <div className="flex-shrink-0 pt-0.5">
+          <div className="pt-0.5">
             <Image
-              width="48"
-              height="48"
-              className="h-12 w-12 rounded-sm"
+              width="100"
+              height="100"
+              className="rounded-sm"
               src={item.image.url}
               alt={item.title}
               priority

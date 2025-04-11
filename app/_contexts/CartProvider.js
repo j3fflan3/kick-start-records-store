@@ -35,6 +35,8 @@ function CartProvider({ children }) {
   }
 
   async function addToCart(catalogId, count = 1) {
+    // fnGetUserId,
+    // const userId = fnGetUserId()
     const { data, error } = await clientAddToCart(
       guestId,
       cartId,

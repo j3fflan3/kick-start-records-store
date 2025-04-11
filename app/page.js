@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import RecordList from "./_components/RecordList";
 import Spinner from "./_components/Spinner";
 import ToastClient from "./_components/ToastClient";
+import ComingSoon from "./_components/ComingSoon";
 export const revalidate = 30;
 export default async function Home({ searchParams }) {
   const { signup_success } = await searchParams;
@@ -15,6 +16,8 @@ export default async function Home({ searchParams }) {
       color: "#fff",
     },
   };
+  const isDev = process.env.NODE_ENV === "development";
+  if (isDev) return <ComingSoon />;
   return (
     <div>
       <Suspense fallback={<Spinner />} key={"abc"}>

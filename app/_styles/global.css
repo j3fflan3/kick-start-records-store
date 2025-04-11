@@ -96,11 +96,11 @@ label {
   align-items: center;
   font-size: 16px;
 }
-input[type="email"],
+/* input[type="email"],
 input[type="password"],
 input[type="text"] {
   flex-grow: 0.67;
   padding: 5px;
   background-color: lightgray;
   color: #000;
-}
+} */

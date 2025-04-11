@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import { getWebStorage } from "@/app/_library/loadWebStorage";
 
 // Right now, I'm kinda doing a catch all for the initialState / value
-// It should either be a function or an object
-// that gets JSON stringified on set and parsed on get
 export function useWebStorage(key, initialState) {
   const [value, setValue] = useState(function () {
     const storage = getWebStorage();
     // Next.js hydrates first on the server, so check if window is undefined
     const storedValue = typeof window !== "undefined" && storage.getItem(key);
+    // Definitely rethink this. Reading those ternary statements is overly complex
+    // This doesn't need to be a catch all, but should have specific usage rules.
+    // It should either be a function or an object
+    // that gets JSON stringified on set and parsed on get
     return storedValue
       ? JSON.parse(storedValue)
       : initialState instanceof Function

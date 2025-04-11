@@ -12,6 +12,7 @@ export default function Navigation() {
   const { session } = context;
   const router = useRouter();
 
+  // Add a transition and SpinnerMini?
   async function handleSignOut() {
     await clientSignOut();
     router.push("/");
@@ -21,7 +22,10 @@ export default function Navigation() {
     <nav className="z-10 text-xl">
       <ul className="flex gap-16 items-center">
         <li>
-          <Link href="/" className="hover:text-accent-400 transition-colors">
+          <Link
+            href="/records"
+            className="hover:text-accent-400 transition-colors"
+          >
             Records
           </Link>
         </li>
@@ -42,7 +46,7 @@ export default function Navigation() {
           </Link>
         </li>
         <li>
-          {session ? (
+          {session && !session?.user?.is_anonymous ? (
             <Link href="/account/profile">
               Hi, {session.user.user_metadata.firstName}!
             </Link>
@@ -51,11 +55,15 @@ export default function Navigation() {
               href="/account/login"
               className="hover:text-accent-400 transition-colors"
             >
-              Log In
+              Log In/Sign Up
             </Link>
           )}
         </li>
-        <li>{session && <button onClick={handleSignOut}>Log Out</button>}</li>
+        <li>
+          {session && !session.user.is_anonymous && (
+            <button onClick={handleSignOut}>Log Out</button>
+          )}
+        </li>
         <li>
           <CartIcon />
         </li>{" "}

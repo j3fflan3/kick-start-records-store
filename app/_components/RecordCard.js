@@ -10,11 +10,12 @@ function RecordCard({ record }) {
 
   return (
     <div className="flex border-primary-800 border rounded-md">
-      <div className="flex-auto relative aspect-square">
+      <div className="relative aspect-square justify-evenly">
         <Image
           src={image.url}
           alt={title}
-          fill
+          width="222"
+          height="222"
           className="flex-1 border-r rounded-sm border-primary-800 object-contain"
         />
       </div>
@@ -26,36 +27,19 @@ function RecordCard({ record }) {
           <h4 className="text-primary-400 mb-3">Artist: {artist}</h4>
 
           <div className="flex gap-3 items-center mb-2">
-            {/* <UsersIcon className="h-5 w-5 text-primary-600" /> */}
-            {/* <p className="text-lg text-primary-200">
-              For up to <span className="font-bold">{maxCapacity}</span> guests
-            </p> */}
             <p className="text-primary-400">{description}</p>
           </div>
 
           <p className="flex gap-3 items-baseline">
-            {/* {discount > 0 ? (
-              <>
-                <span className="text-3xl font-[350]">
-                  ${regularPrice - discount}
-                </span>
-                <span className="line-through font-semibold text-primary-600">
-                  ${regularPrice}
-                </span>
-              </>
-            ) : (
-              <span className="text-3xl font-[350]">${regularPrice}</span>
-            )}
-            <span className="text-primary-200">/ night</span> */}
             {printRecordFormat(recordFormat)}&nbsp;<b>${usd}</b>
           </p>
         </div>
 
-        <div className="bg-primary-950 border-t border-t-primary-800 text-right">
+        <div className="bg-primary-950 border-t border-t-primary-800 pl-4 text-left">
           <AddToCart catalogId={catalogId} />
           <Link
             href={`/records/${catalogId}`}
-            className="border-l border-primary-800 py-4 px-6 inline-block hover:bg-accent-600 transition-all hover:text-primary-950"
+            className="border border-primary-700 rounded-md py-2 px-4 inline-block hover:bg-accent-600 transition-all hover:text-primary-950"
           >
             Details &rarr;
           </Link>

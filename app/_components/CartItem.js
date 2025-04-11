@@ -3,7 +3,7 @@ import { formatDecimal, printRecordFormat } from "@/app/_library/utilities";
 import CartCounter from "./CartCounter";
 import { Suspense } from "react";
 import SpinnerMini from "./SpinnerMini";
-
+// Item's description plus medium desc and availability
 function CartItem({ item }) {
   const {
     catalogId,
@@ -17,7 +17,7 @@ function CartItem({ item }) {
   } = item;
   return (
     <div key={catalogId} className="w-full">
-      <div className="flex bg-primary-800 p-2 border-b border-primary-700">
+      <div className="flex bg-primary-700 p-2 border-b border-primary-800">
         <div className="relative aspect-square m-1">
           <Image
             src={image.url}
