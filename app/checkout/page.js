@@ -18,7 +18,7 @@ async function Page({ searchParams }) {
   if (!cart) {
     return <CartIsEmpty />;
   }
-  // How do we want to handle expired carts?  Not sure.
+
   return (
     <Suspense fallback={<Spinner />}>
       <Checkout cart={cart} />

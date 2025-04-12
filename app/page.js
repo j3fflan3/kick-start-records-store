@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import RecordList from "./_components/RecordList";
 import Spinner from "./_components/Spinner";
 import ToastClient from "./_components/ToastClient";
-import ComingSoon from "./_components/ComingSoon";
+import ComingSoon from "./_components/SignUp";
+import ComingSoonSmall from "./_components/ComingSoonSmall";
 export const revalidate = 30;
 export default async function Home({ searchParams }) {
   const { signup_success } = await searchParams;
@@ -16,16 +17,12 @@ export default async function Home({ searchParams }) {
       color: "#fff",
     },
   };
-  const isDev = process.env.NODE_ENV === "development";
   return (
     <div>
-      {isDev ? (
-        <ComingSoon />
-      ) : (
-        <Suspense fallback={<Spinner />} key={"abc"}>
-          <RecordList />
-        </Suspense>
-      )}
+      <Suspense fallback={<Spinner />} key={"abc"}>
+        <RecordList />
+      </Suspense>
+
       {signup_success && (
         <ToastClient message={signupMessage} options={toastOptions} />
       )}

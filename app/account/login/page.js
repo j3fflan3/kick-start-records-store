@@ -14,7 +14,7 @@ function Page() {
           <p className="pb-1 text-primary-400">
             New customer?{" "}
             <Link
-              href="/signup"
+              href="/account/signup"
               className="text-primary-300 font-bold hover:text-accent-600"
             >
               Start here.

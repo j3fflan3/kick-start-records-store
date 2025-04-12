@@ -1,6 +1,9 @@
 import CartItem from "./CartItem";
+import ComingSoonSmall from "./ComingSoonSmall";
 
 function Checkout({ cart }) {
+  const isDev = process.env.NODE_ENV === "development";
+  if (isDev) return <ComingSoonSmall showSignUp={true} />;
   return (
     <div>
       <div>Checkout</div>
