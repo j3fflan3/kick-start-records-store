@@ -2,7 +2,7 @@
 import { useTransition } from "react";
 import SpinnerMini from "@/src/app/_components/SpinnerMini";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { useCart } from "@src/app/_contexts/CartProvider";
+import { useCart } from "@/src/app/_contexts/CartProvider";
 
 const revalidate = 0;
 
