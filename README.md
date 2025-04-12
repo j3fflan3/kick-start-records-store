@@ -1,6 +1,15 @@
 # Kick Start Records Store
 
-An Indie Label Record Store built with NEXT.js React Framework, JavaScript, and PostgreSQL (Supabase)
-_this is a work in progress_
+An Indie Label Record Store built with NEXT.js React Framework, JavaScript, TailwindCSS, and PostgreSQL (Supabase), RESEND for smtp, and Cypress for E2E testing.
+_This is a work in progress!_
 
 Visit, sign up, and play around at [Kick Start Records](https://www.kickstartrecords.com)
+
+## Task List
+
+- [x] Create product DB with artists, labels, catalog, cart.
+- [ ] Implement Auth with PCKE using Supabase and RESEND, including signup, confirmation email, login, and password reset. _**In Progress**_
+- [ ] Implement shopping cart using localstorage, anonymous login for guest users, and store cart in DB. _**In Progress**_
+- [ ] Implement checkout using PayPal checkout APIs and buttons, as well as order, shipping, and tracking DB. _**In Progress**_
+- [ ] Install and implement Cypress testing
+- [ ] Refactor TailwindCSS to implement responsive web design and finalize look and feel of the site.

@@ -9,8 +9,9 @@ export const revalidate = 0;
 async function Page({ searchParams }) {
   const { guestId, cartId } = await searchParams;
   const { data } = await serverGetCart(guestId, cartId);
-  // How do we want to handle expired carts?  Not sure.
+
   if (!data) return <CartIsEmpty />;
+
   return (
     <Suspense fallback={<Spinner />}>
       <Cart cart={data} guestId={guestId} cartId={cartId} />

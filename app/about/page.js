@@ -1,10 +1,9 @@
 import ComingSoonSmall from "../_components/ComingSoonSmall";
 
 function Page() {
-  const isDev = process.env.NODE_ENV === "development";
   return (
     <div>
-      {isDev && <ComingSoonSmall showSignUp={true} />}
+      <ComingSoonSmall showSignUp={true} />
       <div className="flex grid-cols-3 mt-10">
         <div className="w-1/4"></div>
         <div className="text-4xl text-primary-100 w-1/2">
