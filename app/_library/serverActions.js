@@ -157,11 +157,6 @@ async function serverUpdatePassword(prevState, formData) {
   return { message };
 }
 
-async function serverJoinMailingList(prevState, formData) {
-  const name = formData.get("name");
-  const email = formData.get("email");
-}
-
 export {
   serverAddToCart,
   serverGetCart,
@@ -173,5 +168,4 @@ export {
   serverVerifyOtp,
   serverResetPassword,
   serverUpdatePassword,
-  serverJoinMailingList,
 };

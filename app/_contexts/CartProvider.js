@@ -53,6 +53,10 @@ function CartProvider({ children }) {
   }
 
   async function updateCart(catalogId, count, email = null) {
+    let cnt = count;
+    if (count > 10) {
+      cnt = 10;
+    }
     const { data, error } = await serverUpdateCart(
       guestId,
       cartId,

@@ -17,12 +17,15 @@ export default async function Home({ searchParams }) {
     },
   };
   const isDev = process.env.NODE_ENV === "development";
-  if (isDev) return <ComingSoon />;
   return (
     <div>
-      <Suspense fallback={<Spinner />} key={"abc"}>
-        <RecordList />
-      </Suspense>
+      {isDev ? (
+        <ComingSoon />
+      ) : (
+        <Suspense fallback={<Spinner />} key={"abc"}>
+          <RecordList />
+        </Suspense>
+      )}
       {signup_success && (
         <ToastClient message={signupMessage} options={toastOptions} />
       )}

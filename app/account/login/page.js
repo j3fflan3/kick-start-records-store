@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LoginForm from "../../_components/LoginForm";
+import LoginForm from "@/app/_components/LoginForm";
 import ComingSoonSmall from "@/app/_components/ComingSoonSmall";
 
 function Page() {

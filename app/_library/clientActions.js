@@ -53,10 +53,28 @@ async function clientSignInAnonymously() {
   return { data, error };
 }
 
+async function clientSignUpWithEmail(currentState, formData) {
+  const email = formData.get("email");
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      data: {
+        firstName,
+        lastName,
+      },
+      shouldCreateUser: true,
+      emailRedirectTo: "/records",
+    },
+  });
+}
+
 export {
   clientGetUserId,
   clientAddToCart,
   clientSignIn,
   clientSignOut,
   clientSignInAnonymously,
+  clientSignUpWithEmail,
 };

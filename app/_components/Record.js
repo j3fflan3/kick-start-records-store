@@ -6,7 +6,7 @@ import Link from "next/link";
 function Record({ record }) {
   const { artist, catalogId, title, image, description, price, attributes } =
     record;
-  console.log(record);
+  // console.log(record);
   return (
     <div className="relative flex grid-cols-4 gap-1">
       <div className="w-1/4 col-span-1"></div>
