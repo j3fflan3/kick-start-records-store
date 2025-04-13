@@ -1,8 +1,9 @@
 "use client";
 
 import { useSession } from "@/src/app/_contexts/SessionProvider";
+import Error from "@/src/app/error";
 
-async function Page() {
+function Page() {
   const { session } = useSession();
 
   if (!session) return <Error error={{ message: "Sign Up failed." }} />;
