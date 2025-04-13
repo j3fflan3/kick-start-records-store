@@ -2,10 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/app/_library/supabase/server";
+import { cookies } from "next/headers";
 
 // Not currently used.
 async function serverAddToCart(guestId, cartId, catalogId, count = 1) {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
   const { data, error } = await supabase.rpc("add_to_cart", {
     _guest_id: guestId,
     _cart_id: cartId,
@@ -20,7 +22,9 @@ async function serverAddToCart(guestId, cartId, catalogId, count = 1) {
   return { data, error };
 }
 async function serverGetCart(guestId, cartId) {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   const { data, error } = await supabase.rpc("get_cart", {
     _guest_id: guestId,
     _cart_id: cartId,
@@ -38,7 +42,9 @@ async function serverUpdateCart(
   count,
   email = null
 ) {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   console.log(`serverUpdateCart -> count=${count}`);
   const { data, error } = await supabase.rpc("update_cart", {
     _guest_id: guestId,
@@ -55,7 +61,9 @@ async function serverUpdateCart(
 }
 
 async function serverGetRecords(id = null, limit = 10) {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   const { data, error } = await supabase.rpc("get_records", {
     _catalog_id: id,
     _max_results: limit,
@@ -85,7 +93,9 @@ async function serverSignUp(prevState, formData) {
   const email = formData.get("email");
   const captchaToken = formData.get("captchaToken");
   console.log(captchaToken);
-  const supabase = await createClient();
+
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -106,7 +116,9 @@ async function serverSignUp(prevState, formData) {
 }
 // Not currently used.
 async function serverVerifyOtp({ type, token_hash }) {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   const { error } = await supabase.auth.verifyOtp({ type, token_hash });
   return { error };
 }
@@ -114,7 +126,9 @@ async function serverVerifyOtp({ type, token_hash }) {
 async function serverSignIn(prevState, formData) {
   const email = formData.get("email");
   const password = formData.get("password");
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -128,7 +142,9 @@ async function serverSignIn(prevState, formData) {
 }
 
 async function serverSignOut() {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   // scope: "local" only kills the user's current session.
   // Other sessions on other devices remain logged in.
   const { error } = await supabase.auth.signOut({ scope: "local" });
@@ -138,7 +154,10 @@ async function serverSignOut() {
 
 async function serverResetPassword(prevState, formData) {
   const email = formData.get("email");
-  const supabase = await createClient();
+
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   const { data, error } = await supabase.auth.resetPasswordForEmail(email);
   let message = "success";
   if (error) {
@@ -150,7 +169,9 @@ async function serverResetPassword(prevState, formData) {
 
 async function serverUpdatePassword(prevState, formData) {
   const new_password = formData.get("password");
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+
   const { error } = await supabase.auth.updateUser({ password: new_password });
   let message = "success";
   if (error) {
