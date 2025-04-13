@@ -19,8 +19,8 @@ function SignUp() {
           Sign up early for an account and get a 10% coupon!
         </p>
         <p className="text-justify pb-0 text-xl text-primary-300">
-          Plus, we'll email you to let you know the day we <i>kick start</i> our
-          store!
+          Plus, we&apos;ll email you to let you know the day we{" "}
+          <i>kick start</i> our store!
         </p>
         <MailingListForm />
       </div>
