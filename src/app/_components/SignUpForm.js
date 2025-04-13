@@ -7,7 +7,7 @@ import SubmitButton from "@/src/app/_components/SubmitButton";
 const initialState = {
   message: "",
 };
-function SignUpForm() {
+function SignUpForm({ hCaptchaSiteKey }) {
   const [state, formAction, isPending] = useActionState(
     serverSignUp,
     initialState
@@ -47,6 +47,7 @@ function SignUpForm() {
   function handleConfirm(e) {
     setConfirm(e.target.value);
   }
+  console.log(hCaptchaSiteKey);
   return (
     <div className="w-full content-center">
       <form action={formAction}>
@@ -98,9 +99,8 @@ function SignUpForm() {
             />
           </div>
           <div className="flex p-2 justify-center">
-            {/* sitekey="cb2621b4-1a84-4afa-9818-08465b32ff34" */}
             <HCaptcha
-              sitekey="10000000-ffff-ffff-ffff-000000000001"
+              sitekey={hCaptchaSiteKey}
               onLoad={onLoad}
               onVerify={setToken}
               ref={captchaRef}
@@ -112,7 +112,6 @@ function SignUpForm() {
               value={token}
               readOnly={true}
             />
-            {/* // value="10000000-aaaa-bbbb-cccc-000000000001" */}
           </div>
           <div className="flex w-full content-center">
             {/* <button className="bg-accent-700 px-3 py-2 w-full text-2xl border-primary-500 rounded-md font-bold">

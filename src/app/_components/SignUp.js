@@ -1,5 +1,5 @@
 import { Rubik_Doodle_Shadow } from "next/font/google";
-import MailingListForm from "@/src/app/_components/SignUpForm";
+import SignUpForm from "@/src/app/_components/SignUpForm";
 
 const rubikDoodleShadow = Rubik_Doodle_Shadow({
   weight: "400",
@@ -22,7 +22,7 @@ function SignUp() {
           Plus, we&apos;ll email you to let you know the day we{" "}
           <i>kick start</i> our store!
         </p>
-        <MailingListForm />
+        <SignUpForm hCaptchaSiteKey={process.env.NEXT_HCAPTCHA_SITEKEY} />
       </div>
       <div className="w-1/3"></div>
     </div>
