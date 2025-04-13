@@ -3,6 +3,8 @@ import RecordList from "@/src/app/_components/RecordList";
 import Spinner from "@/src/app/_components/Spinner";
 import ToastClient from "@/src/app/_components/ToastClient";
 
+export const revalidate = 3600;
+
 export default async function Home({ searchParams }) {
   const { signup_success } = await searchParams;
   const signupMessage = "You've successfully confirmed your signup!";

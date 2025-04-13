@@ -1,5 +1,11 @@
+import LoggedInUser from "@/src/app/_components/LoggedInUser";
+
 function Page() {
-  return <div>Profile</div>;
+  return (
+    <div>
+      <LoggedInUser />
+    </div>
+  );
 }
 
 export default Page;
