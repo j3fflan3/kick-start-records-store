@@ -1,23 +1,17 @@
 # Kick Start Records Store
 
-## Set up
+An Indie Label Record Store built with NEXT.js React Framework, JavaScript, TailwindCSS, and PostgreSQL (Supabase), RESEND for smtp, and Cypress for E2E testing.
+_This is a work in progress!_
 
-Install Supabase client
+Visit, sign up, and play around at [Kick Start Records](https://www.kickstartrecords.com)
 
-```bash
-npm i @supabase/supabase-js
-```
+## Task List
 
-To use a schema, e.g., "product" with Supabase, you need to create your schema, then run the following to make it accessible from the supabase client:
-
-```
-GRANT USAGE ON SCHEMA product TO anon, authenticated, service_role;
-GRANT ALL ON ALL TABLES IN SCHEMA product TO anon, authenticated, service_role;
-GRANT ALL ON ALL ROUTINES IN SCHEMA product TO anon, authenticated, service_role;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA product TO anon, authenticated, service_role;
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA product GRANT ALL ON TABLES TO anon, authenticated, service_role;
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA product GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA product GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
-```
-
-Installed v3^ of TailwindCSS. v4 is out, but VS Code intellisense doesn't work right yet.
+- [x] Create product DB with artists, labels, catalog, cart.
+- [ ] Implement Auth with PCKE using Supabase and RESEND, including signup, confirmation email, login, and password reset. _**In Progress**_
+- [ ] Implement shopping cart using localstorage, anonymous login for guest users, and store cart in DB. _**In Progress**_
+- [ ] Implement checkout using PayPal checkout APIs and buttons, as well as order, shipping, and tracking DB. _**In Progress**_
+- [ ] Integrate USPS APIs to calculate shipping cost.
+- [ ] Stream mp3 snippets of one or more songs from each album or single.
+- [ ] Install and implement Cypress testing
+- [ ] Refactor TailwindCSS to implement responsive web design and finalize look and feel of the site.
