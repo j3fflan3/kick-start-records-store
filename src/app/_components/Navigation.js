@@ -1,10 +1,9 @@
 "use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Toaster } from "react-hot-toast";
 import CartIcon from "@/src/app/_components/CartIcon";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { clientSignOut } from "@/src/app/_library/clientActions";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Navigation() {
   const context = useSession();
@@ -67,7 +66,6 @@ export default function Navigation() {
           <CartIcon />
         </li>{" "}
       </ul>
-      <Toaster />
     </nav>
   );
 }
