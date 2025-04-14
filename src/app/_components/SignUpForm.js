@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import SubmitButton from "@/src/app/_components/SubmitButton";
 import { serverSignUp } from "@/src/app/_library/serverActions";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
-import SubmitButton from "@/src/app/_components/SubmitButton";
+import { useActionState, useRef, useState } from "react";
+
 const initialState = {
-  message: "",
+  data: {},
 };
 function SignUpForm({ hCaptchaSiteKey }) {
   const [state, formAction, isPending] = useActionState(
@@ -29,9 +30,27 @@ function SignUpForm({ hCaptchaSiteKey }) {
   const onLoad = () => {
     captchaRef.current.execute();
   };
-  useEffect(() => {
-    if (state) console.log(`state: ${JSON.stringify(state)}`);
-  }, [state]);
+  // useEffect(() => {
+  //   if (state?.data?.user?.id) {
+  //     const user = state.data.user;
+  //     const identities = state.data.identities;
+  //     console.log(`state: ${JSON.stringify(state)}`);
+  //     captchaRef.current.resetCaptcha();
+  //     if (identities.length > 0) {
+  //       const identity = state.data.identities[0];
+  //       const captchaToken = identity.identity_data.captchaToken;
+  //       router.push(
+  //         `/account/check-email?captchaToken=${captchaToken}&email=${user.email}`
+  //       );
+  //     } else {
+  //       router.push(
+  //         `/account/check-email?captchaToken=null&email= ${user.email}`
+  //       );
+  //     }
+  //     //state.data?.identities[0]?.identity_data?.email_verified === false
+  //     //router.push("/account/check-email");
+  //   }
+  // }, [state, router, captchaRef]);
   function handleFirst(e) {
     setFirstName(e.target.value);
   }
@@ -114,9 +133,6 @@ function SignUpForm({ hCaptchaSiteKey }) {
             />
           </div>
           <div className="flex w-full content-center">
-            {/* <button className="bg-accent-700 px-3 py-2 w-full text-2xl border-primary-500 rounded-md font-bold">
-              SIGN UP
-            </button> */}
             <SubmitButton
               disabled={!isSubmittable}
               cssClasses={

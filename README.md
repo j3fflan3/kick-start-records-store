@@ -3,7 +3,7 @@
 An Indie Label Record Store built with NEXT.js React Framework, JavaScript, TailwindCSS, and PostgreSQL (Supabase), RESEND for smtp, and Cypress for E2E testing.
 _This is a work in progress!_
 
-Visit, sign up, and play around at [Kick Start Records](https://www.kickstartrecords.com)
+Visit, sign up, and play around at the test site [Kick Start Records](https://kick-start-records-store.vercel.app)
 
 ## Task List
 

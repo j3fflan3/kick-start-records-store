@@ -1,0 +1,29 @@
+"use client";
+
+import SubmitButton from "@/src/app/_components/SubmitButton";
+import { serverResend } from "@/src/app/_library/serverActions";
+import { useActionState } from "react";
+
+function ResendConfirmation({ email }) {
+  // this needs to display a message to the user
+  // that the confirmation email has been sent
+  // and to check their email
+  // and to check their spam folder
+  // and to check their junk folder
+  // and to check their promotions folder
+  // and to check their social folder
+  const [state, formAction, isPending] = useActionState(serverResend, {});
+  return (
+    <form action={formAction} className="w-full content-center">
+      <input type="hidden" name="email" value={email} />
+      <SubmitButton
+        disabled={isPending}
+        cssClasses="bg-accent-500 mb-3 mt-3 mr-4 px-3 py-2 font-bold h-[40px] text-primary-50 border-primary-500 rounded-md"
+      >
+        Resend Confirmation
+      </SubmitButton>
+    </form>
+  );
+}
+
+export default ResendConfirmation;
