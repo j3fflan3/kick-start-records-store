@@ -1,18 +1,12 @@
 "use client";
 
-import toast, { Toaster } from "react-hot-toast";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from "react";
+import AddToCartToast from "@/src/app/_components/AddToCartToast";
+import SpinnerMini from "@/src/app/_components/SpinnerMini";
 import { useCart } from "@/src/app/_contexts/CartProvider";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { useRouter } from "next/navigation";
-import SpinnerMini from "@/src/app/_components/SpinnerMini";
-import AddToCartToast from "@/src/app/_components/AddToCartToast";
+import { useEffect, useState, useTransition } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 function AddToCart({ catalogId }) {
   const { session } = useSession();
@@ -43,13 +37,20 @@ function AddToCart({ catalogId }) {
                 toast.dismiss(t.id);
                 router.push(`/cart?guestId=${guestId}&cartId=${cartId}`);
               }}
+              handleClose={() => {
+                toast.dismiss(t.id);
+              }}
               cssClasses={`${
                 t.visible ? "animate-enter" : "animate-leave"
-              } max-w-md w-full bg-primary-700 shadow-lg rounded-md pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+              } max-w-md w-full bg-primary-800 border-primary-600 border-2 shadow-lg rounded-md pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
             />
           );
         },
-        { id: "addToCart", removeDelay: 500 }
+        {
+          id: "addToCart",
+          removeDelay: 1000,
+          duration: 10000,
+        }
       );
     });
   }

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { printRecordFormat } from "@/src/app/_library/utilities";
 
-function AddToCartToast({ item, cssClasses, handleCartClick }) {
+function AddToCartToast({ item, cssClasses, handleCartClick, handleClose }) {
   console.log("AddToCartToast");
   return (
     <div className={cssClasses}>
@@ -20,24 +20,31 @@ function AddToCartToast({ item, cssClasses, handleCartClick }) {
           </div>
           <div className="ml-3 flex-1">
             <p>
-              <span className="text-xl  text-primary-100">
+              <span className="text-lg  text-primary-100">
                 &apos;{item.title}&apos;
               </span>
-              &nbsp;was added to your cart!
             </p>
-            <p className="mt-1 text-sm text-gray-500">
-              {printRecordFormat(item.recordFormat)} by {item.artist}
+            <p className="mt-1 text-xs text-primary-300">
+              {printRecordFormat(item.recordFormat)}
+              {/* by {item.artist}  */}
+              &nbsp;was added to your cart
+            </p>
+            <p className="mt-4">
+              <button
+                onClick={handleCartClick}
+                className="bg-accent-700 px-3 py-[5px] mr-2  text-primary-50 text-base rounded-md"
+              >
+                View Cart &rarr;
+              </button>
+              <button
+                onClick={handleClose}
+                className="px-3 py-1 border-primary-500 border text-primary-50 text-base rounded-md"
+              >
+                Close
+              </button>
             </p>
           </div>
         </div>
-      </div>
-      <div className="flex border-l border-gray-200">
-        <button
-          onClick={handleCartClick}
-          className="bg-accent-700 mb-3 mt-3 mr-4 ml-4 px-3 py-1 border-primary-500 rounded-md"
-        >
-          View Cart
-        </button>
       </div>
     </div>
   );
