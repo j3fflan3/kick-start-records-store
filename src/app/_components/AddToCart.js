@@ -31,6 +31,8 @@ function AddToCart({ catalogId }) {
     startTransition(async () => {
       const { data, error } = await addToCart(catalogId);
       const item = data.filter((item) => item.catalogId === catalogId);
+      console.log(`AddToCart item: ${JSON.stringify(item)}`);
+      // Toast is launching the window twice.  Figure out why.
       toast.custom(
         (t) => {
           console.log("invoked toast addToCart");

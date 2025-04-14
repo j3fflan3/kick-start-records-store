@@ -7,7 +7,7 @@ function CartProceed({ cart, guestId, cartId }) {
   const subTotal = cartSubtotal(cart);
   return (
     <div className="text-center p-2">
-      <div className="text-xl m-2">
+      <div className="text-xl m-2 pb-2">
         Subtotal ({numItems} {numItems === 1 ? "item" : "items"}):{" "}
         <strong>${subTotal}</strong>
       </div>
