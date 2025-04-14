@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/app/_library/supabase/server";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // Not currently used.
 async function serverAddToCart(guestId, cartId, catalogId, count = 1) {
@@ -91,12 +92,14 @@ async function serverSignUp(prevState, formData) {
   const lastName = formData.get("lastName");
   const password = formData.get("password");
   const email = formData.get("email");
+  const encodedEmail = encodeURIComponent(email);
+  const redirectURL = getURL() + `account/check-email/${encodedEmail}`;
   const captchaToken = formData.get("captchaToken");
   console.log(captchaToken);
 
   const cookieStore = await cookies();
   const supabase = await createClient(cookieStore);
-
+  console.log(`redirectURL: ${redirectURL}`);
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -105,14 +108,14 @@ async function serverSignUp(prevState, formData) {
         firstName,
         lastName,
         captchaToken,
-        redirectTo: getURL(),
       },
     },
   });
   if (error) {
     console.log(error);
+    return { data, error };
   }
-  return { data, error };
+  redirect(redirectURL);
 }
 // Not currently used.
 async function serverVerifyOtp({ type, token_hash }) {
@@ -192,6 +195,21 @@ async function serverUpdatePassword(prevState, formData) {
   return { message };
 }
 
+async function serverResend(prevState, formData) {
+  const email = formData.get("email");
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+  console.log(`serverResend email: ${email}`);
+  const { data, error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+  });
+  if (error) {
+    console.log(error);
+  }
+  console.log(data);
+  return { data, error };
+}
 export {
   serverAddToCart,
   serverGetCart,
@@ -203,4 +221,5 @@ export {
   serverVerifyOtp,
   serverResetPassword,
   serverUpdatePassword,
+  serverResend,
 };

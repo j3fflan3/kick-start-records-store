@@ -53,17 +53,19 @@ export async function updateSession(request) {
     // !request.nextUrl.pathname.startsWith("/login") &&
     // !request.nextUrl.pathname.startsWith("/auth")
   ) {
-    // console.log("updateSession returned no user");
+    console.log("updateSession returned no user");
     // no user, potentially respond by redirecting the user to the login page
     // In the case of our online store, we don't want to force people to sign up
     // but allow them to checkout as a guest.
     // const url = request.nextUrl.clone();
-    // url.pathname = "/login";
     // return NextResponse.redirect(url);
   } else {
     // console.log(`updateSession returned user ${JSON.stringify(user)}`);
   }
-
+  const myNewResponse = NextResponse.next({
+    request,
+  });
+  myNewResponse.cookies.setAll(cookieStore.getAll());
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:
@@ -76,6 +78,6 @@ export async function updateSession(request) {
   //    return myNewResponse
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
-
-  return supabaseResponse;
+  console.log(myNewResponse);
+  return myNewResponse;
 }
