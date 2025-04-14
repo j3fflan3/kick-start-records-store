@@ -3,7 +3,7 @@ import Image from "next/image";
 import { printRecordFormat } from "@/src/app/_library/utilities";
 
 function AddToCartToast({ item, cssClasses, handleCartClick }) {
-  console.log(cssClasses);
+  console.log("AddToCartToast");
   return (
     <div className={cssClasses}>
       <div className="flex-1 p-4">

@@ -46,7 +46,6 @@ async function serverUpdateCart(
   const cookieStore = await cookies();
   const supabase = await createClient(cookieStore);
 
-  console.log(`serverUpdateCart -> count=${count}`);
   const { data, error } = await supabase.rpc("update_cart", {
     _guest_id: guestId,
     _cart_id: cartId,
