@@ -15,7 +15,7 @@ function CartItem({ item }) {
   } = item;
   return (
     <div key={catalogId} className="w-full">
-      <div className="flex bg-primary-700 p-2 border-b border-primary-800">
+      <div className="flex bg-primary-950 p-2 border-b border-primary-800">
         <div className="relative aspect-square m-1">
           <Image
             src={image.url}
