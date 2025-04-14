@@ -7,9 +7,9 @@ function NotFound() {
       <p>Could not find requested resource</p>
       <Link
         href="/"
-        className="inline-block bg-accent-200 text-primary-800 px-6 py-3 text-lg"
+        className="inline-block bg-accent-600 rounded-md  text-primary-50 px-6 py-3 text-lg font-bold"
       >
-        Go back home
+        Go back home &rarr;
       </Link>
     </main>
   );
