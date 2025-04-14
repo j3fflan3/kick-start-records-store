@@ -18,7 +18,7 @@ function CartCounter({ count, catalogId }) {
   }
   // console.log(`Loading CartCounter -> catalogId:${catalogId}, count:${count}`);
   return (
-    <div className="border-primary-300 bg-primary-700 border-2 rounded-lg px-3 py-1 relative">
+    <div className="border-primary-600 bg-primary-950  border-2 rounded-lg px-3 py-1 relative">
       <button
         className="cursor-pointer"
         onClick={() => {
@@ -27,9 +27,9 @@ function CartCounter({ count, catalogId }) {
         disabled={isPending}
       >
         {count === 1 ? (
-          <TrashIcon className="size-3 text-accent-100" />
+          <TrashIcon className="size-3 text-primary-50" />
         ) : (
-          <MinusIcon className="size-3 text-white" />
+          <MinusIcon className="size-3 text-primary-50" />
         )}
       </button>
       {/* <span className="px-2">{count}</span> */}
@@ -39,7 +39,7 @@ function CartCounter({ count, catalogId }) {
             <SpinnerMini />
           </span>
         ) : (
-          <span className="cart-count">{count}</span>
+          <span className="cart-count text-primary-50">{count}</span>
         )}
       </div>
       <button
@@ -49,7 +49,7 @@ function CartCounter({ count, catalogId }) {
         }}
         disabled={isPending}
       >
-        <PlusIcon className="size-3 text-white" />
+        <PlusIcon className="size-3 text-primary-50" />
       </button>
     </div>
   );
