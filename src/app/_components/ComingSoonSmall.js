@@ -6,8 +6,8 @@ function ComingSoonSmall({ showSignUp }) {
       Coming Soon!
       {showSignUp ? (
         <Link
-          href="/account/signup"
-          className="border border-primary-700 py-1 px-2 rounded-md mx-2 text-lg inline-block hover:bg-accent-600 transition-all hover:text-primary-950"
+          href="/account/verify-human"
+          className="border border-primary-700 py-1 px-2 rounded-md mx-2 text-lg inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
         >
           Sign up now &rarr;
         </Link>

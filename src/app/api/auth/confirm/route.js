@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@/src/app/_library/supabase/server";
+import { Base64Decoder, Base64Encoder } from "next-base64-encoder";
+import { NextResponse } from "next/server";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -17,6 +18,15 @@ export async function GET(request) {
       token_hash,
     });
     if (!error) {
+      return NextResponse.redirect(redirectTo);
+    } else {
+      console.log(error.message);
+      const byteMessage = new TextEncoder().encode(error.message);
+      const base64UrlDecoder = new Base64Decoder();
+      const base64Phrase = base64UrlDecoder.decode(byteMessage);
+      redirectTo.pathname = "/auth/auth-code-error";
+      redirectTo.searchParams.set("message", base64Phrase);
+      redirectTo.searchParams.set("next", next);
       return NextResponse.redirect(redirectTo);
     }
   }

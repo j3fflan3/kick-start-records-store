@@ -53,7 +53,7 @@ export default function Navigation() {
               href="/account/login"
               className="hover:text-accent-400 transition-colors"
             >
-              Log In/Sign Up
+              Log In/Join
             </Link>
           )}
         </li>

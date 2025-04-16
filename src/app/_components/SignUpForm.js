@@ -2,18 +2,19 @@
 
 import SubmitButton from "@/src/app/_components/SubmitButton";
 import { serverSignUp } from "@/src/app/_library/serverActions";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
-import { useActionState, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 
 const initialState = {
   data: {},
 };
-function SignUpForm({ hCaptchaSiteKey }) {
+function SignUpForm({ token }) {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(
     serverSignUp,
     initialState
   );
-  const [token, setToken] = useState("");
+  // const [token, setToken] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,31 +27,27 @@ function SignUpForm({ hCaptchaSiteKey }) {
     email !== "" &&
     password !== "" &&
     confirm !== "";
-  const captchaRef = useRef(null);
-  const onLoad = () => {
-    captchaRef.current.execute();
-  };
-  // useEffect(() => {
-  //   if (state?.data?.user?.id) {
-  //     const user = state.data.user;
-  //     const identities = state.data.identities;
-  //     console.log(`state: ${JSON.stringify(state)}`);
-  //     captchaRef.current.resetCaptcha();
-  //     if (identities.length > 0) {
-  //       const identity = state.data.identities[0];
-  //       const captchaToken = identity.identity_data.captchaToken;
-  //       router.push(
-  //         `/account/check-email?captchaToken=${captchaToken}&email=${user.email}`
-  //       );
-  //     } else {
-  //       router.push(
-  //         `/account/check-email?captchaToken=null&email= ${user.email}`
-  //       );
-  //     }
-  //     //state.data?.identities[0]?.identity_data?.email_verified === false
-  //     //router.push("/account/check-email");
-  //   }
-  // }, [state, router, captchaRef]);
+
+  useEffect(() => {
+    if (state?.data?.user?.id) {
+      const user = state.data.user;
+      const encodedEmail = encodeURIComponent(user.email);
+      const identities = state.data.identities;
+      console.log(`state: ${JSON.stringify(state)}`);
+      // captchaRef.current.resetCaptcha();
+      let captchaToken = "";
+      if (identities.length > 0) {
+        const identity = state.data.identities[0];
+        captchaToken = identity.identity_data.captchaToken;
+      }
+      router.push(
+        `/account/check-email/${encodedEmail}?captchaToken=${captchaToken}&action=signup`
+      );
+      //state.data?.identities[0]?.identity_data?.email_verified === false
+      //router.push("/account/check-email");
+    }
+  }, [state, router]);
+
   function handleFirst(e) {
     setFirstName(e.target.value);
   }
@@ -66,7 +63,7 @@ function SignUpForm({ hCaptchaSiteKey }) {
   function handleConfirm(e) {
     setConfirm(e.target.value);
   }
-  console.log(hCaptchaSiteKey);
+  // console.log(token);
   return (
     <div className="w-full content-center">
       <form action={formAction}>
@@ -118,7 +115,7 @@ function SignUpForm({ hCaptchaSiteKey }) {
             />
           </div>
           <div className="flex p-2 justify-center">
-            <HCaptcha
+            {/* <HCaptcha
               sitekey={hCaptchaSiteKey}
               onLoad={onLoad}
               onVerify={setToken}
@@ -130,7 +127,7 @@ function SignUpForm({ hCaptchaSiteKey }) {
               name="captchaToken"
               value={token}
               readOnly={true}
-            />
+            /> */}
           </div>
           <div className="flex w-full content-center">
             <SubmitButton

@@ -1,15 +1,16 @@
-"use client";
-
-import { useSession } from "@/src/app/_contexts/SessionProvider";
-import Error from "@/src/app/error";
+import Link from "next/link";
+import Welcome from "../_components/Welcome";
 
 function Page() {
-  const { session } = useSession();
-
-  if (!session) return <Error error={{ message: "Sign Up failed." }} />;
   return (
-    <div>
-      {session && <div>Welcome, {session.user.user_metadata.firstName}!</div>}
+    <div className="flex flex-col items-center justify-normal mt-5 min-h-screen">
+      <Welcome />
+      <Link
+        href="/"
+        className="border border-primary-700 py-1 px-2 rounded-md mx-2 mt-2 text-lg font-bold inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
+      >
+        Continue Shopping &rarr;
+      </Link>
     </div>
   );
 }
