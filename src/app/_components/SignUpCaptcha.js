@@ -1,11 +1,12 @@
 "use client";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { useEffect, useRef, useState } from "react";
+import Spinner from "./Spinner";
 
 const SignUpCaptcha = ({ siteKey }) => {
   const [token, setToken] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const captchaRef = useRef(null);
   const onLoad = () => {
@@ -19,22 +20,16 @@ const SignUpCaptcha = ({ siteKey }) => {
     }
   }, [token]);
   const handleSubmit = () => {
-    if (token !== "") {
-      captchaRef.current.resetCaptcha();
-      // Redirect to the signup page or perform any other action
-      router.push(`/account/signup?captchaToken=${token}`);
-    } else {
-      toast.error(
-        "There was an error. Please complete the captcha to proceed."
-      );
-    }
+    setIsSubmitting(true);
+    captchaRef.current.resetCaptcha();
+    // Redirect to the signup page or perform any other action
+    router.push(`/account/signup?captchaToken=${token}`);
   };
 
   return (
-    <>
-      <Toaster />
-      <div className="grid-flow-row w-full box-border">
-        <div className="flex p-2 mt-2 justify-center">
+    <div className="grid-flow-row w-full box-border">
+      <div className="flex p-2 mt-2 justify-center h-22">
+        {!isSubmitting ? (
           <HCaptcha
             sitekey={siteKey}
             onLoad={onLoad}
@@ -42,25 +37,21 @@ const SignUpCaptcha = ({ siteKey }) => {
             ref={captchaRef}
             className="w-full"
           />
-          {/* <input
-            type="hidden"
-            name="captchaToken"
-            value={token}
-            readOnly={true}
-          /> */}
-        </div>
-        <button
-          disabled={disableSubmit}
-          onClick={handleSubmit}
-          className={`border border-primary-700 py-2 px-4 rounded-md mx-2 text-lg font-bold inline-block ${
-            !disableSubmit &&
-            "hover:bg-accent-600 transition-all hover:text-primary-50 hover:cursor-pointer"
-          }`}
-        >
-          Continue &rarr;
-        </button>
+        ) : (
+          <Spinner />
+        )}
       </div>
-    </>
+      <button
+        disabled={disableSubmit}
+        onClick={handleSubmit}
+        className={`border border-primary-700 py-2 px-4 rounded-md mx-2 text-lg font-bold inline-block ${
+          !disableSubmit &&
+          "hover:bg-accent-600 transition-all hover:text-primary-50 hover:cursor-pointer"
+        }`}
+      >
+        Continue &rarr;
+      </button>
+    </div>
   );
 };
 

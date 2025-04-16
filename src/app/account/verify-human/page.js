@@ -1,11 +1,13 @@
 import React from "react";
 import SignUpCaptcha from "@/src/app/_components/SignUpCaptcha";
+import Error from "@/src/app/error";
 
 export default function page() {
   const siteKey = process.env.NEXT_HCAPTCHA_SITEKEY;
 
   if (!siteKey) {
-    return <div>site key is missing</div>;
+    const error = new Error("site key is missing");
+    return <Error error={error} />;
   }
 
   return (
