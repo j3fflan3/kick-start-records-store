@@ -1,11 +1,11 @@
 import React from "react";
 import SignUpCaptcha from "@/src/app/_components/SignUpCaptcha";
 
-const VerifyHumanPage = () => {
+export default function page() {
   const siteKey = process.env.NEXT_HCAPTCHA_SITEKEY;
 
   if (!siteKey) {
-    throw new Error("Error loading page.");
+    return <div>site key is missing</div>;
   }
 
   return (
@@ -18,6 +18,4 @@ const VerifyHumanPage = () => {
       <div className="w-1/4"></div>
     </div>
   );
-};
-
-export default VerifyHumanPage;
+}
