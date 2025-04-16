@@ -29,7 +29,7 @@ function ResetPasswordForm() {
         toast.error("🤒 There was an error resetting your password.");
       }
     }
-  }, [state, setEmail, router]);
+  }, [state, setEmail, email, router]);
 
   function handleEmail(e) {
     setEmail(e.target.value);
