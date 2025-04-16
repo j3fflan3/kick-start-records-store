@@ -30,6 +30,12 @@ function LoginForm() {
         toast.success("You've successfully logged in!", {
           id: "loggedIn",
           position: "top-right",
+          duration: 2000,
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
         });
         router.push("/records");
       } else if (message === "error") {
@@ -65,7 +71,6 @@ function LoginForm() {
               placeholder="Email"
               value={email}
               onChange={handleEmail}
-              autoFocus
             />
           </div>
           <div className="flex w-full content-center pb-4">

@@ -5,24 +5,24 @@ const rubikDoodleShadow = Rubik_Doodle_Shadow({
   weight: "400",
   subsets: ["symbols"],
 });
-function SignUp() {
+function SignUp({ captchaToken }) {
   return (
     <div className="relative flex grid-cols-3">
       <div className="w-1/3"></div>
       <div className="relative z-10 text-center w-1/3">
         <div
-          className={`w-full text-5xl text-center font-bold text-accent-500 mb-5 mt-5 justify-center ${rubikDoodleShadow.className}`}
+          className={`w-full text-5xl text-center font-bold text-accent-50 mb-5 mt-5 justify-center ${rubikDoodleShadow.className}`}
         >
           SIGN UP
         </div>
         <p className="text-justify pb-0 text-xl font-semibold text-primary-200">
-          Sign up early for an account and get a 10% coupon!
+          Sign up early for an account and get 10% off your first purchase!
         </p>
         <p className="text-justify pb-0 text-xl text-primary-300">
           Plus, we&apos;ll email you to let you know the day we{" "}
           <i>kick start</i> our store!
         </p>
-        <SignUpForm hCaptchaSiteKey={process.env.NEXT_HCAPTCHA_SITEKEY} />
+        <SignUpForm token={captchaToken} />
       </div>
       <div className="w-1/3"></div>
     </div>
