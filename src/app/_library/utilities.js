@@ -35,6 +35,7 @@ const validatePassword = (password, confirm) => {
   // Password must be at least 8 characters in length and
   // contain at least one of the following: Uppercase letter, lowercase letter,
   // number, and special character (#?!@$%^&*-)
+  // if (password && password.length < 8) return false;
   return (
     password === confirm &&
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(

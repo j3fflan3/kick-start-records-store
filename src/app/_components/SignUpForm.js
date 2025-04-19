@@ -20,6 +20,8 @@ function SignUpForm({ token }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [mailingChecked, setMailingChecked] = useState(false);
+  const [notifyChecked, setNotifyChecked] = useState(false);
   const isSubmittable =
     token !== "" &&
     firstName !== "" &&
@@ -43,8 +45,6 @@ function SignUpForm({ token }) {
       router.push(
         `/account/check-email/${encodedEmail}?captchaToken=${captchaToken}&action=signup`
       );
-      //state.data?.identities[0]?.identity_data?.email_verified === false
-      //router.push("/account/check-email");
     }
   }, [state, router]);
 
@@ -105,7 +105,7 @@ function SignUpForm({ token }) {
               onChange={handlePassword}
             />
           </div>
-          <div className="flex w-full content-center pb-4">
+          <div className="flex w-full content-center pb-2">
             <input
               type="password"
               name="confirm"
@@ -114,22 +114,25 @@ function SignUpForm({ token }) {
               onChange={handleConfirm}
             />
           </div>
-          <div className="flex p-2 justify-center">
-            {/* <HCaptcha
-              sitekey={hCaptchaSiteKey}
-              onLoad={onLoad}
-              onVerify={setToken}
-              ref={captchaRef}
-              className="w-full"
-            />
+          <div className="flex p-2 justify-left">
             <input
-              type="hidden"
-              name="captchaToken"
-              value={token}
-              readOnly={true}
-            /> */}
+              type="checkbox"
+              name="mailingList"
+              checked={mailingChecked}
+              onChange={() => setMailingChecked(!mailingChecked)}
+            />
+            &nbsp; Sign me up for new release and sale notifications!
           </div>
-          <div className="flex w-full content-center">
+          <div className="flex p-2 justify-left">
+            <input
+              type="checkbox"
+              name="notifyList"
+              checked={notifyChecked}
+              onChange={() => setNotifyChecked(!notifyChecked)}
+            />
+            &nbsp; Email me when the site launches!
+          </div>
+          <div className="flex w-full pt-1 content-center">
             <SubmitButton
               disabled={!isSubmittable}
               cssClasses={

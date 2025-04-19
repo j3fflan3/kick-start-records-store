@@ -15,6 +15,7 @@ function ResendConfirmation({ email, action }) {
   // and to check their junk folder
   // and to check their promotions folder
   // and to check their social folder
+
   let serverAction = null;
   switch (action) {
     case "signup":
@@ -26,6 +27,7 @@ function ResendConfirmation({ email, action }) {
     default:
       console.log(`ResendConfirmation: action ${action} not found`);
   }
+  console.log(serverAction?.name);
   const [state, formAction, isPending] = useActionState(serverAction, {});
   return (
     <form action={formAction} className="w-full content-center">

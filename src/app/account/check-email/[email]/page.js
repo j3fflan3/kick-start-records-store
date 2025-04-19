@@ -1,8 +1,9 @@
 import ResendConfirmation from "@/src/app/_components/ResendConfirmation";
 import SignUpConfirmation from "@/src/app/_components/SignUpConfirmation";
 
-export default async function Page({ params }) {
-  const { email, captchaToken, action } = await params;
+export default async function Page({ params, searchParams }) {
+  const { email } = await params;
+  const { captchaToken, action } = await searchParams;
   const decodedEmail = decodeURIComponent(email);
   return (
     <div className="w-full text-center text-lg text-primary-400 mb-4">
