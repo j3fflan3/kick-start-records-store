@@ -1,70 +1,28 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-primary-50: #fafaf9;
-  --color-primary-100: #f5f5f4;
-  --color-primary-200: #e7e5e4;
-  --color-primary-300: #d6d3d1;
-  --color-primary-400: #a8a29e;
-  --color-primary-500: #78716c;
-  --color-primary-600: #57534e;
-  --color-primary-700: #44403c;
-  --color-primary-800: #292524;
-  --color-primary-900: #1c1917;
-  --color-primary-950: #0c0a09;
-
-  --color-accent-50: #fef2f2;
-  --color-accent-100: #fee2e2;
-  --color-accent-200: #fecaca;
-  --color-accent-300: #fca5a5;
-  --color-accent-400: #f87171;
-  --color-accent-500: #ef4444;
-  --color-accent-600: #dc2626;
-  --color-accent-700: #b91c1c;
-  --color-accent-800: #991b1b;
-  --color-accent-900: #7f1d1d;
-  --color-accent-950: #450a0a;
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #171717;
+    --foreground: #ededed;
   }
 }
 
-@utility text-balance {
-  text-wrap: balance;
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #171717;
-      --foreground: #ededed;
-    }
-  }
-
-  body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: Arial, Helvetica, sans-serif;
+  .text-balance {
+    text-wrap: balance;
   }
 }
 
@@ -73,8 +31,8 @@
   width: 60px;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 8px solid var(--color-primary-900);
-  border-right-color: var(--color-primary-200);
+  border: 8px solid theme("colors.primary.900");
+  border-right-color: theme("colors.primary.200");
   animation: rotate 1s infinite linear;
 }
 
@@ -84,7 +42,7 @@
   width: 16px;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 2px solid var(--color-primary-200);
+  border: 2px solid theme("colors.primary.200");
   border-right-color: transparent;
   animation: rotate 1s infinite linear;
 }
