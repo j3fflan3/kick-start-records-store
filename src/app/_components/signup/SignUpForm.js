@@ -1,6 +1,6 @@
 "use client";
 
-import SubmitButton from "@/src/app/_components/SubmitButton";
+import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
 import { serverSignUp } from "@/src/app/_library/serverActions";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";

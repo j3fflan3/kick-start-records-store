@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import AddToCart from "@/src/app/_components/AddToCart";
+import AddToCart from "@/src/app/_components/cart/AddToCart";
 import { printRecordFormat } from "@/src/app/_library/utilities";
 
 function RecordCard({ record }) {

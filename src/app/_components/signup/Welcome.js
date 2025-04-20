@@ -1,6 +1,6 @@
 "use client";
-import { useSession } from "../_contexts/SessionProvider";
-import Error from "../error";
+import { useSession } from "../../_contexts/SessionProvider";
+import Error from "../../error";
 
 function Welcome() {
   const { session } = useSession();

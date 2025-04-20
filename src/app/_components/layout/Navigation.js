@@ -1,5 +1,5 @@
 "use client";
-import CartIcon from "@/src/app/_components/CartIcon";
+import CartIcon from "@/src/app/_components/cart/CartIcon";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { clientSignOut } from "@/src/app/_library/clientActions";
 import Link from "next/link";

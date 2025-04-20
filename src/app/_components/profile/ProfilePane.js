@@ -61,7 +61,7 @@ const profileSession = {
   },
 };
 
-function LoggedInUser() {
+function ProfilePane({ children }) {
   const router = useRouter();
   const { session } = useSession();
 
@@ -76,10 +76,17 @@ function LoggedInUser() {
   } = session;
 
   return (
-    <div className="w-3/4 bg-primary-800 col-span-2">
-      {userdata && <div className="w-full">{userdata?.firstName}</div>}
+    <div className="col-span-3 row-span-3 grid place-content-start rounded-lg bg-primary-800 p-4">
+      <div className="flex justify-stretch place-content-center text-xl">
+        Account
+      </div>
+      {userdata && (
+        <div className="w-full justify-stretch bg-primary-700">
+          {userdata?.firstName}
+        </div>
+      )}
     </div>
   );
 }
 
-export default LoggedInUser;
+export default ProfilePane;

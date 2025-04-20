@@ -1,6 +1,6 @@
 "use client";
 
-import SubmitButton from "@/src/app/_components/SubmitButton";
+import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
 import {
   serverResend,
   serverResetPassword,

@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { serverResetPassword } from "@/src/app/_library/serverActions";
-import SpinnerMini from "@/src/app/_components/SpinnerMini";
+import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
 import { validateEmail } from "@/src/app/_library/utilities";
 import toast, { Toaster } from "react-hot-toast";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "../buttons/SubmitButton";
 const initialState = { message: "" };
 function ResetPasswordForm() {
   const router = useRouter();

@@ -1,8 +1,8 @@
-function ProfileNavbar() {
+function LeftNavbar() {
   return (
-    <div className="w-1/4 bg-primary-800 h-full row-span-3">
+    <div className="row-span-3 justify-stretch grid place-content-center rounded-md bg-primary-800 p-4">
       <div className="w-full p-2 content-start bg-primary-700">
-        <h1>Orders</h1>
+        <h1 className="w-full p-2 text-2xl">Orders</h1>
         <p> </p>
       </div>
       <div className="w-full ps-2 content-start bg-primary-700">
@@ -13,4 +13,4 @@ function ProfileNavbar() {
   );
 }
 
-export default ProfileNavbar;
+export default LeftNavbar;

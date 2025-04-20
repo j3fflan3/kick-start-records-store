@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { serverUpdatePassword } from "@/src/app/_library/serverActions";
 import { validatePassword } from "@/src/app/_library/utilities";
-import SpinnerMini from "@/src/app/_components/SpinnerMini";
+import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
 
 const initialState = { message: "" };
 

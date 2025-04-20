@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import SubmitButton from "@/src/app/_components/SubmitButton";
+import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
 import { clientSignIn } from "@/src/app/_library/clientActions";
 import { validateEmail } from "@/src/app/_library/utilities";
 

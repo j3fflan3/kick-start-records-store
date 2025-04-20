@@ -1,6 +1,6 @@
 "use client";
 import { useTransition } from "react";
-import SpinnerMini from "@/src/app/_components/SpinnerMini";
+import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useCart } from "@/src/app/_contexts/CartProvider";
 

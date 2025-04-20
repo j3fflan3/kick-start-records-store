@@ -1,4 +1,4 @@
-import SignUp from "@/src/app/_components/SignUp";
+import SignUp from "@/src/app/_components/signup/SignUp";
 
 async function Page({ searchParams }) {
   const { captchaToken } = await searchParams;

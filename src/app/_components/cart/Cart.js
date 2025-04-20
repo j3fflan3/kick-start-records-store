@@ -1,7 +1,7 @@
-import CartFooter from "@/src/app/_components/CartFooter";
-import CartHeader from "@/src/app/_components/CartHeader";
-import CartItem from "@/src/app/_components/CartItem";
-import CartProceed from "@/src/app/_components/CartProceed";
+import CartFooter from "@/src/app/_components/cart/CartFooter";
+import CartHeader from "@/src/app/_components/cart/CartHeader";
+import CartItem from "@/src/app/_components/cart/CartItem";
+import CartProceed from "@/src/app/_components/cart/CartProceed";
 
 function Cart({ cart, guestId, cartId }) {
   return (
