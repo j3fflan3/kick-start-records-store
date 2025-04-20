@@ -8,8 +8,13 @@ function ProfilePane({ children }) {
   const { session } = useSession();
 
   useEffect(() => {
+    // If no session go to login page
     if (!session) {
       router.push("/account/login");
+    }
+    // If user is anonymous, forward to home
+    if (session?.user?.is_anonymous) {
+      router.push("/");
     }
   }, [session, router]);
 
