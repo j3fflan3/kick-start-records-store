@@ -8,7 +8,7 @@ function Checkout({ cart }) {
     //   <div>Checkout</div>
     //   <div>Delivery Instructions</div>
     //   <div>Payment Instructions</div>
-    //   <div className="w-full h-full text-left bg-primary-800 rounded-sm">
+    //   <div className="w-full h-full text-left bg-primary-800 rounded-xs">
     //     {cart.map((item) => (
     //       <CartItem key={item.catalogId} item={item} />
     //     ))}

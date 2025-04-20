@@ -16,10 +16,10 @@ function RecordCard({ record }) {
           alt={title}
           width="222"
           height="222"
-          className="flex-1 border-r rounded-sm border-primary-800 object-contain"
+          className="flex-1 border-r rounded-xs border-primary-800 object-contain"
         />
       </div>
-      <div className="flex-grow">
+      <div className="grow">
         <div className="pt-2 pb-4 px-7 bg-primary-950">
           <h3 className="text-primary-300 font-semibold text-xl mb-3">
             &quot;{title}&quot;

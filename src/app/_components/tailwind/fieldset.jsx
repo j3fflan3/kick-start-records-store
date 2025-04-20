@@ -5,7 +5,7 @@ export function Fieldset({ className, ...props }) {
   return (
     <Headless.Fieldset
       {...props}
-      className={clsx(className, '*:data-[slot=text]:mt-1 [&>*+[data-slot=control]]:mt-6')}
+      className={clsx(className, 'data-[slot=text]:*:mt-1 [&>*+[data-slot=control]]:mt-6')}
     />
   )
 }
@@ -38,7 +38,7 @@ export function Field({ className, ...props }) {
         '[&>[data-slot=description]+[data-slot=control]]:mt-3',
         '[&>[data-slot=control]+[data-slot=description]]:mt-3',
         '[&>[data-slot=control]+[data-slot=error]]:mt-3',
-        '*:data-[slot=label]:font-medium'
+        'data-[slot=label]:*:font-medium'
       )}
     />
   )

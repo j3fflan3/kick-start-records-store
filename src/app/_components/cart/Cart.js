@@ -13,7 +13,7 @@ function Cart({ cart, guestId, cartId }) {
         ))}
         <CartFooter cart={cart} />
       </div>
-      <div className="w-full h-full text-left bg-primary-950 rounded-sm">
+      <div className="w-full h-full text-left bg-primary-950 rounded-xs">
         <CartProceed cart={cart} guestId={guestId} cartId={cartId} />
       </div>
     </div>

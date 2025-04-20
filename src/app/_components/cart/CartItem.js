@@ -22,7 +22,7 @@ function CartItem({ item }) {
             width="180"
             height="180"
             alt={title}
-            className="flex-none border-r border-primary-800 rounded-sm cart-image"
+            className="flex-none border-r border-primary-800 rounded-xs cart-image"
           />
         </div>
         <div className="grid grid-flow-row ml-2 w-full">
