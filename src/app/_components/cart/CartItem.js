@@ -39,7 +39,7 @@ function CartItem({ item }) {
             {printRecordFormat(recordFormat)}
           </div>
           <div className="flex flex-row">
-            <div className="w-30 flex-none">
+            <div className="flex-none">
               <CartCounter catalogId={catalogId} count={count} />
             </div>
             <div className="w-40 pl-2 grow justify-start">
