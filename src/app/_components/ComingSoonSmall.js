@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 
 function ComingSoonSmall() {
-  const session = useSession();
+  const { session } = useSession();
   const isSignedIn = session ? true : false;
 
   return (
@@ -17,7 +17,6 @@ function ComingSoonSmall() {
           >
             Sign up now &rarr;
           </Link>
-
           <span> to receive an email and discount coupon when we open. </span>
         </>
       )}

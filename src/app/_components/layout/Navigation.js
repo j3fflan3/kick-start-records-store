@@ -11,8 +11,13 @@ export default function Navigation() {
   const router = useRouter();
 
   // Add a transition and SpinnerMini?
-  async function handleSignOut() {
-    await clientSignOut();
+  function handleSignOut() {
+    // clientSignOut is an async function, but we don't await it
+    // so as to avoid an error if the user is on the profile
+    // page.  Otherwise, account/profile expects a valid session,
+    // and it throw an error and NEXT.js will redirect the main pane
+    // to the Error.js and router.push("/") below might not be reached.
+    clientSignOut();
     router.push("/");
   }
 
