@@ -5,7 +5,7 @@ function TrackList({ tracks }) {
       <ul>
         {tracks.map((track) => (
           <li key={track.number}>
-            {track.number} - {track.title}. Length: {track.length}
+            {track.number} - {track.title} Length: {track.length}
           </li>
         ))}
       </ul>
