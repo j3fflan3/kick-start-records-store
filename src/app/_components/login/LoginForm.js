@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import SubmitButton from "@/src/app/_components/SubmitButton";
+import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
 import { clientSignIn } from "@/src/app/_library/clientActions";
 import { validateEmail } from "@/src/app/_library/utilities";
 
@@ -13,20 +13,22 @@ const initialState = {
 
 function LoginForm() {
   const router = useRouter();
-  const [state, formAction, isPending] = useActionState(
-    clientSignIn,
-    initialState
-  );
+  const [state, formAction] = useActionState(clientSignIn, initialState);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState(false);
   const isValidEmail = validateEmail(email) || email === "";
   const isSubmittable = email !== "" && password !== "";
 
   useEffect(() => {
     if (state) {
       const { message } = state;
-      if (message === "success" && typeof window !== "undefined") {
+      if (
+        message === "success" &&
+        typeof window !== "undefined" &&
+        !successMessage
+      ) {
         toast.success("You've successfully logged in!", {
           id: "loggedIn",
           position: "top-right",
@@ -37,6 +39,7 @@ function LoginForm() {
             color: "#fff",
           },
         });
+        setSuccessMessage(true); // this is to avoid double success messages
         router.push("/records");
       } else if (message === "error") {
         setEmail("");
@@ -47,7 +50,7 @@ function LoginForm() {
         );
       }
     }
-  }, [state, setEmail, setPassword, router]);
+  }, [state, setEmail, setPassword, router, successMessage, setSuccessMessage]);
 
   function handleEmail(e) {
     setEmail(e.target.value);

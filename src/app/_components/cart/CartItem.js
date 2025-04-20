@@ -1,4 +1,4 @@
-import CartCounter from "@/src/app/_components/CartCounter";
+import CartCounter from "@/src/app/_components/cart/CartCounter";
 import { formatDecimal, printRecordFormat } from "@/src/app/_library/utilities";
 import Image from "next/image";
 // Item's description plus medium desc and availability

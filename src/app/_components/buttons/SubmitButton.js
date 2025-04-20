@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import SpinnerMini from "@/src/app/_components/SpinnerMini";
+import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
 
 function SubmitButton({ cssClasses, disabled, children }) {
   const { pending } = useFormStatus();

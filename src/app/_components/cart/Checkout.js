@@ -1,9 +1,9 @@
-import CartItem from "@/src/app/_components/CartItem";
+import CartItem from "@/src/app/_components/cart/CartItem";
 import ComingSoonSmall from "@/src/app/_components/ComingSoonSmall";
 
 function Checkout({ cart }) {
   return (
-    <ComingSoonSmall showSignUp={true} />
+    <ComingSoonSmall />
     // <div>
     //   <div>Checkout</div>
     //   <div>Delivery Instructions</div>

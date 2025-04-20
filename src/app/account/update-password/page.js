@@ -1,4 +1,4 @@
-import UpdatePasswordForm from "@/src/app/_components/UpdatePasswordForm";
+import UpdatePasswordForm from "@/src/app/_components/login/UpdatePasswordForm";
 
 function Page() {
   return (

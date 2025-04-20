@@ -1,5 +1,5 @@
 import { Rubik_Doodle_Shadow } from "next/font/google";
-import SignUpForm from "@/src/app/_components/SignUpForm";
+import SignUpForm from "@/src/app/_components/signup/SignUpForm";
 
 const rubikDoodleShadow = Rubik_Doodle_Shadow({
   weight: "400",

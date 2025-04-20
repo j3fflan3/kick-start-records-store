@@ -1,5 +1,5 @@
 import React from "react";
-import SignUpCaptcha from "@/src/app/_components/SignUpCaptcha";
+import SignUpCaptcha from "@/src/app/_components/signup/SignUpCaptcha";
 
 export default function page() {
   const siteKey = process.env.NEXT_HCAPTCHA_SITEKEY;

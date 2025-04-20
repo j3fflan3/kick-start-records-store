@@ -3,7 +3,7 @@ import ComingSoonSmall from "@/src/app/_components/ComingSoonSmall";
 function Page() {
   return (
     <div>
-      <ComingSoonSmall showSignUp={true} />
+      <ComingSoonSmall />
       <div className="flex grid-cols-3 mt-10">
         <div className="w-1/4"></div>
         <div className="text-4xl text-primary-100 w-1/2">

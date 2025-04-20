@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LoginForm from "@/src/app/_components/LoginForm";
+import LoginForm from "@/src/app/_components/login/LoginForm";
 import { Rubik_Doodle_Shadow } from "next/font/google";
 
 const rubikDoodleShadow = Rubik_Doodle_Shadow({

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Welcome from "../_components/Welcome";
+import Welcome from "../_components/signup/Welcome";
 
 function Page() {
   return (

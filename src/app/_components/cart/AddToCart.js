@@ -1,7 +1,7 @@
 "use client";
 
-import AddToCartToast from "@/src/app/_components/AddToCartToast";
-import SpinnerMini from "@/src/app/_components/SpinnerMini";
+import AddToCartToast from "@/src/app/_components/cart/AddToCartToast";
+import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
 import { useCart } from "@/src/app/_contexts/CartProvider";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ function AddToCart({ catalogId }) {
         },
         {
           id: "addToCart",
-          removeDelay: 1000,
+          removeDelay: 100,
           duration: 3000,
         }
       );

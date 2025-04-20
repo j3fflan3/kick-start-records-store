@@ -2,7 +2,7 @@
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import Spinner from "./Spinner";
+import Spinner from "../spinners/Spinner";
 
 const SignUpCaptcha = ({ siteKey }) => {
   const [token, setToken] = useState("");

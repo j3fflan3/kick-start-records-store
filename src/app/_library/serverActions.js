@@ -91,10 +91,15 @@ async function serverSignUp(prevState, formData) {
   const lastName = formData.get("lastName");
   const password = formData.get("password");
   const email = formData.get("email");
+  const mailingList = formData.get("mailingList") === "on" ? true : false;
+  const notifyList = formData.get("notifyList") === "on" ? true : false;
+  console.log(`mailingList:${mailingList}, notifyList:${notifyList}`);
   const encodedEmail = encodeURIComponent(email);
-  const redirectURL = getURL() + `account/check-email/${encodedEmail}`;
   const captchaToken = formData.get("captchaToken");
   console.log(captchaToken);
+  const redirectURL =
+    getURL() +
+    `account/check-email/${encodedEmail}?action=signup&captchaToken=${captchaToken}`;
 
   const cookieStore = await cookies();
   const supabase = await createClient(cookieStore);
@@ -107,6 +112,8 @@ async function serverSignUp(prevState, formData) {
         firstName,
         lastName,
         captchaToken,
+        mailingList,
+        notifyList,
       },
     },
   });
