@@ -22,7 +22,7 @@ function CartItem({ item }) {
             width="180"
             height="180"
             alt={title}
-            className="flex-none border-r border-primary-800 rounded-sm cart-image"
+            className="flex-none border-r border-primary-800 rounded-xs cart-image"
           />
         </div>
         <div className="grid grid-flow-row ml-2 w-full">
@@ -39,7 +39,7 @@ function CartItem({ item }) {
             {printRecordFormat(recordFormat)}
           </div>
           <div className="flex flex-row">
-            <div className="w-30 flex-none">
+            <div className="flex-none">
               <CartCounter catalogId={catalogId} count={count} />
             </div>
             <div className="w-40 pl-2 grow justify-start">
