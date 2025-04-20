@@ -12,7 +12,7 @@ function AddToCartToast({ item, cssClasses, handleCartClick, handleClose }) {
             <Image
               width="100"
               height="100"
-              className="rounded-sm"
+              className="rounded-xs"
               src={item.image.url}
               alt={item.title}
               priority
