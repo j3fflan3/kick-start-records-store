@@ -16,6 +16,7 @@ function ProfilePane({ children }) {
     if (session?.user?.is_anonymous) {
       router.push("/");
     }
+
   }, [session, router]);
 
   const {
