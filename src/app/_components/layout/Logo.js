@@ -21,7 +21,7 @@ function Logo() {
       {/*rubikDoodleShadow.className*/}
       <div>
         <span
-          className={`text-3xl/6 font-semibold align-middle pb-2 text-primary-50`}
+          className={`text-3xl/6 font-semibold align-middle pb-2 text-primary-950 dark:text-primary-50`}
         >
           kickstart
         </span>
