@@ -23,10 +23,13 @@ function Record({ record }) {
         <h5 className="text-2xl">{title}</h5>
         <h6 className="text-xl mb-4">By {artist}</h6>
         {/* <p>{description}</p> */}
-        <AddToCart catalogId={catalogId} />
+        <AddToCart
+          catalogId={catalogId}
+          className="mr-4 px-2 py-2 w-[108.5px] h-[40px] inline-block border border-primary-700 rounded-md hover:cursor-pointer hover:bg-accent-600 hover:text-primary-50"
+        />
         <Link
           href={`/records`}
-          className="border border-primary-700 rounded-md py-2 px-3  inline-block hover:bg-accent-600 transition-all hover:text-primary-950"
+          className="border border-primary-700 rounded-md py-2 px-2  inline-block hover:bg-accent-700 transition-all hover:text-primary-50"
         >
           Continue Shopping &rarr;
         </Link>

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 function ProfilePane({ children }) {
   const router = useRouter();
   const { session } = useSession();
-
+  console.log(session);
   useEffect(() => {
     // If no session go to login page
     if (!session) {
@@ -16,9 +16,8 @@ function ProfilePane({ children }) {
     if (session?.user?.is_anonymous) {
       router.push("/");
     }
-
   }, [session, router]);
-
+  if (!session) return <div>Loading...</div>;
   const {
     user: { user_metadata: userdata },
   } = session;

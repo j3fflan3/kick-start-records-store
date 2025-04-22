@@ -2,7 +2,8 @@ function printRecordFormat(recordFormat) {
   // This should be remedied in PostgreSQL. Enums can have spaces.
   switch (recordFormat) {
     case "DigitalDownload":
-      return "Digital Download";
+    case "Digital Download":
+      return "Download";
     case "VinylLP":
       return "Vinyl LP";
     case "VinylEP":

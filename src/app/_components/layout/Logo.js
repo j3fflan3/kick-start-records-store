@@ -10,20 +10,28 @@ const rubikDoodleShadow = Rubik_Doodle_Shadow({
 
 function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-4 z-10 mr-1">
+    <div className="flex items-center gap-4 z-10 mr-1">
       <Image
         src={logo}
-        height="50"
-        width="50"
+        height="40"
+        width="40"
         alt="Kick Start Records Logo"
         priority
       />
-      <span
-        className={`${rubikDoodleShadow.className} text-4xl font-semibold text-primary-100`}
-      >
-        KICK START RECORDS
-      </span>
-    </Link>
+      {/*rubikDoodleShadow.className*/}
+      <div>
+        <span
+          className={`text-3xl/6 font-semibold align-middle pb-2 text-primary-50`}
+        >
+          kickstart
+        </span>
+        <span
+          className={`text-3xl/6 font-semibold align-middle pb-2 text-accent-600`}
+        >
+          records
+        </span>
+      </div>
+    </div>
   );
 }
 

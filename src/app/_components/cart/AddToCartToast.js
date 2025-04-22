@@ -32,13 +32,13 @@ function AddToCartToast({ item, cssClasses, handleCartClick, handleClose }) {
             <p className="mt-4">
               <button
                 onClick={handleCartClick}
-                className="bg-accent-700 px-3 py-[5px] mr-2  text-primary-50 text-base rounded-md"
+                className="bg-accent-700 px-3 py-[5px] mr-2  text-primary-50 text-base rounded-md hover:cursor-pointer"
               >
                 View Cart &rarr;
               </button>
               <button
                 onClick={handleClose}
-                className="px-3 py-1 border-primary-500 border text-primary-50 text-base rounded-md"
+                className="px-3 py-1 border-primary-500 border text-primary-50 text-base rounded-md hover:cursor-pointer"
               >
                 Close
               </button>

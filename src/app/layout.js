@@ -54,10 +54,11 @@ export default function RootLayout({ children }) {
       >
         <SessionProvider>
           <CartProvider>
-            <Header />
-            <div className="flex-1 px-8 py-4 grid">
-              <main className="max-w-7xl mx-auto w-full">{children}</main>
-            </div>
+            <Header>
+              <div className="flex-1 px-8 py-4 grid">
+                <main className="max-w-7xl mx-auto w-full">{children}</main>
+              </div>
+            </Header>
           </CartProvider>
         </SessionProvider>
       </body>

@@ -137,7 +137,7 @@ function SignUpForm({ token }) {
               disabled={!isSubmittable}
               cssClasses={
                 isSubmittable
-                  ? `rounded-md bg-accent-700 font-bold px-3 py-2 text-2xl w-full hover:bg-yellow-600 active:bg-yellow-500`
+                  ? `rounded-md bg-accent-700 text-primary-50 font-bold px-3 py-2 text-2xl w-full hover:bg-yellow-600 active:bg-yellow-500`
                   : `rounded-md bg-primary-500 font-bold px-3 py-2 text-2xl w-full`
               }
             >
