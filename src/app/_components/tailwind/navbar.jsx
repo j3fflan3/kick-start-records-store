@@ -13,7 +13,7 @@ export function Navbar({ className, ...props }) {
       {...props}
       className={clsx(
         className,
-        "flex flex-1 items-center gap-4 py-2.5 no-dark:bg-yellow-500"
+        "flex flex-1 items-center gap-4 py-2.5 bg-yellow-500 dark:bg-primary-950"
       )}
     />
   );
