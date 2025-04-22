@@ -34,7 +34,7 @@ function ResendConfirmation({ email, action }) {
       <input type="hidden" name="email" value={email} />
       <SubmitButton
         disabled={isPending || !serverAction}
-        cssClasses="bg-accent-500 mb-3 mt-3 mr-4 px-3 py-2 font-bold h-[40px] text-primary-50 border-primary-500 rounded-md"
+        cssClasses="bg-accent-700 mb-3 mt-3 mr-4 px-3 py-2 font-bold h-[40px] text-primary-50  text-lg/6 border-primary-500 rounded-md"
       >
         Resend Confirmation
       </SubmitButton>

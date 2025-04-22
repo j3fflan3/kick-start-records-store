@@ -1,6 +1,6 @@
 function TrackList({ tracks }) {
   return (
-    <div className="text-accent-100 mt-4">
+    <div className="dark:text-accent-100 mt-4">
       <p className="text-xl">Track List</p>
       <ul>
         {tracks.map((track) => (

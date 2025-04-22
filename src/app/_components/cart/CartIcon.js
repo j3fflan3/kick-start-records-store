@@ -56,7 +56,7 @@ function CartIcon() {
 
         <div className="shoppingCartCount">
           <div className=" text-center align-top w-8">
-            <span className="text-accent-700 text-lg">
+            <span className="text-accent-600 text-lg">
               <strong>{itemCount}</strong>
             </span>
           </div>

@@ -6,7 +6,7 @@ export default async function Page({ params, searchParams }) {
   const { captchaToken, action } = await searchParams;
   const decodedEmail = decodeURIComponent(email);
   return (
-    <div className="w-full text-center text-lg text-primary-400 mb-4">
+    <div className="w-full text-center text-lg dark:text-primary-400 mb-4">
       {action === "signup" && <SignUpConfirmation showNote={captchaToken} />}{" "}
       {action === "reset" && (
         <>

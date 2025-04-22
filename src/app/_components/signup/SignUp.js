@@ -11,14 +11,14 @@ function SignUp({ captchaToken }) {
       <div className="w-1/3"></div>
       <div className="relative z-10 text-center w-1/3">
         <div
-          className={`w-full text-5xl text-center font-bold text-accent-50 mb-5 mt-5 justify-center ${rubikDoodleShadow.className}`}
+          className={`w-full text-5xl text-center font-bold dark:text-accent-50 mb-5 mt-5 justify-center`}
         >
           SIGN UP
         </div>
-        <p className="text-justify pb-0 text-xl font-semibold text-primary-200">
+        <p className="text-justify pb-0 text-xl font-semibold dark:text-primary-200">
           Sign up early for an account and get 10% off your first purchase!
         </p>
-        <p className="text-justify pb-0 text-xl text-primary-300">
+        <p className="text-justify pb-0 text-xl dark:text-primary-300">
           Plus, we&apos;ll email you to let you know the day we{" "}
           <i>kick start</i> our store!
         </p>
