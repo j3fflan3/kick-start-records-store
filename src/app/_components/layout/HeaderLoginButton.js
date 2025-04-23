@@ -11,7 +11,7 @@ function HeaderLoginButton() {
   const loginHref =
     session && !session?.user?.is_anonymous
       ? "/account/profile"
-      : "/account/login";
+      : "/account/signin";
 
   // Add a transition and SpinnerMini?
   function handleSignOut() {

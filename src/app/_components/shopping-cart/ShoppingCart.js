@@ -4,7 +4,7 @@ import OrderSummary from "./OrderSummary";
 
 function ShoppingCart({ cart, guestId, cartId }) {
   return (
-    <div className="bg-white dark:bg-primary-900">
+    <div className="bg-white dark:bg-primary-950">
       <div className="mx-auto max-w-2xl px-4 pt-8 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="text-3xl font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-4xl">
           Shopping Cart

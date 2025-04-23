@@ -10,6 +10,7 @@ function Logo() {
         width="40"
         alt="Kick Start Records Logo"
         priority
+        className="max-sm:hidden"
       />
       <div>
         <span
