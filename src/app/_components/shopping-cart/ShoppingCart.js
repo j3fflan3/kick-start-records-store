@@ -1,5 +1,4 @@
 "use client";
-import { getRequestMeta } from "next/dist/server/request-meta";
 import CartItemCard from "./CartItemCard";
 import OrderSummary from "./OrderSummary";
 
