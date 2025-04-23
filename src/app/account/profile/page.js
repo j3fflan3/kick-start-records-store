@@ -1,6 +1,4 @@
 "use client";
-import LeftNavbar from "@/src/app/_components/profile/LeftNavbar";
-import ProfilePane from "@/src/app/_components/profile/ProfilePane";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 function Page() {
   const { session } = useSession();

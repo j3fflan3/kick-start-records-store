@@ -1,12 +1,5 @@
-import Link from "next/link";
-import Image from "next/image";
 import logo from "@/public/vinyl-record.png";
-import { Rubik_Doodle_Shadow } from "next/font/google";
-
-const rubikDoodleShadow = Rubik_Doodle_Shadow({
-  weight: "400",
-  subsets: ["symbols"],
-});
+import Image from "next/image";
 
 function Logo() {
   return (
@@ -18,7 +11,6 @@ function Logo() {
         alt="Kick Start Records Logo"
         priority
       />
-      {/*rubikDoodleShadow.className*/}
       <div>
         <span
           className={`text-3xl/6 font-semibold align-middle pb-2 text-primary-950 dark:text-primary-50`}

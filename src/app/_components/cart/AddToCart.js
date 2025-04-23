@@ -49,7 +49,7 @@ function AddToCart({ catalogId, className }) {
         {
           id: "addToCart",
           removeDelay: 100,
-          duration: 3000,
+          duration: 2000,
         }
       );
     });
