@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { useCart } from "@/src/app/_contexts/CartProvider";
 import { useTransition } from "react";
+import SpinnerMini from "../spinners/SpinnerMini";
 
 function ShoppingCartCard({ item }) {
   const { updateCart } = useCart();
@@ -91,7 +92,11 @@ function ShoppingCartCard({ item }) {
                 }}
               >
                 <span className="sr-only">Remove</span>
-                <XMarkIcon aria-hidden="true" className="size-5" />
+                {isPending ? (
+                  <SpinnerMini />
+                ) : (
+                  <XMarkIcon aria-hidden="true" className="size-5" />
+                )}
               </button>
             </div>
           </div>
