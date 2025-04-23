@@ -1,4 +1,3 @@
-import CartItem from "@/src/app/_components/cart/CartItem";
 import ComingSoonSmall from "@/src/app/_components/ComingSoonSmall";
 
 function Checkout({ cart }) {

@@ -1,8 +1,8 @@
-import { Suspense } from "react";
-import Cart from "@/src/app/_components/cart/Cart";
+import CartIsEmpty from "@/src/app/_components/cart/CartIsEmpty";
 import Spinner from "@/src/app/_components/spinners/Spinner";
 import { serverGetCart } from "@/src/app/_library/serverActions";
-import CartIsEmpty from "@/src/app/_components/cart/CartIsEmpty";
+import { Suspense } from "react";
+import ShoppingCart from "../_components/shopping-cart/ShoppingCart";
 
 export const revalidate = 0;
 
@@ -11,10 +11,10 @@ async function Page({ searchParams }) {
   const { data } = await serverGetCart(guestId, cartId);
 
   if (!data) return <CartIsEmpty />;
-
+  // console.log(data);
   return (
     <Suspense fallback={<Spinner />}>
-      <Cart cart={data} guestId={guestId} cartId={cartId} />
+      <ShoppingCart cart={data} guestId={guestId} cartId={cartId} />
     </Suspense>
   );
 }
