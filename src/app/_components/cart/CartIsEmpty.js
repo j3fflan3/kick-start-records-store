@@ -9,7 +9,7 @@ function CartIsEmpty() {
         Your cart is empty.{" "}
         <Link
           href="/records"
-          className="border border-primary-700 ml-2 py-4 px-6 inline-block hover:bg-accent-600 transition-all hover:text-primary-950"
+          className="border border-primary-700 rounded-md ml-2 py-4 px-6 inline-block hover:bg-accent-600 transition-all hover:text-primary-950"
         >
           Continue shopping &rarr;
         </Link>
