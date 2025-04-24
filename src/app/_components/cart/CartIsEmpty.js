@@ -5,7 +5,7 @@ import Link from "next/link";
 function CartIsEmpty() {
   return (
     <div className="relative z-10 text-center">
-      <div className="text-2xl text-primary-100 mb-10 tracking-tight font-normal">
+      <div className="text-2xl dark:text-primary-100 mb-10 tracking-tight font-normal">
         Your cart is empty.{" "}
         <Link
           href="/records"
