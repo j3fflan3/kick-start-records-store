@@ -1,11 +1,12 @@
 function TrackList({ tracks }) {
   return (
-    <div className="dark:text-accent-100 mt-4">
-      <p className="text-xl">Track List</p>
+    <div className="mt-4">
+      <p className="text-lg dark:text-primary-400">Track List</p>
       <ul>
         {tracks.map((track) => (
-          <li key={track.number}>
-            {track.number} - {track.title} Length: {track.length}
+          <li key={track.number} className="text-sm dark:text-primary-500">
+            {track.number} - {track.title}
+            {/* Length: {track.length} */}
           </li>
         ))}
       </ul>

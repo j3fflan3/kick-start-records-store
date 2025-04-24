@@ -19,6 +19,7 @@ import {
 } from "../tailwind/sidebar";
 import { StackedLayout } from "../tailwind/stacked-layout";
 import HeaderLoginButton from "./HeaderLoginButton";
+import DarkModeToggle from "../buttons/DarkModeToggle";
 
 const navItems = [
   { label: "Records", url: "/records" },

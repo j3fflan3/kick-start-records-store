@@ -69,7 +69,7 @@ export function StackedLayout({ navbar, sidebar, children }) {
 
       {/* Content */}
       <main className="flex flex-1 flex-col pb-2 lg:px-2">
-        <div className="grow p-2 lg:rounded-lg lg:bg-white lg:p-4 lg:shadow-xs lg:ring-1 lg:ring-primary-950/5 dark:lg:bg-primary-950 dark:lg:ring-white/10">
+        <div className="grow p-2 lg:rounded-lg lg:bg-gray-50 lg:p-4 lg:shadow-xs lg:ring-1 lg:ring-primary-900/5 dark:lg:bg-primary-950 dark:lg:ring-white/10">
           <div className="mx-auto max-w-6xl">{children}</div>
         </div>
       </main>
