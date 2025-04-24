@@ -42,7 +42,7 @@ function AddToCart({ catalogId, className }) {
               }}
               cssClasses={`${
                 t.visible ? "animate-enter" : "animate-leave"
-              } max-w-md w-full bg-primary-800 border-primary-600 border-2 shadow-lg rounded-md pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+              } max-w-md w-full bg-primary-950 border-primary-600 border-2 shadow-lg rounded-md pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
             />
           );
         },

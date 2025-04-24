@@ -7,7 +7,7 @@ function ComingSoonSmall() {
   const isSignedIn = session ? true : false;
 
   return (
-    <div className="w-full text-center text-lg text-primary-400 mb-4">
+    <div className="w-full text-center text-lg text-primary-400 mb-12">
       Coming Soon!
       {!isSignedIn && (
         <>

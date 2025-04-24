@@ -69,7 +69,7 @@ function SignInForm() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action={formAction} method="POST" className="space-y-6">
+          <form action={formAction} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
@@ -86,7 +86,7 @@ function SignInForm() {
                   onChange={handleEmail}
                   required
                   autoComplete="email"
-                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base dark:text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-500 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
                 />
               </div>
             </div>
@@ -117,7 +117,7 @@ function SignInForm() {
                   onChange={handlePassword}
                   required
                   autoComplete="current-password"
-                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-500 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
                 />
               </div>
             </div>
@@ -132,7 +132,7 @@ function SignInForm() {
                 cssClasses={
                   isSubmittable
                     ? `rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-primary-50 hover:bg-accent-600 active:bg-yellow-500 cursor-pointer`
-                    : `rounded-md bg-accent-500 font-bold px-3 py-2 w-full text-2xl text-primary-100 cursor-not-allowed`
+                    : `rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-primary-100 cursor-not-allowed`
                 }
               >
                 Sign in

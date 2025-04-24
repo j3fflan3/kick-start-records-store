@@ -4,6 +4,7 @@ import "@/src/app/_styles/global.css";
 import Header from "@/src/app/_components/layout/Header";
 import { CartProvider } from "@/src/app/_contexts/CartProvider";
 import { SessionProvider } from "@/src/app/_contexts/SessionProvider";
+import { DarkModeProvider } from "./_contexts/DarkModeProvider";
 
 const rubikDoodleShadow = Rubik_Doodle_Shadow({
   weight: "400",
@@ -52,15 +53,17 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${rubikDoodleShadow.variable} antialiased`}
       >
-        <SessionProvider>
-          <CartProvider>
-            <Header>
-              <div className="flex-1 px-8 py-4 grid">
-                <main className="max-w-7xl mx-auto w-full">{children}</main>
-              </div>
-            </Header>
-          </CartProvider>
-        </SessionProvider>
+        <DarkModeProvider>
+          <SessionProvider>
+            <CartProvider>
+              <Header>
+                <div className="flex-1 px-8 py-4 grid">
+                  <main className="max-w-7xl mx-auto w-full">{children}</main>
+                </div>
+              </Header>
+            </CartProvider>
+          </SessionProvider>
+        </DarkModeProvider>
       </body>
     </html>
   );

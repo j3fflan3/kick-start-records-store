@@ -69,7 +69,7 @@ function ShoppingCartCard({ item }) {
                 aria-label={`Quantity, ${item.title}`}
                 defaultValue={item.count}
                 onChange={handleSelectChange}
-                className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                className="col-start-1 row-start-1 appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
               >
                 {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                   <option value={num} key={num}>
@@ -106,7 +106,7 @@ function ShoppingCartCard({ item }) {
           {/* {item?.inStock ? ( */}
           <CheckIcon
             aria-hidden="true"
-            className="size-5 shrink-0 text-green-500 dark:text-primary-100"
+            className="size-5 shrink-0 text-green-500 dark:text-green-900"
           />
           {/* ) : (
                         <ClockIcon
