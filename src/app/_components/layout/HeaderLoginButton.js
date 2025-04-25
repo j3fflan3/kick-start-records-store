@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "../../_contexts/SessionProvider";
 import { NavbarItem } from "../tailwind/navbar";
-import { clientSignOut } from "../../_library/clientActions";
+import { clientSignOut } from "@/src/app/_library/clientActions";
 
 function HeaderLoginButton() {
   const { session } = useSession();

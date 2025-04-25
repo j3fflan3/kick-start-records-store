@@ -78,6 +78,6 @@ export async function updateSession(request) {
   //    return myNewResponse
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
-  console.log(myNewResponse);
+  console.log(`updateSession:${myNewResponse}`);
   return myNewResponse;
 }

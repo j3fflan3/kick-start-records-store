@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { formatDecimal } from "@/src/app/_library/utilities";
+import { formatDollars } from "@/src/app/_library/utilities";
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -58,7 +58,7 @@ function ShoppingCartCard({ item }) {
                           ) : null} */}
             </div>
             <p className="mt-1 text-sm font-medium text-gray-900 dark:text-primary-100">
-              ${formatDecimal(item.price / 100)}
+              ${formatDollars(item.price)}
             </p>
           </div>
 
