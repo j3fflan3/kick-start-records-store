@@ -1,11 +1,21 @@
 "use client";
 import Link from "next/link";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
+import { usePathname, useRouter } from "next/navigation";
 
-function ComingSoonSmall() {
+function ComingSoonSmall({ callback }) {
+  const router = useRouter();
   const { session } = useSession();
+  const pathname = usePathname();
+  console.log(pathname);
   const isSignedIn = session ? true : false;
-
+  if (pathname === "/account/profile") {
+  }
+  function goHome() {
+    console.log("GO HOME INVOKED!!!!!");
+    router.push("/");
+    if (callback) callback();
+  }
   return (
     <div className="w-full text-center text-lg text-primary-400 mb-12">
       Coming Soon!
@@ -19,6 +29,14 @@ function ComingSoonSmall() {
           </Link>
           <span> to receive an email and discount coupon when we open. </span>
         </>
+      )}
+      {isSignedIn && pathname === "/account/profile" && (
+        <button
+          onClick={goHome}
+          className="border border-primary-700 py-1 px-2 rounded-md mx-2 text-lg inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
+        >
+          Explore &rarr;
+        </button>
       )}
     </div>
   );

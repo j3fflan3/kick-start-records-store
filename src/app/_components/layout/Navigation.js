@@ -4,8 +4,6 @@ import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { clientSignOut } from "@/src/app/_library/clientActions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { StackedLayout } from "../tailwind/stacked-layout";
-import { Navbar } from "../tailwind/navbar";
 
 export default function Navigation() {
   const context = useSession();

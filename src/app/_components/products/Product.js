@@ -2,7 +2,7 @@
 
 import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { formatDecimal, printRecordFormat } from "../../_library/utilities";
+import { formatDollars, printRecordFormat } from "../../_library/utilities";
 import TrackList from "../records/TrackList";
 import SubmitButton from "../buttons/SubmitButton";
 import AddToCart from "../cart/AddToCart";
@@ -37,7 +37,7 @@ export default function Product({ record }) {
 
             <div className="flex items-center">
               <p className="text-lg text-gray-900 dark:text-primary-100 sm:text-xl">
-                ${formatDecimal(price / 100)}
+                ${formatDollars(price)}
               </p>
 
               <div className="ml-4 border-l border-gray-300 pl-4">

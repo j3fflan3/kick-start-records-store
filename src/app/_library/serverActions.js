@@ -201,6 +201,31 @@ async function serverUpdatePassword(prevState, formData) {
   return { message };
 }
 
+async function serverUpdateUser(prevState, formData) {
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+  const email = formData.get("email");
+  const mailingList = formData.get("mailingList");
+  const notifyList = formData.get("notifyList");
+  console.log(`mailingList=${mailingList}`);
+  console.log(`notifyList=${notifyList}`);
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+  const { error } = supabase.auth.updateUser({
+    email,
+    data: {
+      firstName,
+      lastName,
+      mailingList,
+      notifyList,
+    },
+  });
+  revalidatePath("/account/profile");
+  if (error) console.log(error.message);
+  const message = error ? "error" : "success";
+  return { message };
+}
+
 async function serverResend(prevState, formData) {
   const email = formData.get("email");
   const cookieStore = await cookies();
@@ -227,5 +252,6 @@ export {
   serverVerifyOtp,
   serverResetPassword,
   serverUpdatePassword,
+  serverUpdateUser,
   serverResend,
 };

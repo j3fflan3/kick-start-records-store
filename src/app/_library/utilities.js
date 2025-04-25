@@ -17,13 +17,18 @@ function printRecordFormat(recordFormat) {
   }
 }
 
-function formatDecimal(intCents) {
-  return Number(parseFloat(intCents));
+function formatDollars(intCents) {
+  const dollarFloat = intCents / 100;
+  let dollars = String(Number(parseFloat(dollarFloat)));
+  if (dollars.indexOf(".") === dollars.length - 2) {
+    dollars += "0";
+  }
+  return dollars;
 }
 
 const cartSubtotal = (cart) => {
   const subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
-  return formatDecimal(subtotal / 100);
+  return formatDollars(subtotal);
 };
 
 const cartItemCount = (cart) => {
@@ -51,7 +56,7 @@ const validateEmail = (email) => {
 
 export {
   printRecordFormat,
-  formatDecimal,
+  formatDollars,
   cartSubtotal,
   cartItemCount,
   validateEmail,
