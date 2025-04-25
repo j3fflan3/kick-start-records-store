@@ -13,8 +13,8 @@ function ProfileList({ user, setEdit }) {
   console.log(user);
   return (
     <>
-      <div className="text-base/6 pb-2 font-bold">
-        Profile / Personal Information
+      <div className="text-base/6 pb-2 pl-1 font-bold">
+        Profile - Personal Information
       </div>
       <DescriptionList className="border px-2 rounded-md">
         <DescriptionTerm>Customer</DescriptionTerm>

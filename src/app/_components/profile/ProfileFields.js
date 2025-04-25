@@ -1,3 +1,4 @@
+"use client";
 import { useActionState, useEffect, useState } from "react";
 import { serverUpdateUser } from "../../_library/serverActions";
 import SubmitButton from "../buttons/SubmitButton";
@@ -11,6 +12,7 @@ import {
 import { Input } from "../tailwind/input";
 import { useRouter } from "next/navigation";
 import { Checkbox, CheckboxField, CheckboxGroup } from "../tailwind/checkbox";
+import ComingSoonSmall from "../ComingSoonSmall";
 
 const initialState = {
   message: "",
@@ -55,17 +57,21 @@ function ProfileFields({ user, setEdit }) {
   function handleEmail(e) {
     setEmail(e.target.value);
   }
-  //   function handleMailingList(e) {
-  //     setMailingList(e.target.value);
-  //   }
-  //   function handleNotifyList(e) {
-  //     setNotifyList(e.target.value);
-  //   }
 
+  const inDevelopment = true;
+  //   //   function handleMailingList(e) {
+  //   //     setMailingList(e.target.value);
+  //   //   }
+  //   //   function handleNotifyList(e) {
+  //   //     setNotifyList(e.target.value);
+  //   //   }
+  if (inDevelopment) {
+    return <ComingSoonSmall callback={() => setEdit(false)} />;
+  }
   return (
     <form action={formAction}>
       <Fieldset className="mb-4">
-        <Legend>Profile / Update Personal Information</Legend>
+        <Legend className="pl-1">Profile / Update Personal Information</Legend>
         <FieldGroup>
           <Field>
             <Label>First Name</Label>
