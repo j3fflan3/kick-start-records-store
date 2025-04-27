@@ -1,30 +1,26 @@
-import { Rubik_Doodle_Shadow } from "next/font/google";
-import SignUpForm from "@/src/app/_components/signup/SignUpForm";
+"use client";
 
-const rubikDoodleShadow = Rubik_Doodle_Shadow({
-  weight: "400",
-  subsets: ["symbols"],
-});
+import SignUpForm from "./SignUpForm";
+
 function SignUp({ captchaToken }) {
   return (
-    <div className="relative flex grid-cols-3">
-      <div className="w-1/3"></div>
-      <div className="relative z-10 text-center w-1/3">
-        <div
-          className={`w-full text-5xl text-center font-bold dark:text-accent-50 mb-5 mt-5 justify-center`}
-        >
-          SIGN UP
-        </div>
-        <p className="text-justify pb-0 text-xl font-semibold dark:text-primary-200">
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6  lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 className="mt-4 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
+          Sign up
+        </h2>
+        <p className="text-justify pb-0 text-lg font-semibold dark:text-primary-200">
           Sign up early for an account and get 10% off your first purchase!
         </p>
-        <p className="text-justify pb-0 text-xl dark:text-primary-300">
+        {/* <p className="text-justify pb-0 text-lg dark:text-primary-300">
           Plus, we&apos;ll email you to let you know the day we{" "}
           <i>kick start</i> our store!
-        </p>
+        </p> */}
+      </div>
+
+      <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
         <SignUpForm token={captchaToken} />
       </div>
-      <div className="w-1/3"></div>
     </div>
   );
 }

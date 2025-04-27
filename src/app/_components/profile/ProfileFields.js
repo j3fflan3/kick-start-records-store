@@ -1,7 +1,8 @@
 "use client";
-import { useActionState, useEffect, useState } from "react";
+import Link from "next/link";
 import { serverUpdateUser } from "../../_library/serverActions";
 import SubmitButton from "../buttons/SubmitButton";
+import { Checkbox, CheckboxField, CheckboxGroup } from "../tailwind/checkbox";
 import {
   Field,
   FieldGroup,
@@ -10,63 +11,29 @@ import {
   Legend,
 } from "../tailwind/fieldset";
 import { Input } from "../tailwind/input";
-import { useRouter } from "next/navigation";
-import { Checkbox, CheckboxField, CheckboxGroup } from "../tailwind/checkbox";
-import ComingSoonSmall from "../ComingSoonSmall";
+import ComingSoonSmall from "../utilities/ComingSoonSmall";
+import { useActionState, useEffect, useState } from "react";
 
 const initialState = {
   message: "",
 };
 
-function ProfileFields({ user, setEdit }) {
-  const router = useRouter();
+function ProfileFields({ user }) {
+  const { firstName, lastName, email, mailingList, notifyList } = user;
+  const [errorMessage, setErrorMessage] = useState("");
   const [state, formAction, isPending] = useActionState(
     serverUpdateUser,
     initialState
   );
-  const [successMessage, setSuccessMessage] = useState(false);
-  const [firstName, setFirstName] = useState(user.firstName);
-  const [lastName, setLastName] = useState(user.lastName);
-  const [email, setEmail] = useState(user.email);
-  const [mailingList, setMailingList] = useState(user.mailingList === "on");
-  const [notifyList, setNotifyList] = useState(user.notifyList === "on");
-  const isSubmittable =
-    firstName !== "" && lastName !== "" && email !== "" && !isPending;
   useEffect(() => {
-    if (state) {
-      const { message } = state;
-      console.log(message);
-      if (
-        message === "success" &&
-        typeof window !== "undefined" &&
-        !successMessage
-      ) {
-        setSuccessMessage(true);
-        console.log("before router.push...");
-        router.push("/account/profile");
-      }
+    if (state?.message === "error") {
+      setErrorMessage("error");
     }
-  }, [state, router, successMessage]);
+  }, [state]);
 
-  function handleFirstName(e) {
-    setFirstName(e.target.value);
-  }
-  function handleLastName(e) {
-    setLastName(e.target.value);
-  }
-  function handleEmail(e) {
-    setEmail(e.target.value);
-  }
-
-  const inDevelopment = true;
-  //   //   function handleMailingList(e) {
-  //   //     setMailingList(e.target.value);
-  //   //   }
-  //   //   function handleNotifyList(e) {
-  //   //     setNotifyList(e.target.value);
-  //   //   }
+  const inDevelopment = false;
   if (inDevelopment) {
-    return <ComingSoonSmall callback={() => setEdit(false)} />;
+    return <ComingSoonSmall />;
   }
   return (
     <form action={formAction}>
@@ -78,8 +45,8 @@ function ProfileFields({ user, setEdit }) {
             <Input
               type="text"
               name="firstName"
-              value={firstName}
-              onChange={handleFirstName}
+              defaultValue={firstName}
+              required
             />
           </Field>
           <Field>
@@ -87,18 +54,13 @@ function ProfileFields({ user, setEdit }) {
             <Input
               type="text"
               name="lastName"
-              value={lastName}
-              onChange={handleLastName}
+              defaultValue={lastName}
+              required
             />
           </Field>
           <Field>
             <Label>Email</Label>
-            <Input
-              type="text"
-              name="email"
-              value={email}
-              onChange={handleEmail}
-            />
+            <Input type="text" name="email" defaultValue={email} required />
           </Field>
         </FieldGroup>
         <CheckboxGroup>
@@ -106,37 +68,35 @@ function ProfileFields({ user, setEdit }) {
             <Label>Mailing List</Label>
             <Checkbox
               name="mailingList"
-              value={mailingList}
-              onChange={setMailingList}
+              value="true"
               defaultChecked={mailingList}
-              checked={mailingList}
             />
           </CheckboxField>
           <CheckboxField>
             <Label>Notify me of grand opening</Label>
             <Checkbox
               name="notifyList"
-              value={notifyList}
-              onChange={setNotifyList}
+              value="true"
               defaultChecked={notifyList}
-              checked={notifyList}
             />
           </CheckboxField>
         </CheckboxGroup>
       </Fieldset>
-      <button
-        onClick={() => setEdit(false)}
-        className="border border-primary-700 rounded-md ml-2 px-3 py-2 text-2xl inline-block hover:bg-accent-600 transition-all hover:text-primary-50 hover:cursor-pointer"
+      {errorMessage !== "" && (
+        <div>
+          <p className="text-lg text-red-600 mb-4">
+            There was an error updating your profile. Please try again.
+          </p>
+        </div>
+      )}
+      <Link
+        href="/account/profile"
+        className="border border-primary-700 rounded-md ml-0 px-3 py-2 text-2xl inline-block hover:bg-accent-600 transition-all hover:text-primary-50 hover:cursor-pointer"
       >
         Cancel
-      </button>
+      </Link>
       <SubmitButton
-        disabled={!isSubmittable}
-        cssClasses={
-          isSubmittable
-            ? `rounded-md ml-4 bg-accent-700 text-primary-50 font-bold px-3 py-2 text-2xl hover:cursor-pointer hover:bg-accent-600 active:bg-accent-500`
-            : `rounded-md ml-4 bg-primary-500 font-bold px-3 py-2 text-2xl `
-        }
+        cssClasses={`rounded-md ml-4 bg-accent-700 text-primary-50 font-bold px-3 py-2 text-2xl w-[105.333px] h-[48px] hover:cursor-pointer hover:bg-accent-600 active:bg-accent-500`}
       >
         Submit
       </SubmitButton>

@@ -1,4 +1,4 @@
-import ComingSoonSmall from "@/src/app/_components/ComingSoonSmall";
+import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
 
 function Page() {
   return (

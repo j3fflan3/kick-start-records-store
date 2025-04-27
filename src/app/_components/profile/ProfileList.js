@@ -1,15 +1,13 @@
-"use client";
 import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
 } from "@/src/app/_components/tailwind/description-list";
-import { Legend } from "../tailwind/fieldset";
+import Link from "next/link";
 
-function ProfileList({ user, setEdit }) {
+function ProfileList({ user }) {
   const { email, firstName, lastName, mailingList, notifyList } = user;
-  const bMailingList = mailingList && Boolean(mailingList);
-  const bNotifyList = notifyList && Boolean(notifyList);
+
   console.log(user);
   return (
     <>
@@ -26,19 +24,19 @@ function ProfileList({ user, setEdit }) {
         <DescriptionDetails>{email}</DescriptionDetails>
 
         <DescriptionTerm>Mailing List</DescriptionTerm>
-        <DescriptionDetails>{bMailingList ? "Yes" : "No"}</DescriptionDetails>
+        <DescriptionDetails>{mailingList ? "Yes" : "No"}</DescriptionDetails>
 
         <DescriptionTerm>Notify me about the grand opening</DescriptionTerm>
-        <DescriptionDetails>{bNotifyList ? "Yes" : "No"}</DescriptionDetails>
+        <DescriptionDetails>{notifyList ? "Yes" : "No"}</DescriptionDetails>
 
         <DescriptionTerm></DescriptionTerm>
         <DescriptionDetails>
-          <button
-            onClick={() => setEdit(true)}
+          <Link
+            href="/account/profile/edit"
             className="border border-primary-700 rounded-md text-base py-1 px-6 hover:cursor-pointer inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
           >
             Edit
-          </button>
+          </Link>
         </DescriptionDetails>
       </DescriptionList>
     </>

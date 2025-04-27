@@ -3,16 +3,22 @@
 import { useFormStatus } from "react-dom";
 import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
 
-function SubmitButton({ cssClasses, disabled, children }) {
+function SubmitButton({
+  cssClasses,
+  disabled,
+  showPending,
+  children,
+  ...props
+}) {
   const { pending } = useFormStatus();
   return (
     <button
-      type="submit"
       disabled={disabled}
       className={`${cssClasses}`}
       aria-disabled={pending}
+      {...props}
     >
-      {pending ? <SpinnerMini /> : children}
+      {pending || showPending ? <SpinnerMini /> : children}
     </button>
   );
 }

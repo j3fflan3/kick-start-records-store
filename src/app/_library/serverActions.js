@@ -91,8 +91,8 @@ async function serverSignUp(prevState, formData) {
   const lastName = formData.get("lastName");
   const password = formData.get("password");
   const email = formData.get("email");
-  const mailingList = formData.get("mailingList") === "on" ? true : false;
-  const notifyList = formData.get("notifyList") === "on" ? true : false;
+  const mailingList = Boolean(formData.get("mailingList"));
+  const notifyList = Boolean(formData.get("notifyList"));
   console.log(`mailingList:${mailingList}, notifyList:${notifyList}`);
   const encodedEmail = encodeURIComponent(email);
   const captchaToken = formData.get("captchaToken");
@@ -205,8 +205,8 @@ async function serverUpdateUser(prevState, formData) {
   const firstName = formData.get("firstName");
   const lastName = formData.get("lastName");
   const email = formData.get("email");
-  const mailingList = formData.get("mailingList");
-  const notifyList = formData.get("notifyList");
+  const mailingList = !!formData.get("mailingList");
+  const notifyList = !!formData.get("notifyList");
   console.log(`mailingList=${mailingList}`);
   console.log(`notifyList=${notifyList}`);
   const cookieStore = await cookies();
@@ -221,9 +221,19 @@ async function serverUpdateUser(prevState, formData) {
     },
   });
   revalidatePath("/account/profile");
-  if (error) console.log(error.message);
-  const message = error ? "error" : "success";
-  return { message };
+  if (error) {
+    console.log(error.message);
+    const message = "error";
+    return { message };
+  }
+  const redirectTo = getURL() + "account/profile";
+  redirect(redirectTo);
+}
+
+async function serverGetUser() {
+  const cookieStore = await cookies();
+  const supabase = await createClient(cookieStore);
+  return await supabase.auth.getUser();
 }
 
 async function serverResend(prevState, formData) {
@@ -253,5 +263,6 @@ export {
   serverResetPassword,
   serverUpdatePassword,
   serverUpdateUser,
+  serverGetUser,
   serverResend,
 };
