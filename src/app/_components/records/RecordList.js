@@ -1,6 +1,5 @@
+import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
 import { serverGetRecords } from "@/src/app/_library/serverActions";
-import RecordCard from "@/src/app/_components/records/RecordCard";
-import ComingSoonSmall from "@/src/app/_components/ComingSoonSmall";
 import ProductCard from "../products/ProductCard";
 
 export const revalidate = 0;

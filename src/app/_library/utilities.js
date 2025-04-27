@@ -37,22 +37,32 @@ const cartItemCount = (cart) => {
   }, 0);
 };
 
-const validatePassword = (password, confirm) => {
+const validatePassword = (password) => {
   // Password must be at least 8 characters in length and
   // contain at least one of the following: Uppercase letter, lowercase letter,
   // number, and special character (#?!@$%^&*-)
   // if (password && password.length < 8) return false;
-  return (
-    password === confirm &&
-    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
-      password
-    )
+  return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
+    password
   );
 };
 
 const validateEmail = (email) => {
   return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 };
+
+function validateForm(setErrors, ...inputs) {
+  const formError = {};
+  let isValid = true;
+  for (const input of inputs) {
+    if (!input.validator(input.value)) {
+      formError[input.field] = input.message;
+      isValid = false;
+    }
+  }
+  setErrors(formError);
+  return isValid;
+}
 
 export {
   printRecordFormat,
@@ -61,4 +71,5 @@ export {
   cartItemCount,
   validateEmail,
   validatePassword,
+  validateForm,
 };

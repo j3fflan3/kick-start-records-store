@@ -22,10 +22,17 @@ async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
   return { data, error };
 }
 
+async function clientRefreshSession() {
+  const { data, error } = await supabase.auth.refreshSession();
+  if (error) {
+    console.log(error);
+  }
+  return { data, error };
+}
+
 async function clientSignIn(currentState, formData) {
   const email = formData.get("email");
   const password = formData.get("password");
-  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -73,6 +80,7 @@ async function clientSignUpWithEmail(currentState, formData) {
 export {
   clientGetUserId,
   clientAddToCart,
+  clientRefreshSession,
   clientSignIn,
   clientSignOut,
   clientSignInAnonymously,

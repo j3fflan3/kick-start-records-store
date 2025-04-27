@@ -18,6 +18,7 @@ function SessionProvider({ children }) {
       if (event === "SIGNED_OUT") {
         setSession(null);
       } else if (session) {
+        console.log(`calling setSession()`);
         setSession(session);
       }
     });
@@ -27,7 +28,7 @@ function SessionProvider({ children }) {
   }, [supabase.auth]);
 
   return (
-    <SessionContext.Provider value={{ session, authEvent }}>
+    <SessionContext.Provider value={{ session, setSession, authEvent }}>
       {children}
     </SessionContext.Provider>
   );

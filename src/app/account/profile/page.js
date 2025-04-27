@@ -1,35 +1,19 @@
-"use client";
-import { useSession } from "@/src/app/_contexts/SessionProvider";
+import { redirect } from "next/navigation";
 import ProfileList from "../../_components/profile/ProfileList";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import ProfileFields from "../../_components/profile/ProfileFields";
-function Page() {
-  const router = useRouter();
-  const { session } = useSession();
-  const [edit, setEdit] = useState(false);
-  useEffect(
-    function () {
-      if (!session || (session && session?.user?.is_anonymous)) {
-        router.push("/account/signin");
-      }
-    },
-    [session, router]
-  );
+import { serverGetUser } from "../../_library/serverActions";
+import NewCustomer from "../../_components/utilities/NewCustomer";
+async function Page() {
+  const { data, error } = await serverGetUser();
+  if (error) {
+    console.log(`account profile: ${error.message}`);
+    return <NewCustomer />;
+  }
+  const { user } = data;
   return (
     <div className="flex grid-cols-3">
       <div className="w-1/4"></div>
       <div className="w-1/2">
-        {session &&
-          !session?.user?.is_anonymous &&
-          (edit ? (
-            <ProfileFields
-              user={session.user.user_metadata}
-              setEdit={setEdit}
-            />
-          ) : (
-            <ProfileList user={session.user.user_metadata} setEdit={setEdit} />
-          ))}
+        {user && <ProfileList user={user.user_metadata} />}
       </div>
       <div className="w-1/4"></div>
     </div>
