@@ -201,7 +201,7 @@ async function serverUpdatePassword(prevState, formData) {
   return { message };
 }
 
-async function serverUpdateUser(fprevState, formData) {
+async function serverUpdateUser(prevState, formData) {
   const firstName = formData.get("firstName");
   const lastName = formData.get("lastName");
   const email = formData.get("email");
