@@ -1,15 +1,7 @@
 import ResetPasswordForm from "@/src/app/_components/login/ResetPasswordForm";
 
 function Page() {
-  return (
-    <div className="relative flex grid-cols-3">
-      <div className="w-1/3"></div>
-      <div className="text-center rounded-md py-4 w-1/3">
-        <ResetPasswordForm />
-      </div>
-      <div className="w-1/3"></div>
-    </div>
-  );
+  return <ResetPasswordForm />;
 }
 
 export default Page;

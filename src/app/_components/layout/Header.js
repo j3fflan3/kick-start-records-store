@@ -60,7 +60,6 @@ function Header({ children }) {
         <Sidebar>
           <SidebarHeader>
             <Avatar src="/vinyl-record.png" className="w-[20px] h-[20px]" />
-            <SidebarLabel>kickstart records</SidebarLabel>
           </SidebarHeader>
           <SidebarBody>
             <SidebarSection>
