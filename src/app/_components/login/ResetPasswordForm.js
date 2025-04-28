@@ -1,13 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
 import { serverResetPassword } from "@/src/app/_library/serverActions";
-import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
-import { validateEmail } from "@/src/app/_library/utilities";
-import toast, { Toaster } from "react-hot-toast";
+import { validateEmail, validateForm } from "@/src/app/_library/utilities";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useRef, useState } from "react";
 import SubmitButton from "../buttons/SubmitButton";
+
 const initialState = { message: "" };
+
 function ResetPasswordForm() {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(
@@ -15,7 +15,11 @@ function ResetPasswordForm() {
     initialState
   );
   const [email, setEmail] = useState("");
-  const isValidEmail = validateEmail(email);
+  const [resetMessage, setResetMessage] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const formRef = useRef(null);
+  const emailRef = useRef(null);
 
   useEffect(() => {
     if (state) {
@@ -24,50 +28,93 @@ function ResetPasswordForm() {
         router.push(
           `/account/check-email/${encodeURIComponent(email)}?action=reset`
         );
-      } else if (message === "error") {
-        setEmail("");
-        toast.error("🤒 There was an error resetting your password.");
+      } else {
+        setResetMessage(message);
       }
     }
-  }, [state, setEmail, email, router]);
+    if (errors?.email) {
+      setEmail("");
+      emailRef.current.focus();
+    }
+  }, [state, setResetMessage, router, errors]);
 
   function handleEmail(e) {
+    if (resetMessage !== "") setResetMessage("");
+    setErrors({});
     setEmail(e.target.value);
   }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const valid = validateForm(setErrors, {
+      field: "email",
+      value: email,
+      validator: validateEmail,
+      message: "Email is invalid.",
+    });
+    if (valid) {
+      formRef.current.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true })
+      );
+    }
+  }
   return (
-    <div>
-      <Toaster />
-      <form action={formAction}>
-        <div className="grid-flow-row w-full box-border">
-          <div className="flex w-full content-center pt-3 pb-4">
-            <input
-              name="email"
-              type="email"
-              className={`rounded-md w-full p-3 text-lg text-primary-900 ${
-                !isValidEmail && "border border-red-600"
-              }`}
-              placeholder="Email"
-              value={email}
-              onChange={handleEmail}
-              autoFocus
-              required
-            />
-          </div>
-          <div className="flex w-full content-center">
-            <SubmitButton
-              disabled={!isValidEmail}
-              cssClasses={
-                isValidEmail
-                  ? `rounded-md bg-yellow-600 font-bold px-3 py-2 w-full text-2xl hover:bg-accent-600 active:bg-yellow-500`
-                  : `rounded-md bg-primary-500 font-bold px-3 py-2 w-full text-2xl`
-              }
-            >
-              {isPending ? <SpinnerMini /> : "Reset My Password"}
-            </SubmitButton>
-          </div>
+    <>
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
+            Reset Password
+          </h2>
+          <p className="text-left text-primary-700 mb-2">
+            Enter your email address and we&apos;ll send you a link to reset
+            your password.
+          </p>
         </div>
-      </form>
-    </div>
+        <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form action={formAction} ref={formRef} className="space-y-6">
+            <div>
+              <label
+                htmlFor="email"
+                className="text-sm/6 font-medium dark:text-white"
+              >
+                Email address
+              </label>
+              <div className="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+                  placeholder="you@email.com"
+                  ref={emailRef}
+                  value={email}
+                  onChange={handleEmail}
+                  autoFocus
+                  required
+                  autoComplete="email"
+                />
+                <p className="ml-2 mt-2 text-sm text-red-700">
+                  {errors?.email && errors.email}
+                </p>
+              </div>
+            </div>
+            <div>
+              <SubmitButton
+                cssClasses="rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-primary-50 hover:bg-accent-600 active:bg-yellow-500 cursor-pointer"
+                onClick={handleSubmit}
+              >
+                Send Reset Link
+              </SubmitButton>
+            </div>
+            {resetMessage !== "" && (
+              <p className="text-lg text-left mt-4 dark:text-primary-50">
+                {resetMessage}
+              </p>
+            )}
+          </form>
+        </div>
+      </div>
+    </>
   );
 }
 

@@ -7,7 +7,7 @@ import {
   validateForm,
   validatePassword,
 } from "@/src/app/_library/utilities";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 const initialState = {
   data: {},
@@ -43,23 +43,26 @@ function SignUpForm({ token }) {
     password !== "" &&
     confirm !== "";
 
-  // useEffect(() => {
-  //   if (state?.data?.user?.id) {
-  //     const user = state.data.user;
-  //     const encodedEmail = encodeURIComponent(user.email);
-  //     const identities = state.data.identities;
-  //     console.log(`state: ${JSON.stringify(state)}`);
-  //     // captchaRef.current.resetCaptcha();
-  //     let captchaToken = "";
-  //     if (identities.length > 0) {
-  //       const identity = state.data.identities[0];
-  //       captchaToken = identity.identity_data.captchaToken;
-  //     }
-  //     router.push(
-  //       `/account/check-email/${encodedEmail}?captchaToken=${captchaToken}&action=signup`
-  //     );
-  //   }
-  // }, [state, router]);
+  useEffect(
+    function () {
+      if (errors?.email) {
+        setEmail("");
+        emailRef.current.focus();
+        return;
+      }
+      if (errors?.password) {
+        setPassword("");
+        setConfirm("");
+        passwordRef.current.focus();
+        return;
+      }
+      if (errors?.confirm) {
+        setConfirm("");
+        confirmRef.current.focus();
+      }
+    },
+    [errors]
+  );
 
   function handleFirst(e) {
     setErrors({});
@@ -81,7 +84,8 @@ function SignUpForm({ token }) {
     setErrors({});
     setConfirm(e.target.value);
   }
-  function handleSubmit() {
+  function handleSubmit(e) {
+    e.preventDefault();
     const valid = validateForm(
       setErrors,
       {
@@ -106,7 +110,6 @@ function SignUpForm({ token }) {
     );
     if (valid) {
       setShowPending(true);
-      console.log("in handleSubmit");
       formRef.current.dispatchEvent(
         new Event("submit", { cancelable: true, bubbles: true })
       );

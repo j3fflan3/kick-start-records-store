@@ -162,17 +162,17 @@ async function serverSignOut() {
 }
 
 async function serverResetPassword(prevState, formData) {
+  let message = "success";
   const email = formData.get("email");
-
   const cookieStore = await cookies();
   const supabase = await createClient(cookieStore);
-
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email);
-  let message = "success";
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
   if (error) {
     console.log(error);
-    message = "error";
+    message =
+      "There was a problem sending you a reset password email. Please try again.";
   }
+  revalidatePath("/account/reset-password");
   return { message };
 }
 
@@ -245,11 +245,14 @@ async function serverResend(prevState, formData) {
     type: "signup",
     email,
   });
+  let message = "Confirmation email successfully sent.";
   if (error) {
+    message =
+      "There was an error resending your confirmation email.  Please try again.";
     console.log(error);
   }
-  console.log(data);
-  return { data, error };
+  revalidatePath("/account/check-email");
+  return { message };
 }
 export {
   serverAddToCart,
