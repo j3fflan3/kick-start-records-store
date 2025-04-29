@@ -36,7 +36,7 @@ function ResetPasswordForm() {
       setEmail("");
       emailRef.current.focus();
     }
-  }, [state, setResetMessage, router, errors]);
+  }, [state, setResetMessage, router, errors, email]);
 
   function handleEmail(e) {
     if (resetMessage !== "") setResetMessage("");
@@ -84,7 +84,7 @@ function ResetPasswordForm() {
                   id="email"
                   name="email"
                   type="email"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-800 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
                   placeholder="you@email.com"
                   ref={emailRef}
                   value={email}

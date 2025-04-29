@@ -59,7 +59,10 @@ function Header({ children }) {
       sidebar={
         <Sidebar>
           <SidebarHeader>
-            <Avatar src="/vinyl-record.png" className="w-[20px] h-[20px]" />
+            <Avatar
+              src="/vinyl-record.png"
+              className="w-[20px] h-[20px] ml-2"
+            />
           </SidebarHeader>
           <SidebarBody>
             <SidebarSection>

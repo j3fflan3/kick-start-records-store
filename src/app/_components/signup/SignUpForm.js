@@ -35,13 +35,7 @@ function SignUpForm({ token }) {
   const formRef = useRef(null);
   // We want to make sure they've at least filled out all the fields
   // before we let them hit the submit button and validate the values
-  const isSubmittable =
-    token !== "" &&
-    firstName !== "" &&
-    lastName !== "" &&
-    email !== "" &&
-    password !== "" &&
-    confirm !== "";
+  const isSubmittable = token !== "";
 
   useEffect(
     function () {

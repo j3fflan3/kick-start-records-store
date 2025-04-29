@@ -45,10 +45,10 @@ async function clientSignIn(currentState, formData) {
   return { message };
 }
 
-async function clientSignOut() {
+async function clientSignOut(scope = "local") {
   // scope: "local" only kills the user's current session.
   // Other sessions on other devices remain logged in.
-  const { error } = await supabase.auth.signOut({ scope: "local" });
+  const { error } = await supabase.auth.signOut({ scope });
   if (error) console.log(error);
 }
 

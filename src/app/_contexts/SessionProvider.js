@@ -18,7 +18,6 @@ function SessionProvider({ children }) {
       if (event === "SIGNED_OUT") {
         setSession(null);
       } else if (session) {
-        console.log(`calling setSession()`);
         setSession(session);
       }
     });
