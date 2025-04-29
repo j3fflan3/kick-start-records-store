@@ -32,7 +32,7 @@ function ResendConfirmation({ email, action, children }) {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-4 mb-4 text-center text-xl/9 font-bold tracking-tight dark:text-white">
-          We sent an confirmation email to {email}
+          We sent a confirmation email to {email}
         </h2>
         {children}
       </div>

@@ -4,11 +4,11 @@ import {
   DescriptionTerm,
 } from "@/src/app/_components/tailwind/description-list";
 import Link from "next/link";
+import DeleteAccountDialog from "./DeleteAccountDialog";
 
-function ProfileList({ user }) {
+function ProfileList({ user, userId }) {
   const { email, firstName, lastName, mailingList, notifyList } = user;
 
-  console.log(user);
   return (
     <>
       <div className="text-base/6 pb-2 pl-1 font-bold">
@@ -29,7 +29,7 @@ function ProfileList({ user }) {
         <DescriptionTerm>Notify me about the grand opening</DescriptionTerm>
         <DescriptionDetails>{notifyList ? "Yes" : "No"}</DescriptionDetails>
 
-        <DescriptionTerm></DescriptionTerm>
+        {/* <DescriptionTerm></DescriptionTerm>
         <DescriptionDetails>
           <Link
             href="/account/profile/edit"
@@ -37,8 +37,17 @@ function ProfileList({ user }) {
           >
             Edit
           </Link>
-        </DescriptionDetails>
+        </DescriptionDetails> */}
       </DescriptionList>
+      <div className="mt-4">
+        <Link
+          href="/account/profile/edit"
+          className="border border-primary-700 rounded-md text-base py-1 px-6 hover:cursor-pointer inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
+        >
+          Edit
+        </Link>
+        <DeleteAccountDialog userId={userId} />
+      </div>
     </>
   );
 }

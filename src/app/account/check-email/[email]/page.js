@@ -15,8 +15,8 @@ export default async function Page({ params, searchParams }) {
               <span className="font-semibold">
                 Check your email for a link to update your password.
               </span>{" "}
-              If you don&apos;t see the email, please check your spam or junk
-              folder.
+              If you don&apos;t see the email, please check your spam, junk,
+              promotions, or social folder.
             </p>
           </>
         )}
