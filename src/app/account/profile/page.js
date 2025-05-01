@@ -10,11 +10,11 @@ async function Page() {
   const { user } = data;
   return (
     <div className="flex grid-cols-3">
-      <div className="w-1/4"></div>
-      <div className="w-1/2">
+      <div className="xs:hidden sm:w-1/5"></div>
+      <div className="w-full sm:w-3/5">
         {user && <ProfileList user={user.user_metadata} userId={user.id} />}
       </div>
-      <div className="w-1/4"></div>
+      <div className="xs:hidden sm:w-1/5"></div>
     </div>
   );
 }

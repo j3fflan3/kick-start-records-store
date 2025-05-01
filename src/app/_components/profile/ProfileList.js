@@ -11,23 +11,29 @@ function ProfileList({ user, userId }) {
 
   return (
     <>
-      <div className="text-base/6 pb-2 pl-1 font-bold">
+      <div className="text-xl/6 lg:text-3xl/6 pb-2 pl-1 mb-4 mt-4 font-bold">
         Profile - Personal Information
       </div>
-      <DescriptionList className="border px-2 rounded-md">
-        <DescriptionTerm>Customer</DescriptionTerm>
-        <DescriptionDetails>
+      <DescriptionList className="border p-4 rounded-md dark:border-yellow-600">
+        <DescriptionTerm className="text-base">Customer</DescriptionTerm>
+        <DescriptionDetails className="text-base">
           {firstName} {lastName}
         </DescriptionDetails>
 
-        <DescriptionTerm>Email</DescriptionTerm>
-        <DescriptionDetails>{email}</DescriptionDetails>
+        <DescriptionTerm className="text-base">Email</DescriptionTerm>
+        <DescriptionDetails className="text-base">{email}</DescriptionDetails>
 
-        <DescriptionTerm>Mailing List</DescriptionTerm>
-        <DescriptionDetails>{mailingList ? "Yes" : "No"}</DescriptionDetails>
+        <DescriptionTerm className="text-base">Mailing List</DescriptionTerm>
+        <DescriptionDetails className="text-base">
+          {mailingList ? "Yes" : "No"}
+        </DescriptionDetails>
 
-        <DescriptionTerm>Notify me about the grand opening</DescriptionTerm>
-        <DescriptionDetails>{notifyList ? "Yes" : "No"}</DescriptionDetails>
+        <DescriptionTerm className="text-base">
+          Notify me about the grand opening
+        </DescriptionTerm>
+        <DescriptionDetails className="text-base">
+          {notifyList ? "Yes" : "No"}
+        </DescriptionDetails>
 
         {/* <DescriptionTerm></DescriptionTerm>
         <DescriptionDetails>

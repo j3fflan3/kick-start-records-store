@@ -1,6 +1,6 @@
-import { Suspense } from "react";
 import Spinner from "@/src/app/_components/spinners/Spinner";
-import RecordList from "@/src/app/_components/records/RecordList";
+import { Suspense } from "react";
+import RecordList from "../_components/records/RecordList";
 export const revalidate = 3600;
 function Page() {
   return (

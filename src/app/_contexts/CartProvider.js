@@ -24,8 +24,11 @@ function CartProvider({ children }) {
     createLocalCart
   );
   const { guestId, cartId } = localCartIds;
-
   const [cartCount, setCartCount] = useState(0);
+  const [openCart, setOpenCart] = useState(false);
+  const [cartItem, setCartItem] = useState(null);
+  const [cartLink, setCartLink] = useState(null);
+
   function setCount(data) {
     // If data comes back null, set to 0
     const newCartCount = !data
@@ -79,11 +82,15 @@ function CartProvider({ children }) {
       value={{
         addToCart,
         updateCart,
-        setLocalCartIds,
-        createLocalCart,
         setCartCount,
         cartCount,
         localCartIds,
+        setOpenCart, // Used by AddToCart.js to open cart slider, populate
+        setCartItem,
+        setCartLink,
+        openCart, // Used by AddToCartSlider.js to give state to slider
+        cartItem,
+        cartLink,
       }}
     >
       {children}
