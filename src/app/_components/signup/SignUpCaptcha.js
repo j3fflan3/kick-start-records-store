@@ -2,6 +2,7 @@
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import SpinnerMini from "../spinners/SpinnerMini";
 import Spinner from "../spinners/Spinner";
 
 const SignUpCaptcha = ({ siteKey }) => {
@@ -28,7 +29,9 @@ const SignUpCaptcha = ({ siteKey }) => {
 
   return (
     <div className="grid-flow-row w-full box-border">
-      <div className="flex p-2 mt-2 justify-center h-22">
+      <div
+        className={`flex p-2 mt-2 justify-center ${!isSubmitting && "h-22"}`}
+      >
         {!isSubmitting ? (
           <HCaptcha
             sitekey={siteKey}

@@ -1,5 +1,5 @@
-function Spinner() {
-  return <div className='spinner'></div>;
+function Spinner({ className }) {
+  return <div className={`spinner w-full ${className && className}`}></div>;
 }
 
 export default Spinner;
