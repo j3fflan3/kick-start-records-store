@@ -1,7 +1,7 @@
 import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
 import { serverGetRecords } from "@/src/app/_library/serverActions";
 import ProductCard from "../products/ProductCard";
-import AddToCartSlider from "../cart/AddToCartSlider";
+import AddToCartSlider from "../shopping-cart/AddToCartSlider";
 import { useCart } from "../../_contexts/CartProvider";
 
 export const revalidate = 0;

@@ -1,4 +1,4 @@
-import CartIsEmpty from "@/src/app/_components/cart/CartIsEmpty";
+import CartIsEmpty from "@/src/app/_components/shopping-cart/CartIsEmpty";
 import Spinner from "@/src/app/_components/spinners/Spinner";
 import { serverGetCart } from "@/src/app/_library/serverActions";
 import { Suspense } from "react";

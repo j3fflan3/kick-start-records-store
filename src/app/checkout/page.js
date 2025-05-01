@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import CartIsEmpty from "@/src/app/_components/cart/CartIsEmpty";
-import Checkout from "@/src/app/_components/cart/Checkout";
+import CartIsEmpty from "@/src/app/_components/shopping-cart/CartIsEmpty";
+import Checkout from "@/src/app/_components/shopping-cart/Checkout";
 import Spinner from "@/src/app/_components/spinners/Spinner";
 import { serverGetCart } from "@/src/app/_library/serverActions";
 import Error from "@/src/app/error";

@@ -1,7 +1,7 @@
 import Image from "next/image";
-import AddToCart from "../cart/AddToCart";
+import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
 import Link from "next/link";
-import { printRecordFormat } from "../../_library/utilities";
+import { printRecordFormat } from "@/src/app/_library/utilities";
 
 function ProductCard({ product }) {
   const { image, title, price, catalogId, recordFormat } = product;

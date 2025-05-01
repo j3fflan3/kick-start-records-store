@@ -65,7 +65,7 @@ function ResetPasswordForm() {
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
             Reset Password
           </h2>
-          <p className="text-left text-primary-700 mb-2">
+          <p className="text-left text-primary-700 mb-2 dark:text-primary-200">
             Enter your email address and we&apos;ll send you a link to reset
             your password.
           </p>

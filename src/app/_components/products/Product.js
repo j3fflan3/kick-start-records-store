@@ -2,10 +2,10 @@
 
 import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { formatDollars, printRecordFormat } from "../../_library/utilities";
-import AddToCart from "../cart/AddToCart";
-import TrackList from "../records/TrackList";
-import AddToCartSlider from "../cart/AddToCartSlider";
+import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
+import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
+import TrackList from "@/src/app/_components/records/TrackList";
+import AddToCartSlider from "@/src/app/_components/shopping-cart/AddToCartSlider";
 
 export default function Product({ record }) {
   const {
