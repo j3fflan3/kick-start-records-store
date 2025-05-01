@@ -7,7 +7,7 @@ import { clientSignOut } from "@/src/app/_library/clientActions";
 
 function HeaderLoginButton() {
   const { session } = useSession();
-  console.log(session);
+  // console.log(session);
   const router = useRouter();
   const loginHref =
     session && !session?.user?.is_anonymous

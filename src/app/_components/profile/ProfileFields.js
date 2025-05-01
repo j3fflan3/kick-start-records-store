@@ -38,7 +38,9 @@ function ProfileFields({ user }) {
   return (
     <form action={formAction}>
       <Fieldset className="mb-4">
-        <Legend className="pl-1">Profile / Update Personal Information</Legend>
+        <Legend className="!text-3xl/6 mb-4 mt-4">
+          Profile / Update Personal Information
+        </Legend>
         <FieldGroup>
           <Field>
             <Label>First Name</Label>
