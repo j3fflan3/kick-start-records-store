@@ -1,18 +1,12 @@
-import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
-
 function Checkout({ cart }) {
   return (
-    <ComingSoonSmall />
-    // <div>
-    //   <div>Checkout</div>
-    //   <div>Delivery Instructions</div>
-    //   <div>Payment Instructions</div>
-    //   <div className="w-full h-full text-left bg-primary-800 rounded-xs">
-    //     {cart.map((item) => (
-    //       <CartItem key={item.catalogId} item={item} />
-    //     ))}
-    //   </div>
-    // </div>
+    <div className="flex grid-cols-3">
+      <div className="xs:hidden sm:w-1/5"></div>
+      <div className="w-full sm:w-3/5 text-center text-3xl sm:text-5xl mt-10">
+        Checkout
+      </div>
+      <div className="xs:hidden sm:w-1/5"></div>
+    </div>
   );
 }
 
