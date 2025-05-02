@@ -1,25 +1,23 @@
 import Logo from "@/src/app/_components/layout/Logo";
-import CartIcon from "../cart/CartIcon";
-import { Avatar } from "../tailwind/avatar";
-import { Link } from "../tailwind/link";
+import CartIcon from "@/src/app/_components/shopping-cart/CartIcon";
+import { Avatar } from "@/src/app/_components/tailwind/avatar";
+import { Link } from "@/src/app/_components/tailwind/link";
+import { StackedLayout } from "@/src/app/_components/tailwind/stacked-layout";
 import {
   Navbar,
   NavbarDivider,
   NavbarItem,
   NavbarSection,
   NavbarSpacer,
-} from "../tailwind/navbar";
+} from "@/src/app/_components/tailwind/navbar";
 import {
   Sidebar,
   SidebarBody,
   SidebarHeader,
   SidebarItem,
-  SidebarLabel,
   SidebarSection,
-} from "../tailwind/sidebar";
-import { StackedLayout } from "../tailwind/stacked-layout";
-import HeaderLoginButton from "./HeaderLoginButton";
-import DarkModeToggle from "../buttons/DarkModeToggle";
+} from "@/src/app/_components/tailwind/sidebar";
+import HeaderLoginButton from "@/src/app/_components/layout/HeaderLoginButton";
 
 const navItems = [
   { label: "Records", url: "/records" },

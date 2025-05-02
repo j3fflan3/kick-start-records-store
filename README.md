@@ -8,7 +8,7 @@ Visit, sign up, and play around at the test site [Kick Start Records](https://ki
 ## Task List
 
 - [x] Create product DB with artists, labels, catalog, cart.
-- [ ] Implement Auth with PCKE using Supabase and RESEND, including signup, confirmation email, login, and password reset. _**In Progress**_
+- [x] Implement Auth with PCKE using Supabase and RESEND, including signup, confirmation email, login, and password reset.
 - [ ] Implement shopping cart using localstorage, anonymous login for guest users, and store cart in DB. _**In Progress**_
 - [ ] Implement checkout using PayPal checkout APIs and buttons, as well as order, shipping, and tracking DB. _**In Progress**_
 - [ ] Integrate USPS APIs to calculate shipping cost.

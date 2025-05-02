@@ -1,6 +1,6 @@
 import Image from "next/image";
 import TrackList from "@/src/app/_components/records/TrackList";
-import AddToCart from "@/src/app/_components/cart/AddToCart";
+import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
 import Link from "next/link";
 
 function Record({ record }) {
