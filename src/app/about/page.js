@@ -14,10 +14,9 @@ function Page() {
             An independent Alternative/Rock/Metal Label and eCommerce store.
           </p>
           <p className="text-lg">
-            Founded in February 2025, our mission is to help indie labels and
-            bands with an online store where they not only can list and sell
-            their records and merch, but they also get to choose whether they
-            ship the goods themselves, or have us do the dirty work!
+            Our mission is to suppoprt indie labels and bands with a
+            professional online store where they can sell their music and
+            merchandise.
           </p>
         </div>
         <div className="w-1/4"></div>
