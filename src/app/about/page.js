@@ -5,8 +5,8 @@ function Page() {
     <div>
       <ComingSoonSmall />
       <div className="flex grid-cols-3 mt-10">
-        <div className="w-1/4"></div>
-        <div className="text-4xl dark:text-primary-100 w-1/2">
+        <div className="xs:hidden sm:w-1/5"></div>
+        <div className="text-4xl dark:text-primary-100 w-full sm:w-3/5">
           <p className=" tracking-wide font-normal text-4xl text-center mb-4">
             Welcome to Kick Start Records
           </p>
@@ -18,7 +18,7 @@ function Page() {
             online store where they can sell their music and merchandise.
           </p>
         </div>
-        <div className="w-1/4"></div>
+        <div className="xs:hidden sm:w-1/5"></div>
       </div>
     </div>
   );
