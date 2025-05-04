@@ -118,7 +118,7 @@ function SignUpForm({ token }) {
             type="text"
             name="firstName"
             placeholder="First Name"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             value={firstName}
             onChange={handleFirst}
             required
@@ -129,7 +129,7 @@ function SignUpForm({ token }) {
             type="text"
             name="lastName"
             placeholder="Last Name"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             required
             onChange={handleLast}
             value={lastName}
@@ -140,7 +140,7 @@ function SignUpForm({ token }) {
             type="email"
             name="email"
             placeholder="Email Address"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             onChange={handleEmail}
             ref={emailRef}
             value={email}
@@ -156,7 +156,7 @@ function SignUpForm({ token }) {
             type="password"
             name="password"
             placeholder="Password"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             onChange={handlePassword}
             ref={passwordRef}
             value={password}
@@ -170,7 +170,7 @@ function SignUpForm({ token }) {
             type="password"
             name="confirm"
             placeholder="Confirm Password"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             onChange={handleConfirm}
             ref={confirmRef}
             value={confirm}
