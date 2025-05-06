@@ -64,6 +64,12 @@ function validateForm(setErrors, ...inputs) {
   return isValid;
 }
 
+function shoppingCartKey(id, is_anonymous, expirationDate) {
+  this.id = id;
+  this.is_anonymous = is_anonymous;
+  this.expirationDate = expirationDate;
+}
+
 export {
   printRecordFormat,
   formatDollars,
@@ -72,4 +78,5 @@ export {
   validateEmail,
   validatePassword,
   validateForm,
+  shoppingCartKey,
 };

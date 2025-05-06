@@ -1,28 +1,19 @@
 "use client";
-
-import { createContext, useContext, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { clientAddToCart } from "@/src/app/_library/clientActions";
-import { CartID } from "@/src/app/_library/loadWebStorage";
 import { useWebStorage } from "@/src/app/_hooks/useWebStorage";
+import { clientAddToCart } from "@/src/app/_library/clientActions";
 import { serverUpdateCart } from "@/src/app/_library/serverActions";
-import { shoppingCartKey } from "@/src/app/_library/utilities";
+import { createContext, useState } from "react";
+import { shoppingCartKey } from "../_library/utilities";
 
-const CartContext = createContext();
-
+const ShoppingCartContext = createContext();
 const localCartKey = "kickStartRecordsCart";
-
-const createLocalCart = () => {
-  return new CartID(uuidv4(), uuidv4(), new Date());
+const createLocalShoppingCart = (id, is_anonymous) => {
+  return new shoppingCartKey(id, is_anonymous, new Date());
 };
-
-function CartProvider({ children }) {
-  // useLocalStorage will check first for the existence of the local storage key.
-  // If it does not exist, it will create it and store the value returned by
-  // createLocalCart
+function ShoppingCartProvider({ children }) {
   const [localCartIds, setLocalCartIds] = useWebStorage(
     localCartKey,
-    createLocalCart
+    createLocalShoppingCart
   );
   const { guestId, cartId } = localCartIds;
   const [cartCount, setCartCount] = useState(0);
@@ -30,11 +21,11 @@ function CartProvider({ children }) {
   const [cartItem, setCartItem] = useState(null);
   const [cartLink, setCartLink] = useState(null);
 
-  function setCount(data) {
-    // If data comes back null, set to 0
-    const newCartCount = !data
+  function setCount(products) {
+    // If products is null, set to 0
+    const newCartCount = !products
       ? 0
-      : data.reduce((sum, item) => sum + item.count, 0);
+      : products.reduce((sum, item) => sum + item.count, 0);
     setCartCount(newCartCount);
   }
 
@@ -77,9 +68,8 @@ function CartProvider({ children }) {
     setCount(data);
     return { data, error };
   }
-
   return (
-    <CartContext.Provider
+    <ShoppingCartContext.Provider
       value={{
         addToCart,
         updateCart,
@@ -95,15 +85,9 @@ function CartProvider({ children }) {
       }}
     >
       {children}
-    </CartContext.Provider>
+    </ShoppingCartContext.Provider>
   );
 }
 
-function useCart() {
-  const context = useContext(CartContext);
-  if (context === undefined)
-    throw new Error("CartContext used outside of provider");
-  return context;
-}
-
-export { CartProvider, useCart };
+function useShoppingCart() {}
+export { ShoppingCartProvider, useShoppingCart };

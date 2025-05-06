@@ -60,9 +60,9 @@ export default function Product({ record }) {
                 <div className="mt-2 flex items-center">
                   <CheckIcon
                     aria-hidden="true"
-                    className="size-5 shrink-0 text-primary-900 dark:text-white"
+                    className="size-5 shrink-0 text-green-700 font-bold"
                   />
-                  <p className="ml-2 text-sm text-primary-500">
+                  <p className="ml-2 text-sm text-green-700">
                     In stock and ready to ship
                   </p>
                 </div>
@@ -76,7 +76,7 @@ export default function Product({ record }) {
               width="400"
               height="400"
               alt={record.title}
-              src={record.image.url}
+              src={image.url}
               className="aspect-square w-full rounded-lg object-cover"
             />
           </div>
