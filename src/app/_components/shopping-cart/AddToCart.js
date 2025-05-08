@@ -8,6 +8,7 @@ import { useEffect, useState, useTransition } from "react";
 
 function AddToCart({ catalogId, className }) {
   const { session } = useSession();
+  console.log(`session = ${session}`);
   const {
     addToCart,
     localCartIds,
@@ -22,16 +23,17 @@ function AddToCart({ catalogId, className }) {
   const { guestId, cartId } = localCartIds;
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  // Don't think this is needed.
   // This prevents a NextJS hydration error for an SSR'd client
-  useEffect(() => {
-    return;
-    if (cartItem && cartLink && !openCart) {
-      setOpenCart(true);
-    }
-  }, [cartItem, cartLink, openCart, setOpenCart]);
+  // useEffect(() => {
+  //   if (cartItem && cartLink && !openCart) {
+  //     setOpenCart(true);
+  //   }
+  // }, [cartItem, cartLink, openCart, setOpenCart]);
 
   async function handleAddToCart(e) {
-    console.log("invoked handleAddToCart");
+    console.log(`invoked handleAddToCart -> catalogId: ${catalogId}`);
     startTransition(async () => {
       const { data, error } = await addToCart(catalogId);
       const addedItem = data.filter((item) => item.catalogId === catalogId);

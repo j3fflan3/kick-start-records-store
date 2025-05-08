@@ -56,15 +56,15 @@ export default function RootLayout({ children }) {
       >
         <DarkModeProvider>
           <SessionProvider>
-            <ShoppingCartProvider>
-              <CartProvider>
-                <Header>
-                  <div className="flex-1 px-8 py-4 grid">
-                    <main className="max-w-7xl mx-auto w-full">{children}</main>
-                  </div>
-                </Header>
-              </CartProvider>
-            </ShoppingCartProvider>
+            {/* <ShoppingCartProvider> */}
+            <CartProvider>
+              <Header>
+                <div className="flex-1 px-8 py-4 grid">
+                  <main className="max-w-7xl mx-auto w-full">{children}</main>
+                </div>
+              </Header>
+            </CartProvider>
+            {/* </ShoppingCartProvider> */}
           </SessionProvider>
         </DarkModeProvider>
       </body>

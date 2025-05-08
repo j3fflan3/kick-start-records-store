@@ -22,6 +22,17 @@ async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
   return { data, error };
 }
 
+async function clientAnonAddToCart(catalogId, count = 1) {
+  const { data, error } = await supabase.rpc("add_to_anon_cart", {
+    _catalog_id: catalogId,
+    _count: count,
+  });
+  if (error) {
+    console.log(error.message);
+  }
+  return { data, error };
+}
+
 async function clientRefreshSession() {
   const { data, error } = await supabase.auth.refreshSession();
   if (error) {
@@ -77,6 +88,9 @@ async function clientSignUpWithEmail(currentState, formData) {
   });
 }
 
+async function clientGetJWT() {
+  return await supabase.rpc("get_jwt");
+}
 export {
   clientGetUserId,
   clientAddToCart,
@@ -85,4 +99,6 @@ export {
   clientSignOut,
   clientSignInAnonymously,
   clientSignUpWithEmail,
+  clientAnonAddToCart,
+  clientGetJWT,
 };

@@ -4,18 +4,30 @@ import { clientAddToCart } from "@/src/app/_library/clientActions";
 import { serverUpdateCart } from "@/src/app/_library/serverActions";
 import { createContext, useState } from "react";
 import { shoppingCartKey } from "../_library/utilities";
+import { useSession } from "./SessionProvider";
 
 const ShoppingCartContext = createContext();
 const localCartKey = "kickStartRecordsCart";
-const createLocalShoppingCart = (id, is_anonymous) => {
-  return new shoppingCartKey(id, is_anonymous, new Date());
+const createLocalShoppingCart = (id = null, is_anonymous = null) => {
+  return () => {
+    return new shoppingCartKey(id, is_anonymous, new Date());
+  };
+};
+
+const initialCart = {
+  id: "",
+  is_anonymous: null,
+  expirationDate: null,
 };
 function ShoppingCartProvider({ children }) {
-  const [localCartIds, setLocalCartIds] = useWebStorage(
-    localCartKey,
-    createLocalShoppingCart
-  );
-  const { guestId, cartId } = localCartIds;
+  const { session } = useSession();
+
+  // const [localCartIds, setLocalCartIds] = useWebStorage(
+  //   localCartKey,
+  //   initialCart
+  // );
+  // console.log(`localCartIds: ${JSON.stringify(localCartIds)}`);
+  const { id, is_anonymous, expirationDate } = localCartIds;
   const [cartCount, setCartCount] = useState(0);
   const [openCart, setOpenCart] = useState(false);
   const [cartItem, setCartItem] = useState(null);
@@ -28,7 +40,7 @@ function ShoppingCartProvider({ children }) {
       : products.reduce((sum, item) => sum + item.count, 0);
     setCartCount(newCartCount);
   }
-
+  async function addToAnonCart(userId, catalogId, count = 1) {}
   async function addToCart(catalogId, count = 1) {
     // fnGetUserId,
     // const userId = fnGetUserId()

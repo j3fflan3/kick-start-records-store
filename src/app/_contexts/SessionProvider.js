@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/src/app/_library/supabase/client";
+import { clientSignInAnonymously } from "../_library/clientActions";
 
 const SessionContext = createContext(null);
 
@@ -9,6 +10,7 @@ function SessionProvider({ children }) {
   const [session, setSession] = useState(null);
   // authEvent is used here only for debugging purposes
   const [authEvent, setAuthEvent] = useState(null);
+
   const supabase = createClient();
   useEffect(() => {
     const {
@@ -25,6 +27,21 @@ function SessionProvider({ children }) {
       subscription.unsubscribe();
     };
   }, [supabase.auth]);
+
+  // useEffect(() => {
+  //   async function signInAnonymously() {
+  //     const { data, error } = await clientSignInAnonymously();
+  //     if (error) {
+  //       console.error("Error signing in anonymously:", error);
+  //     } else {
+  //       console.log("Signed in anonymously:", data);
+  //     }
+  //   }
+
+  //   if (!session) {
+  //     signInAnonymously();
+  //   }
+  // }, [session]);
 
   return (
     <SessionContext.Provider value={{ session, setSession, authEvent }}>
