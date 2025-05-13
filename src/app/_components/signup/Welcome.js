@@ -1,15 +1,12 @@
 "use client";
-import { useSession } from "../../_contexts/SessionProvider";
-import Error from "../../error";
+import useSessionMergeCart from "@/src/app/_hooks/useSessionMergeCart";
 
 function Welcome() {
-  const { session } = useSession();
-  if (!session) {
-    return <div>Session not found</div>;
-  }
+  const { user } = useSessionMergeCart();
+
   return (
     <div className="text-2xl font-bold">
-      {session && <div>Welcome, {session.user.user_metadata.firstName}!</div>}
+      {user && <div>Welcome, {user.user_metadata.firstName}!</div>}
     </div>
   );
 }

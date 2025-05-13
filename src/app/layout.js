@@ -1,7 +1,7 @@
 import localFont from "next/font/local";
 import { Rubik_Doodle_Shadow } from "next/font/google";
 import "@/src/app/_styles/global.css";
-import Header from "@/src/app/_components/layout/Header";
+import Header from "@/src/app/_components/header/Header";
 import { CartProvider } from "@/src/app/_contexts/CartProvider";
 import { SessionProvider } from "@/src/app/_contexts/SessionProvider";
 import { DarkModeProvider } from "./_contexts/DarkModeProvider";
@@ -56,15 +56,15 @@ export default function RootLayout({ children }) {
       >
         <DarkModeProvider>
           <SessionProvider>
-            {/* <ShoppingCartProvider> */}
-            <CartProvider>
-              <Header>
-                <div className="flex-1 px-8 py-4 grid">
-                  <main className="max-w-7xl mx-auto w-full">{children}</main>
-                </div>
-              </Header>
-            </CartProvider>
-            {/* </ShoppingCartProvider> */}
+            <ShoppingCartProvider>
+              <CartProvider>
+                <Header>
+                  <div className="flex-1 px-8 py-4 grid">
+                    <main className="max-w-7xl mx-auto w-full">{children}</main>
+                  </div>
+                </Header>
+              </CartProvider>
+            </ShoppingCartProvider>
           </SessionProvider>
         </DarkModeProvider>
       </body>

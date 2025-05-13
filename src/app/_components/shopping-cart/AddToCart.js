@@ -2,35 +2,23 @@
 
 import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
 import { useCart } from "@/src/app/_contexts/CartProvider";
-import { useSession } from "@/src/app/_contexts/SessionProvider";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
+import { useAnonymousSessionCart } from "../../_hooks/useAnonymousSessionCart";
 
 function AddToCart({ catalogId, className }) {
-  const { session } = useSession();
-  console.log(`session = ${session}`);
+  const { user, resetAnonymousSessionCart } = useAnonymousSessionCart();
+  console.log(`user: ${user && JSON.stringify(user)}`);
   const {
     addToCart,
     localCartIds,
     setCartItem,
     cartItem,
-    cartLink,
     setCartLink,
-    openCart,
     setOpenCart,
   } = useCart();
 
   const { guestId, cartId } = localCartIds;
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
-
-  // Don't think this is needed.
-  // This prevents a NextJS hydration error for an SSR'd client
-  // useEffect(() => {
-  //   if (cartItem && cartLink && !openCart) {
-  //     setOpenCart(true);
-  //   }
-  // }, [cartItem, cartLink, openCart, setOpenCart]);
 
   async function handleAddToCart(e) {
     console.log(`invoked handleAddToCart -> catalogId: ${catalogId}`);

@@ -1,8 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/app/_library/supabase/server";
-import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 // Not currently used.
@@ -33,7 +32,8 @@ async function serverGetCart(guestId, cartId) {
   }
   return { data, error };
 }
-// Not currently used.
+async function serverUpdateShoppingCart() {}
+
 async function serverUpdateCart(
   guestId,
   cartId,
@@ -265,17 +265,17 @@ async function serverResend(prevState, formData) {
 
 export {
   serverAddToCart,
+  serverDeleteUser,
   serverGetCart,
   serverGetRecords,
+  serverGetUser,
+  serverResend,
+  serverResetPassword,
   serverSignIn,
   serverSignOut,
   serverSignUp,
   serverUpdateCart,
-  serverVerifyOtp,
-  serverResetPassword,
   serverUpdatePassword,
   serverUpdateUser,
-  serverGetUser,
-  serverDeleteUser,
-  serverResend,
+  serverVerifyOtp,
 };

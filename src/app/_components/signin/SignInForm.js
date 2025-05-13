@@ -29,16 +29,6 @@ function SignInForm() {
         typeof window !== "undefined" &&
         !successMessage
       ) {
-        toast.success("You've successfully logged in!", {
-          id: "loggedIn",
-          position: "top-right",
-          duration: 2000,
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-          },
-        });
         setSuccessMessage(true); // this is to avoid double success messages
         router.push("/records");
       } else if (message === "error") {

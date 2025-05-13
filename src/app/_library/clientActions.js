@@ -21,7 +21,35 @@ async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
   }
   return { data, error };
 }
+async function clientAddToShoppingCart(
+  catalogId,
+  is_anonymous = false,
+  count = 1
+) {
+  const { data, error } = await supabase.rpc("add_to_shopping_cart", {
+    _catalog_id: catalogId,
+    _is_anonymous: is_anonymous,
+    _count: count,
+  });
 
+  if (error) {
+    console.log(error.message);
+  }
+  return { data, error };
+}
+
+// Merge the carts of the anonUserId with logged in userId
+// or just replace anonUserId with userId if logged in user
+// doesn't already have a cart.
+async function clientMergeShoppingCarts(anonUserId) {
+  const { data, error } = await supabase.rpc("merge_shopping_carts", {
+    _anon_user_id: anonUserId,
+  });
+  if (error) {
+    console.log(error.message);
+  }
+  return { data, error };
+}
 async function clientAnonAddToCart(catalogId, count = 1) {
   const { data, error } = await supabase.rpc("add_to_anon_cart", {
     _catalog_id: catalogId,
@@ -94,6 +122,8 @@ async function clientGetJWT() {
 export {
   clientGetUserId,
   clientAddToCart,
+  clientAddToShoppingCart,
+  clientMergeShoppingCarts,
   clientRefreshSession,
   clientSignIn,
   clientSignOut,

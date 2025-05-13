@@ -1,18 +1,16 @@
 "use client";
 import { useWebStorage } from "@/src/app/_hooks/useWebStorage";
-import { clientAddToCart } from "@/src/app/_library/clientActions";
+import {
+  clientAddToCart,
+  clientAddToShoppingCart,
+} from "@/src/app/_library/clientActions";
 import { serverUpdateCart } from "@/src/app/_library/serverActions";
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { shoppingCartKey } from "../_library/utilities";
 import { useSession } from "./SessionProvider";
 
 const ShoppingCartContext = createContext();
-const localCartKey = "kickStartRecordsCart";
-const createLocalShoppingCart = (id = null, is_anonymous = null) => {
-  return () => {
-    return new shoppingCartKey(id, is_anonymous, new Date());
-  };
-};
+const localCartKey = "ksrShoppingCart";
 
 const initialCart = {
   id: "",
@@ -22,11 +20,11 @@ const initialCart = {
 function ShoppingCartProvider({ children }) {
   const { session } = useSession();
 
-  // const [localCartIds, setLocalCartIds] = useWebStorage(
-  //   localCartKey,
-  //   initialCart
-  // );
-  // console.log(`localCartIds: ${JSON.stringify(localCartIds)}`);
+  const [localCartIds, setLocalCartIds] = useWebStorage(
+    localCartKey,
+    initialCart
+  );
+  console.log(`localCartIds: ${JSON.stringify(localCartIds)}`);
   const { id, is_anonymous, expirationDate } = localCartIds;
   const [cartCount, setCartCount] = useState(0);
   const [openCart, setOpenCart] = useState(false);
@@ -40,14 +38,16 @@ function ShoppingCartProvider({ children }) {
       : products.reduce((sum, item) => sum + item.count, 0);
     setCartCount(newCartCount);
   }
-  async function addToAnonCart(userId, catalogId, count = 1) {}
-  async function addToCart(catalogId, count = 1) {
-    // fnGetUserId,
-    // const userId = fnGetUserId()
-    const { data, error } = await clientAddToCart(
-      guestId,
-      cartId,
+
+  function createLocalShoppingCart(id = null, is_anonymous = null) {
+    return () => {
+      return new shoppingCartKey(id, is_anonymous, new Date());
+    };
+  }
+  async function addToShoppingCart(catalogId, is_anonymous, count = 1) {
+    const { data, error } = await clientAddToShoppingCart(
       catalogId,
+      is_anonymous,
       count
     );
     if (error) {
@@ -83,10 +83,12 @@ function ShoppingCartProvider({ children }) {
   return (
     <ShoppingCartContext.Provider
       value={{
-        addToCart,
+        addToShoppingCart,
         updateCart,
         setCartCount,
         cartCount,
+        setLocalCartIds,
+        createLocalShoppingCart, // Used to update/reset the local storage cart json
         localCartIds,
         setOpenCart, // Used by AddToCart.js to open cart slider, populate
         setCartItem,
@@ -101,5 +103,10 @@ function ShoppingCartProvider({ children }) {
   );
 }
 
-function useShoppingCart() {}
+function useShoppingCart() {
+  const context = useContext(ShoppingCartContext);
+  if (context === undefined)
+    throw new Error("ShoppingCartContext used outside of provider");
+  return context;
+}
 export { ShoppingCartProvider, useShoppingCart };
