@@ -1,28 +1,21 @@
 "use client";
 
-import { ShoppingCartIcon } from "@heroicons/react/24/solid";
-import { useCart } from "@/src/app/_contexts/CartProvider";
-import { useEffect } from "react";
-import { serverGetCart } from "@/src/app/_library/serverActions";
-import Link from "next/link";
+import { serverGetShoppingCart } from "@/src/app/_library/serverActions";
 import Error from "@/src/app/error";
+import { ShoppingCartIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
+import { useEffect } from "react";
+import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 
 export const revalidate = 0;
 
 function CartIcon() {
-  const context = useCart();
-  const {
-    cartCount: itemCount,
-    getCartCount,
-    setCartCount,
-    localCartIds,
-  } = context;
-  const { guestId, cartId } = localCartIds;
+  const context = useShoppingCart();
+  const { cartCount: itemCount, setCartCount, localCartIds } = context;
   useEffect(
     function () {
-      async function getCartCount(guestId, cartId) {
-        if (!guestId || !cartId) return;
-        const { data, error } = await serverGetCart(guestId, cartId);
+      async function getCartCount() {
+        const { data, error } = await serverGetShoppingCart();
         if (error) {
           console.log(error);
           return <Error error={"There was a problem updating the cart."} />;
@@ -36,16 +29,13 @@ function CartIcon() {
         }
       }
 
-      getCartCount(guestId, cartId);
+      getCartCount();
     },
-    [setCartCount, guestId, cartId]
+    [setCartCount]
   );
   // Need to figure out if there is a way to avoid this hydration warning in the first place
   return (
-    <Link
-      suppressHydrationWarning={true}
-      href={`/cart?guestId=${guestId}&cartId=${cartId}`}
-    >
+    <Link suppressHydrationWarning={true} href="/cart">
       <div className="shoppingCartContainer">
         <div className="shoppingCartIcon ">
           <ShoppingCartIcon

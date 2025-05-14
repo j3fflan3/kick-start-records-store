@@ -1,10 +1,7 @@
 "use client";
 import { useWebStorage } from "@/src/app/_hooks/useWebStorage";
-import {
-  clientAddToCart,
-  clientAddToShoppingCart,
-} from "@/src/app/_library/clientActions";
-import { serverUpdateCart } from "@/src/app/_library/serverActions";
+import { clientAddToShoppingCart } from "@/src/app/_library/clientActions";
+import { serverUpdateShoppingCart } from "@/src/app/_library/serverActions";
 import { createContext, useContext, useState } from "react";
 import { shoppingCartKey } from "../_library/utilities";
 import { useSession } from "./SessionProvider";
@@ -59,14 +56,12 @@ function ShoppingCartProvider({ children }) {
     return { data, error };
   }
 
-  async function updateCart(catalogId, count, email = null) {
+  async function updateShoppingCart(catalogId, count, email = null) {
     let cnt = count;
     if (count > 10) {
       cnt = 10;
     }
-    const { data, error } = await serverUpdateCart(
-      guestId,
-      cartId,
+    const { data, error } = await serverUpdateShoppingCart(
       catalogId,
       count,
       email
@@ -76,7 +71,7 @@ function ShoppingCartProvider({ children }) {
       return { data, error };
     }
     console.log(`data: ${JSON.stringify(data)}`);
-    console.log("CartProvider: finishing updateCart");
+    console.log("CartProvider: finishing updateShoppingCart");
     setCount(data);
     return { data, error };
   }
@@ -84,7 +79,7 @@ function ShoppingCartProvider({ children }) {
     <ShoppingCartContext.Provider
       value={{
         addToShoppingCart,
-        updateCart,
+        updateShoppingCart,
         setCartCount,
         cartCount,
         setLocalCartIds,

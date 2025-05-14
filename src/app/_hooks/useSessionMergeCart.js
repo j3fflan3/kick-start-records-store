@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
-import { clientMergeCarts } from "@/src/app/_library/clientActions";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
+import { clientMergeShoppingCarts } from "@/src/app/_library/clientActions";
+import { useEffect, useState } from "react";
 
 // Call this hook immediately after logging in (whether via confirming signup
 // at @/src/app/_components/signup/Welcome.js,
@@ -30,7 +30,7 @@ function useSessionMergeCart() {
   }
   useEffect(() => {
     async function mergeCarts(anonUserId, userId) {
-      await clientMergeCarts(anonUserId, userId);
+      await clientMergeShoppingCarts(anonUserId, userId);
       // set localCartIds
       setLocalCartIds(createLocalShoppingCart(userId, false));
     }

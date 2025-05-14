@@ -8,6 +8,7 @@ function useAnonymousSessionCart() {
   const [done, setDone] = useState(false);
 
   const { session } = useSession();
+  console.log(session);
   const { setLocalCartIds, createLocalShoppingCart } = useShoppingCart();
 
   function resetAnonymousSessionCart() {
@@ -32,6 +33,9 @@ function useAnonymousSessionCart() {
     if (!session && !done) {
       console.log("useAnonymousSessionCart -> signInAnonymously");
       signInAnonymously();
+    } else if (session && !done) {
+      setUser(session.user);
+      setDone(true);
     }
   }, [session, done, setLocalCartIds, createLocalShoppingCart]);
 
