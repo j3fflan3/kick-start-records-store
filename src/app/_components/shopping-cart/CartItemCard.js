@@ -1,27 +1,27 @@
 "use client";
 
-import Image from "next/image";
 import { formatDollars } from "@/src/app/_library/utilities";
 import {
   CheckIcon,
   ChevronDownIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useCart } from "@/src/app/_contexts/CartProvider";
+import Image from "next/image";
 import { useTransition } from "react";
+import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 import SpinnerMini from "../spinners/SpinnerMini";
 
 function ShoppingCartCard({ item }) {
-  const { updateCart } = useCart();
+  const { updateShoppingCart } = useShoppingCart();
   const [isPending, startTransition] = useTransition();
-  async function handleUpdateCart(count) {
+  async function handleUpdateShoppingCart(count) {
     startTransition(async () => {
-      await updateCart(item.catalogId, count);
+      await updateShoppingCart(item.catalogId, count);
     });
   }
 
   async function handleSelectChange(e) {
-    await handleUpdateCart(e.target.value);
+    await handleUpdateShoppingCart(e.target.value);
   }
 
   return (
@@ -88,7 +88,7 @@ function ShoppingCartCard({ item }) {
                 type="button"
                 className="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500"
                 onClick={() => {
-                  handleUpdateCart(0);
+                  handleUpdateShoppingCart(0);
                 }}
               >
                 <span className="sr-only">Remove</span>

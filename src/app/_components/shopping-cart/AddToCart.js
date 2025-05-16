@@ -1,42 +1,33 @@
 "use client";
 
 import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
-import { useCart } from "@/src/app/_contexts/CartProvider";
-import { useSession } from "@/src/app/_contexts/SessionProvider";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
+import { useSession } from "../../_contexts/SessionProvider";
+import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 
 function AddToCart({ catalogId, className }) {
   const { session } = useSession();
+  const isAnonymous = session && session.user && session.user.is_anonymous;
+
   const {
-    addToCart,
+    addToShoppingCart,
     localCartIds,
     setCartItem,
     cartItem,
-    cartLink,
     setCartLink,
-    openCart,
     setOpenCart,
-  } = useCart();
+  } = useShoppingCart();
 
-  const { guestId, cartId } = localCartIds;
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
-  // This prevents a NextJS hydration error for an SSR'd client
-  useEffect(() => {
-    return;
-    if (cartItem && cartLink && !openCart) {
-      setOpenCart(true);
-    }
-  }, [cartItem, cartLink, openCart, setOpenCart]);
 
   async function handleAddToCart(e) {
-    console.log("invoked handleAddToCart");
+    console.log(`invoked handleAddToCart -> catalogId: ${catalogId}`);
     startTransition(async () => {
-      const { data, error } = await addToCart(catalogId);
+      const { data, error } = await addToShoppingCart(catalogId, isAnonymous);
+      // TODO: Add error handling here.
       const addedItem = data.filter((item) => item.catalogId === catalogId);
       setCartItem(addedItem[0]);
-      setCartLink(`/cart?guestId=${guestId}&cartId=${cartId}`);
+      setCartLink("/cart");
       console.log(`AddToCart item: ${JSON.stringify(cartItem)}`);
       setOpenCart(true);
     });
