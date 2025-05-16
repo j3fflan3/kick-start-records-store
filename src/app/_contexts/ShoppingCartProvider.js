@@ -38,7 +38,7 @@ function ShoppingCartProvider({ children }) {
   useEffect(() => {
     async function mergeCarts(anonUserId, userId) {
       console.log(
-        `useSessionMergeCart -> mergeCarts: anonUserId: ${anonUserId}, userId: ${userId}`
+        `ShoppingCartProvider -> mergeCarts: anonUserId: ${anonUserId}, userId: ${userId}`
       );
       const { data } = await clientMergeShoppingCarts(anonUserId, userId);
       setCount(data);

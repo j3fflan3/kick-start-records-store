@@ -8,20 +8,6 @@ async function clientGetUserId() {
   return await supabase.rpc("get_user_id");
 }
 
-// async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
-//   const { data, error } = await supabase.rpc("add_to_cart", {
-//     _guest_id: guestId,
-//     _cart_id: cartId,
-//     _catalog_id: catalogId,
-//     _email: null,
-//     _count: count,
-//   });
-//   if (error) {
-//     console.log(error.message);
-//   }
-//   return { data, error };
-// }
-
 async function clientAddToShoppingCart(
   catalogId,
   is_anonymous = false,
@@ -51,16 +37,6 @@ async function clientMergeShoppingCarts(anonUserId) {
   }
   return { data, error };
 }
-// async function clientAnonAddToCart(catalogId, count = 1) {
-//   const { data, error } = await supabase.rpc("add_to_anon_cart", {
-//     _catalog_id: catalogId,
-//     _count: count,
-//   });
-//   if (error) {
-//     console.log(error.message);
-//   }
-//   return { data, error };
-// }
 
 async function clientRefreshSession() {
   const { data, error } = await supabase.auth.refreshSession();

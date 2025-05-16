@@ -4,34 +4,6 @@ import { createClient } from "@/src/app/_library/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-// Not currently used.
-// async function serverAddToCart(guestId, cartId, catalogId, count = 1) {
-//   const supabase = await createClient();
-//   const { data, error } = await supabase.rpc("add_to_cart", {
-//     _guest_id: guestId,
-//     _cart_id: cartId,
-//     _catalog_id: catalogId,
-//     _email: null,
-//     _count: count,
-//   });
-//   if (error) {
-//     console.log(error.message);
-//   }
-//   revalidatePath("/cart");
-//   return { data, error };
-// }
-// async function serverGetCart(guestId, cartId) {
-//   const supabase = await createClient();
-
-//   const { data, error } = await supabase.rpc("get_cart", {
-//     _guest_id: guestId,
-//     _cart_id: cartId,
-//   });
-//   if (error) {
-//     console.log(`serverGetCart ${error}`);
-//   }
-//   return { data, error };
-// }
 async function serverGetShoppingCart() {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("get_shopping_cart");
@@ -53,29 +25,6 @@ async function serverUpdateShoppingCart(catalogId, count, email = null) {
   revalidatePath("/cart");
   return { data, error };
 }
-
-// async function serverUpdateCart(
-//   guestId,
-//   cartId,
-//   catalogId,
-//   count,
-//   email = null
-// ) {
-//   const supabase = await createClient();
-
-//   const { data, error } = await supabase.rpc("update_cart", {
-//     _guest_id: guestId,
-//     _cart_id: cartId,
-//     _catalog_id: catalogId,
-//     _count: count,
-//     _email: email,
-//   });
-//   if (error) {
-//     console.log(`serverUpdateCart error: ${error.message}`);
-//   }
-//   revalidatePath("/cart");
-//   return { data, error };
-// }
 
 async function serverGetRecords(id = null, limit = 10) {
   const supabase = await createClient();
