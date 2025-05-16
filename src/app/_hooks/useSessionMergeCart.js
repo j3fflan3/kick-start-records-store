@@ -21,20 +21,37 @@ function useSessionMergeCart() {
   const [user, setUser] = useState(null);
   const [done, setDone] = useState(false);
   const { session } = useSession();
-  const { localCartIds, setLocalCartIds, createLocalShoppingCart } =
-    useShoppingCart();
+  const {
+    localCartIds,
+    setLocalCartIds,
+    createLocalShoppingCart,
+    setCount,
+    getShoppingCart,
+  } = useShoppingCart();
 
   function resetSessionMergeCart() {
     setUser(null);
     setDone(false);
   }
   useEffect(() => {
+    async function refreshCart() {
+      const { error } = await getShoppingCart();
+      if (error) {
+        console.log(error.message);
+      }
+    }
     async function mergeCarts(anonUserId, userId) {
-      await clientMergeShoppingCarts(anonUserId, userId);
+      console.log(
+        `useSessionMergeCart -> mergeCarts: anonUserId: ${anonUserId}, userId: ${userId}`
+      );
+      const { data } = await clientMergeShoppingCarts(anonUserId, userId);
+      setCount(data);
       // set localCartIds
       setLocalCartIds(createLocalShoppingCart(userId, false));
     }
+    console.log("useSessionMergeCart fired.");
     if (session && !session.user.is_anonymous && !done) {
+      console.log("useSessionMergeCart -> user session and !done");
       setDone(true); // prevent continual loop due to localCartIds being updated
       setUser(session.user);
       const { id: userId } = session.user;
@@ -43,10 +60,24 @@ function useSessionMergeCart() {
         // merge anonymous cart with users cart (if either exists)
         mergeCarts(anonUserId, userId);
       } else {
+        console.log(
+          `useSessionMergeCart -> userId: ${userId}, anonymous: false`
+        );
+        if (localCartIds.is_anonymous === null) {
+          refreshCart();
+        }
         setLocalCartIds(createLocalShoppingCart(userId, false));
       }
     }
-  }, [session, createLocalShoppingCart, localCartIds, setLocalCartIds, done]);
+  }, [
+    session,
+    createLocalShoppingCart,
+    localCartIds,
+    setLocalCartIds,
+    done,
+    setCount,
+    getShoppingCart,
+  ]);
   // returning setUser in order to set user to null upon sign out.
   return { user, resetSessionMergeCart };
 }

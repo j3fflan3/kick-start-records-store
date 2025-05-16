@@ -4,7 +4,7 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { cartItemCount, cartSubtotal } from "@/src/app/_library/utilities";
 import Link from "next/link";
 
-function OrderSummary({ cart, guestId, cartId }) {
+function OrderSummary({ cart }) {
   if (!cart) return null;
   const numItems = cartItemCount(cart);
   const subTotal = cartSubtotal(cart);
@@ -70,7 +70,7 @@ function OrderSummary({ cart, guestId, cartId }) {
       </dl>
       <div className="flex mt-6 w-full content-center">
         <Link
-          href={`/checkout?guestId=${guestId}&cartId=${cartId}`}
+          href={`/checkout`}
           className="w-full text-center rounded-md border border-transparent bg-accent-600 px-4 py-3 text-base font-medium text-white shadow-xs hover:cursor-pointer hover:bg-accent-700 focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden"
         >
           Checkout

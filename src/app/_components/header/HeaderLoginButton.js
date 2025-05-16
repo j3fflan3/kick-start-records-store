@@ -1,21 +1,27 @@
 "use client";
 
 import { NavbarItem } from "@/src/app/_components/tailwind/navbar";
-import useSessionMergeCart from "@/src/app/_hooks/useSessionMergeCart";
 import { clientSignOut } from "@/src/app/_library/clientActions";
 import { useRouter } from "next/navigation";
+import { useSession } from "../../_contexts/SessionProvider";
+import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 
 function HeaderLoginButton() {
-  const { user, resetSessionMergeCart } = useSessionMergeCart();
+  const { session } = useSession();
+  const { setCount } = useShoppingCart();
   const router = useRouter();
-  const loginHref = user ? "/account/profile" : "/account/signin";
+  const loginHref =
+    session && !session.user.is_anonymous
+      ? "/account/profile"
+      : "/account/signin";
 
   // Add a transition and SpinnerMini?
   function handleSignOut() {
     async function signOut() {
       await clientSignOut();
-      // need to resetSessionMergeCart AFTER clientSignOut
-      resetSessionMergeCart();
+      // Clear out the cart number
+      setCount(null);
+      console.log("after await clientSignOut");
     }
     // clientSignOut is an async function, but we don't await it
     // so as to avoid an error if the user is on the profile
@@ -25,14 +31,17 @@ function HeaderLoginButton() {
     // TODO: ☝🏻 This comment is a bit stale, but still need to rethink
     // if there is a better way to do this.
     signOut();
+    console.log('before router.push("/")');
     router.push("/");
   }
   return (
     <>
       <NavbarItem key="login" href={loginHref}>
-        {user ? `Hi, ${user.user_metadata.firstName}!` : "Log In/Join"}
+        {session && !session.user.is_anonymous
+          ? `Hi, ${session.user.user_metadata.firstName}!`
+          : "Log In/Join"}
       </NavbarItem>
-      {user && (
+      {session && !session.user.is_anonymous && (
         <NavbarItem key="logout" onClick={handleSignOut}>
           Log Out
         </NavbarItem>

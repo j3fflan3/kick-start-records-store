@@ -9,7 +9,8 @@ function useAnonymousSessionCart() {
 
   const { session } = useSession();
   console.log(session);
-  const { setLocalCartIds, createLocalShoppingCart } = useShoppingCart();
+  const { setLocalCartIds, createLocalShoppingCart, getShoppingCart } =
+    useShoppingCart();
 
   function resetAnonymousSessionCart() {
     setUser(null);
@@ -27,17 +28,30 @@ function useAnonymousSessionCart() {
       const { id: userId } = data.user;
       // go ahead and store the anon userId in the cart
       setLocalCartIds(createLocalShoppingCart(userId, true));
+      // refresh the cart
+      const { error: getShoppingCartError } = await getShoppingCart();
+      if (getShoppingCartError) {
+        console.log(getShoppingCartError.message);
+      }
       setDone(true);
     }
+    console.log("useAnonymousSessionCart fired");
     // If we don't have a session, sign-in anonymously
     if (!session && !done) {
       console.log("useAnonymousSessionCart -> signInAnonymously");
       signInAnonymously();
     } else if (session && !done) {
+      console.log("useAnonymousSessionCart -> session exists and !done");
       setUser(session.user);
       setDone(true);
     }
-  }, [session, done, setLocalCartIds, createLocalShoppingCart]);
+  }, [
+    session,
+    done,
+    setLocalCartIds,
+    createLocalShoppingCart,
+    getShoppingCart,
+  ]);
 
   return { user, resetAnonymousSessionCart };
 }
