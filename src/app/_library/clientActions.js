@@ -8,13 +8,29 @@ async function clientGetUserId() {
   return await supabase.rpc("get_user_id");
 }
 
-async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
-  const { data, error } = await supabase.rpc("add_to_cart", {
-    _guest_id: guestId,
-    _cart_id: cartId,
+async function clientAddToShoppingCart(
+  catalogId,
+  is_anonymous = false,
+  count = 1
+) {
+  const { data, error } = await supabase.rpc("add_to_shopping_cart", {
     _catalog_id: catalogId,
-    _email: null,
+    _is_anonymous: is_anonymous,
     _count: count,
+  });
+
+  if (error) {
+    console.log(error.message);
+  }
+  return { data, error };
+}
+
+// Merge the carts of the anonUserId with logged in userId
+// or just replace anonUserId with userId if logged in user
+// doesn't already have a cart.
+async function clientMergeShoppingCarts(anonUserId) {
+  const { data, error } = await supabase.rpc("merge_shopping_carts", {
+    _anon_user_id: anonUserId,
   });
   if (error) {
     console.log(error.message);
@@ -77,12 +93,17 @@ async function clientSignUpWithEmail(currentState, formData) {
   });
 }
 
+async function clientGetJWT() {
+  return await supabase.rpc("get_jwt");
+}
 export {
   clientGetUserId,
-  clientAddToCart,
+  clientAddToShoppingCart,
+  clientMergeShoppingCarts,
   clientRefreshSession,
   clientSignIn,
   clientSignOut,
   clientSignInAnonymously,
   clientSignUpWithEmail,
+  clientGetJWT,
 };

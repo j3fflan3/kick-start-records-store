@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
 import {
   Dialog,
   DialogBackdrop,
@@ -8,11 +9,8 @@ import {
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCart } from "../../_contexts/CartProvider";
-import { createGlobalStyle } from "styled-components";
+import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 
 function AddToCartSlider() {
   const {
@@ -22,7 +20,7 @@ function AddToCartSlider() {
     setOpenCart,
     setCartItem,
     setCartLink,
-  } = useCart();
+  } = useShoppingCart();
   console.log(cartItem);
   const router = useRouter();
   function handleContinueShopping(e) {

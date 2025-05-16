@@ -1,4 +1,4 @@
-import Logo from "@/src/app/_components/layout/Logo";
+import Logo from "@/src/app/_components/header/Logo";
 import CartIcon from "@/src/app/_components/shopping-cart/CartIcon";
 import { Avatar } from "@/src/app/_components/tailwind/avatar";
 import { Link } from "@/src/app/_components/tailwind/link";
@@ -17,7 +17,7 @@ import {
   SidebarItem,
   SidebarSection,
 } from "@/src/app/_components/tailwind/sidebar";
-import HeaderLoginButton from "@/src/app/_components/layout/HeaderLoginButton";
+import HeaderLoginButton from "@/src/app/_components/header/HeaderLoginButton";
 
 const navItems = [
   { label: "Records", url: "/records" },
