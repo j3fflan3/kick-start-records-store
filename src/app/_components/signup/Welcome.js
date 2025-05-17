@@ -1,12 +1,14 @@
 "use client";
-import useSessionMergeCart from "@/src/app/_hooks/useSessionMergeCart";
+import { useSession } from "../../_contexts/SessionProvider";
 
 function Welcome() {
-  const { user } = useSessionMergeCart();
+  const { session } = useSession();
 
   return (
     <div className="text-2xl font-bold">
-      {user && <div>Welcome, {user.user_metadata.firstName}!</div>}
+      {session && !session.user.is_anonymous && (
+        <div>Welcome, {session.user.user_metadata.firstName}!</div>
+      )}
     </div>
   );
 }

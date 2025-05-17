@@ -8,19 +8,6 @@ async function clientGetUserId() {
   return await supabase.rpc("get_user_id");
 }
 
-async function clientAddToCart(guestId, cartId, catalogId, count = 1) {
-  const { data, error } = await supabase.rpc("add_to_cart", {
-    _guest_id: guestId,
-    _cart_id: cartId,
-    _catalog_id: catalogId,
-    _email: null,
-    _count: count,
-  });
-  if (error) {
-    console.log(error.message);
-  }
-  return { data, error };
-}
 async function clientAddToShoppingCart(
   catalogId,
   is_anonymous = false,
@@ -44,16 +31,6 @@ async function clientAddToShoppingCart(
 async function clientMergeShoppingCarts(anonUserId) {
   const { data, error } = await supabase.rpc("merge_shopping_carts", {
     _anon_user_id: anonUserId,
-  });
-  if (error) {
-    console.log(error.message);
-  }
-  return { data, error };
-}
-async function clientAnonAddToCart(catalogId, count = 1) {
-  const { data, error } = await supabase.rpc("add_to_anon_cart", {
-    _catalog_id: catalogId,
-    _count: count,
   });
   if (error) {
     console.log(error.message);
@@ -121,7 +98,6 @@ async function clientGetJWT() {
 }
 export {
   clientGetUserId,
-  clientAddToCart,
   clientAddToShoppingCart,
   clientMergeShoppingCarts,
   clientRefreshSession,
@@ -129,6 +105,5 @@ export {
   clientSignOut,
   clientSignInAnonymously,
   clientSignUpWithEmail,
-  clientAnonAddToCart,
   clientGetJWT,
 };

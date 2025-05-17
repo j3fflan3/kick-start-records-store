@@ -1,32 +1,33 @@
 "use client";
 
 import SpinnerMini from "@/src/app/_components/spinners/SpinnerMini";
-import { useCart } from "@/src/app/_contexts/CartProvider";
 import { useTransition } from "react";
-import { useAnonymousSessionCart } from "../../_hooks/useAnonymousSessionCart";
+import { useSession } from "../../_contexts/SessionProvider";
+import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 
 function AddToCart({ catalogId, className }) {
-  const { user, resetAnonymousSessionCart } = useAnonymousSessionCart();
-  console.log(`user: ${user && JSON.stringify(user)}`);
+  const { session } = useSession();
+  const isAnonymous = session && session.user && session.user.is_anonymous;
+
   const {
-    addToCart,
+    addToShoppingCart,
     localCartIds,
     setCartItem,
     cartItem,
     setCartLink,
     setOpenCart,
-  } = useCart();
+  } = useShoppingCart();
 
-  const { guestId, cartId } = localCartIds;
   const [isPending, startTransition] = useTransition();
 
   async function handleAddToCart(e) {
     console.log(`invoked handleAddToCart -> catalogId: ${catalogId}`);
     startTransition(async () => {
-      const { data, error } = await addToCart(catalogId);
+      const { data, error } = await addToShoppingCart(catalogId, isAnonymous);
+      // TODO: Add error handling here.
       const addedItem = data.filter((item) => item.catalogId === catalogId);
       setCartItem(addedItem[0]);
-      setCartLink(`/cart?guestId=${guestId}&cartId=${cartId}`);
+      setCartLink("/cart");
       console.log(`AddToCart item: ${JSON.stringify(cartItem)}`);
       setOpenCart(true);
     });
