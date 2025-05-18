@@ -17,6 +17,9 @@ function Page() {
             Our mission is to support indie labels and bands with a professional
             online store where they can sell their music and merchandise.
           </p>
+          <p className="text-[10px] mt-6 text-center">
+            California Seller&apos;s Permit #245052512-00001
+          </p>
         </div>
         <div className="xs:hidden sm:w-1/5"></div>
       </div>
