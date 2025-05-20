@@ -1,5 +1,5 @@
 import CartIsEmpty from "@/src/app/_components/shopping-cart/CartIsEmpty";
-import Checkout from "@/src/app/_components/shopping-cart/Checkout";
+import Checkout from "@/src/app/_components/Checkout/Checkout";
 import Spinner from "@/src/app/_components/spinners/Spinner";
 import { serverGetShoppingCart } from "@/src/app/_library/serverActions";
 import Error from "@/src/app/error";

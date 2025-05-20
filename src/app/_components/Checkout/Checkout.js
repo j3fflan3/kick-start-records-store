@@ -1,4 +1,8 @@
+"use client";
+
 function Checkout({ cart }) {
+  const cartJson = cart ? JSON.stringify(cart) : "";
+  console.log(cartJson);
   return (
     <div className="flex grid-cols-3">
       <div className="xs:hidden sm:w-1/5"></div>

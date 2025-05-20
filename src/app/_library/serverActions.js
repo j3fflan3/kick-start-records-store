@@ -3,6 +3,8 @@
 import { createClient } from "@/src/app/_library/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { OAuth2Request } from "./usps";
+import { isDateExpired } from "./utilities";
 
 async function serverGetShoppingCart() {
   const supabase = await createClient();
@@ -232,6 +234,88 @@ async function serverResend(prevState, formData) {
   return { message };
 }
 
+async function serverGetUSPSRates(request, itemCount) {
+  // class BaseRatesRequest
+  request.accountType = "EPS";
+  request.accountNumber = process.env.USPS_ACCOUNT_NUMBER;
+  // call oAuth to refresh the access token, if needed
+  await oAuthUSPSRequest();
+  const endpoint = process.env.USPS_API_URL + "/prices/v3/base-rates/search";
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.USPS_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify(request),
+    });
+    if (!response.ok) {
+      const { code, message } = await response.json();
+      throw new Error(`${code}-${message}`);
+    }
+    const data = await response.json();
+    data.handling =
+      itemCount < process.env.USPS_HANDLING_SM_TH
+        ? process.env.USPS_HANDLING_SM
+        : itemCount < process.env.USPS_HANDLING_MD_TH
+        ? process.env.USPS_HANDLING_MD
+        : process.env.USPS_HANDLING_LG;
+    return data;
+  } catch (error) {
+    const { message } = error;
+    console.log(message);
+    return { message };
+  }
+}
+
+async function oAuthUSPSRequest() {
+  if (
+    process.env.USPS_ACCESS_TOKEN !== "" &&
+    process.env.USPS_ACCESS_TOKEN_ISSUED_AT !== "" &&
+    process.env.USPS_ACCESS_TOKEN_EXPIRES_IN !== ""
+  ) {
+    if (
+      !isDateExpired(
+        process.env.USPS_ACCESS_TOKEN_ISSUED_AT,
+        process.env.USPS_ACCESS_TOKEN_EXPIRES_IN
+      )
+    ) {
+      // If the current token isn't expired, no need to re-auth
+      return;
+    }
+  }
+  let oAuthRequest = new OAuth2Request(
+    "client_credentials",
+    process.env.USPS_CLIENT_ID,
+    process.env.USPS_CLIENT_SECRET,
+    ""
+  );
+  const endpoint = process.env.USPS_API_URL + "/oauth2/v3/token";
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(oAuthRequest),
+    });
+
+    if (!response.ok) {
+      const { code, message } = await response.json();
+      throw new Error(`${code}-${message}`);
+    }
+    const { access_token, expires_in, token_type, issued_at } =
+      await response.json();
+    process.env.USPS_ACCESS_TOKEN = access_token;
+    process.env.USPS_ACCESS_TOKEN_EXPIRES_IN = expires_in;
+    process.env.USPS_ACCESS_TOKEN_TYPE = token_type;
+    process.env.USPS_ACCESS_TOKEN_ISSUED_AT = issued_at;
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 export {
   serverDeleteUser,
   serverGetShoppingCart,
@@ -246,4 +330,5 @@ export {
   serverUpdatePassword,
   serverUpdateUser,
   serverVerifyOtp,
+  serverGetUSPSRates,
 };

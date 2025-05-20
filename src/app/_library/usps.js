@@ -1,0 +1,48 @@
+class BaseRatesRequest {
+  constructor(
+    originZIPCode,
+    destinationZIPCode,
+    weight,
+    length,
+    width,
+    height,
+    mailClass,
+    processingCategory,
+    rateIndicator,
+    destinationEntryFacilityType,
+    priceType,
+    mailingDate,
+    foreignPostalCode,
+    destinationCountryCode,
+    accountType,
+    accountNumber
+  ) {
+    this.originZIPCode = originZIPCode;
+    this.destinationZIPCode = destinationZIPCode; // leave blank for international
+    this.weight = weight; // float
+    this.length = length; // float
+    this.width = width; // float
+    this.height = height; // float
+    this.mailClass = mailClass; // MEDIA MAIL, USPS_GROUND_ADVANTAGE
+    this.processingCategory = processingCategory; // FLATS, MACHINABLE, NONSTANDARD
+    this.rateIndicator = rateIndicator; // SP (Single Piece), LE (Single-piece parcel)
+    this.destinationEntryFacilityType = destinationEntryFacilityType; // NONE or INTERNATIONAL_SERVICE_CENTER
+    this.priceType = priceType;
+    this.mailingDate = mailingDate;
+    this.foreignPostalCode = foreignPostalCode; // leave blank for domestic
+    this.destinationCountryCode = destinationCountryCode; // 2-letter Alpha Code, leave blank for domestic
+    this.accountType = accountType;
+    this.accountNumber = accountNumber;
+  }
+}
+
+class OAuth2Request {
+  constructor(grantType, clientId, clientSecret, scope) {
+    this.grant_type = grantType;
+    this.client_id = clientId;
+    this.client_secret = clientSecret;
+    this.scope = scope;
+  }
+}
+
+export { BaseRatesRequest, OAuth2Request };

@@ -70,6 +70,22 @@ function shoppingCartKey(id, is_anonymous, expirationDate) {
   this.expirationDate = expirationDate;
 }
 
+function getDateForUSPS() {
+  const today = new Date();
+  let day = today.getDate();
+  let month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  day = day < 10 ? "0" + day : day;
+  month = month < 10 ? "0" + month : month;
+  return year + "-" + month + "-" + day;
+}
+
+function isDateExpired(startUnixEpoch, expirationSeconds) {
+  const expirationDate = new Date(startUnixEpoch + expirationSeconds * 1000);
+  const now = new Date();
+  return now > expirationDate;
+}
+
 export {
   printRecordFormat,
   formatDollars,
@@ -79,4 +95,6 @@ export {
   validatePassword,
   validateForm,
   shoppingCartKey,
+  getDateForUSPS,
+  isDateExpired,
 };
