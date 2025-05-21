@@ -26,6 +26,11 @@ function formatDollars(intCents) {
   return dollars;
 }
 
+const cartItemsWeight = (cart) => {
+  const weight = cart.reduce((sum, item) => sum + item.count * item.weight, 0);
+  return weight;
+};
+
 const cartSubtotal = (cart) => {
   const subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
   return formatDollars(subtotal);
@@ -91,6 +96,7 @@ export {
   formatDollars,
   cartSubtotal,
   cartItemCount,
+  cartItemsWeight,
   validateEmail,
   validatePassword,
   validateForm,

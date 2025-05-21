@@ -5,6 +5,18 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { OAuth2Request } from "./usps";
 import { isDateExpired } from "./utilities";
+import { Mutex } from "async-mutex";
+import { Redis } from "@upstash/redis";
+
+// Used for key/value storage (e.g., for USPS auth)
+const redis = Redis.fromEnv();
+// Constants for redis keys
+const USPS_ACCESS_TOKEN = "USPS_ACCESS_TOKEN";
+const USPS_ACCESS_TOKEN_EXPIRES_IN = "USPS_ACCESS_TOKEN_EXPIRES_IN";
+const USPS_ACCESS_TOKEN_TYPE = "USPS_ACCESS_TOKEN_TYPE"; // Bearer
+const USPS_ACCESS_TOKEN_ISSUED_AT = "USPS_ACCESS_TOKEN_ISSUED_AT";
+// Used for acquiring locks on shared resources when updating
+const mutex = new Mutex();
 
 async function serverGetShoppingCart() {
   const supabase = await createClient();
@@ -234,65 +246,131 @@ async function serverResend(prevState, formData) {
   return { message };
 }
 
-async function serverGetUSPSRates(request, itemCount) {
-  // class BaseRatesRequest
-  request.accountType = "EPS";
+function getDateForUSPS() {
+  const today = new Date();
+  let day = today.getDate();
+  let month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  day = day < 10 ? "0" + day : day;
+  month = month < 10 ? "0" + month : month;
+  return year + "-" + month + "-" + day;
+}
+
+function getPackageDimensions(itemCount) {
+  let length = 0;
+  let width = 0;
+  let height = 0;
+  // These values should probably be stored somewhere where they can be updated
+  // via config file or DB lookup.
+  if (itemCount < Number(process.env.HANDLING_SM_TH)) {
+    length = 8;
+    width = 7.25;
+  } else if (itemCount < Number(process.env.HANDLING_MD_TH)) {
+    length = 6;
+    width = 5;
+    height = 5;
+  } else {
+    length = 11;
+    width = 11;
+    height = 5;
+  }
+  return { length, width, height };
+}
+
+function getBaseRatesRequestObject(sJson, itemCount) {
+  // This function assumes the sJson string was stringified from
+  // a client BaseRatesRequest class instance
+  const { length, width, height } = getPackageDimensions(itemCount);
+  const request = JSON.parse(sJson);
+  request.length = length;
+  request.width = width;
+  request.height = height;
+  request.mailClass = process.env.USPS_MAIL_CLASS;
+  request.processingCategory = process.env.USPS_PROCESSING_CATEGORY;
+  request.rateIndicator = process.env.USPS_RATE_INDICATOR;
+  request.destinationEntryFacilityType =
+    process.env.USPS_DEST_ENTRY_FACILITY_TYPE;
+  request.priceType = process.env.USPS_PRICE_TYPE;
+  request.mailingDate = getDateForUSPS();
+  request.accountType = process.env.USPS_ACCOUNT_TYPE;
   request.accountNumber = process.env.USPS_ACCOUNT_NUMBER;
+  return request;
+}
+
+async function serverGetUSPSRates(sJson, itemCount) {
+  const request = getBaseRatesRequestObject(sJson, itemCount);
   // call oAuth to refresh the access token, if needed
   await oAuthUSPSRequest();
   const endpoint = process.env.USPS_API_URL + "/prices/v3/base-rates/search";
   try {
+    const access_token = await redis.get(USPS_ACCESS_TOKEN);
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.USPS_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${access_token}`,
       },
       body: JSON.stringify(request),
     });
     if (!response.ok) {
-      const { code, message } = await response.json();
-      throw new Error(`${code}-${message}`);
+      const { error } = await response.json();
+      console.log(error);
+      throw new Error(`${error.code} - ${error.message}`);
     }
     const data = await response.json();
     data.handling =
-      itemCount < process.env.USPS_HANDLING_SM_TH
-        ? process.env.USPS_HANDLING_SM
-        : itemCount < process.env.USPS_HANDLING_MD_TH
-        ? process.env.USPS_HANDLING_MD
-        : process.env.USPS_HANDLING_LG;
+      itemCount < process.env.HANDLING_SM_TH
+        ? process.env.HANDLING_SM
+        : itemCount < process.env.HANDLING_MD_TH
+        ? process.env.HANDLING_MD
+        : process.env.HANDLING_LG;
     return data;
   } catch (error) {
     const { message } = error;
     console.log(message);
     return { message };
+  } finally {
+    revalidatePath("/checkout");
   }
 }
 
-async function oAuthUSPSRequest() {
-  if (
-    process.env.USPS_ACCESS_TOKEN !== "" &&
-    process.env.USPS_ACCESS_TOKEN_ISSUED_AT !== "" &&
-    process.env.USPS_ACCESS_TOKEN_EXPIRES_IN !== ""
-  ) {
-    if (
-      !isDateExpired(
-        process.env.USPS_ACCESS_TOKEN_ISSUED_AT,
-        process.env.USPS_ACCESS_TOKEN_EXPIRES_IN
-      )
-    ) {
+async function isUSPSTokenExpired() {
+  const [token, token_issued_at, token_expires_in] = await Promise.all([
+    redis.get(USPS_ACCESS_TOKEN),
+    redis.get(USPS_ACCESS_TOKEN_ISSUED_AT),
+    redis.get(USPS_ACCESS_TOKEN_EXPIRES_IN),
+  ]);
+  if (token && token_issued_at && token) {
+    if (!isDateExpired(token_issued_at, token_expires_in)) {
+      console.log(`The token isn't expired.`);
       // If the current token isn't expired, no need to re-auth
-      return;
+      return false;
     }
   }
-  let oAuthRequest = new OAuth2Request(
-    "client_credentials",
-    process.env.USPS_CLIENT_ID,
-    process.env.USPS_CLIENT_SECRET,
-    ""
-  );
-  const endpoint = process.env.USPS_API_URL + "/oauth2/v3/token";
+  return true;
+}
+async function oAuthUSPSRequest() {
+  let tokenExpired = await isUSPSTokenExpired();
+  if (!tokenExpired) {
+    return;
+  }
+  const release = await mutex.acquire();
+  // double check expiration once again in case other ops were waiting
+  // to acquire the lock. There's probably a better way to do this.
+  tokenExpired = await isUSPSTokenExpired();
+  if (!tokenExpired) {
+    console.log("After mutex.acquire(), but token isn't expired.");
+    release();
+    return;
+  }
   try {
+    let oAuthRequest = new OAuth2Request(
+      "client_credentials",
+      process.env.USPS_CLIENT_ID,
+      process.env.USPS_CLIENT_SECRET,
+      ""
+    );
+    const endpoint = process.env.USPS_API_URL + "/oauth2/v3/token";
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
@@ -302,17 +380,24 @@ async function oAuthUSPSRequest() {
     });
 
     if (!response.ok) {
-      const { code, message } = await response.json();
-      throw new Error(`${code}-${message}`);
+      throw new Error(`oAuthUSPSRequest: ${response.status}`);
     }
     const { access_token, expires_in, token_type, issued_at } =
       await response.json();
-    process.env.USPS_ACCESS_TOKEN = access_token;
-    process.env.USPS_ACCESS_TOKEN_EXPIRES_IN = expires_in;
-    process.env.USPS_ACCESS_TOKEN_TYPE = token_type;
-    process.env.USPS_ACCESS_TOKEN_ISSUED_AT = issued_at;
+    console.log(`access_token: ${access_token}`);
+    // Update redis cache with USPS token info
+    const p = Promise.all([
+      redis.set(USPS_ACCESS_TOKEN, access_token),
+      redis.set(USPS_ACCESS_TOKEN_EXPIRES_IN, expires_in),
+      redis.set(USPS_ACCESS_TOKEN_TYPE, token_type),
+      redis.set(USPS_ACCESS_TOKEN_ISSUED_AT, issued_at),
+    ]);
+    console.log(p);
   } catch (error) {
     console.log(error.message);
+  } finally {
+    // release the mutex lock
+    release();
   }
 }
 

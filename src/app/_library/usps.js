@@ -2,23 +2,25 @@ class BaseRatesRequest {
   constructor(
     originZIPCode,
     destinationZIPCode,
-    weight,
-    length,
-    width,
-    height,
-    mailClass,
-    processingCategory,
-    rateIndicator,
-    destinationEntryFacilityType,
-    priceType,
-    mailingDate,
     foreignPostalCode,
     destinationCountryCode,
-    accountType,
-    accountNumber
+    weight,
+    length = null,
+    width = null,
+    height = null,
+    mailClass = null,
+    processingCategory = null,
+    rateIndicator = null,
+    destinationEntryFacilityType = null,
+    priceType = null,
+    mailingDate = null,
+    accountType = null,
+    accountNumber = null
   ) {
     this.originZIPCode = originZIPCode;
     this.destinationZIPCode = destinationZIPCode; // leave blank for international
+    this.foreignPostalCode = foreignPostalCode; // leave blank for domestic
+    this.destinationCountryCode = destinationCountryCode; // 2-letter Alpha Code, leave blank for domestic
     this.weight = weight; // float
     this.length = length; // float
     this.width = width; // float
@@ -29,8 +31,6 @@ class BaseRatesRequest {
     this.destinationEntryFacilityType = destinationEntryFacilityType; // NONE or INTERNATIONAL_SERVICE_CENTER
     this.priceType = priceType;
     this.mailingDate = mailingDate;
-    this.foreignPostalCode = foreignPostalCode; // leave blank for domestic
-    this.destinationCountryCode = destinationCountryCode; // 2-letter Alpha Code, leave blank for domestic
     this.accountType = accountType;
     this.accountNumber = accountNumber;
   }
