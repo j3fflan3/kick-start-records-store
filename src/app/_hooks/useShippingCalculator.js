@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BaseRatesRequest } from "../_library/usps";
-import { getDateForUSPS } from "../_library/utilities";
 import { serverGetUSPSRates } from "../_library/serverActions";
+import { BaseRatesRequest } from "../_library/usps";
 
 function useShippingCalculator(
   itemCount,
