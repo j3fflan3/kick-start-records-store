@@ -318,6 +318,7 @@ async function serverGetUSPSRates(sBaseRatesRequest, itemCount) {
       throw new Error(`${error.code} - ${error.message}`);
     }
     const data = await response.json();
+    // Add a handling field to the returned data object
     data.handling =
       itemCount < Number(process.env.HANDLING_SM_LT)
         ? process.env.HANDLING_SM
@@ -349,6 +350,7 @@ async function isUSPSTokenExpired() {
   }
   return true;
 }
+
 async function oAuthUSPSRequest() {
   let tokenExpired = await isUSPSTokenExpired();
   if (!tokenExpired) {
