@@ -319,9 +319,9 @@ async function serverGetUSPSRates(sJson, itemCount) {
     }
     const data = await response.json();
     data.handling =
-      itemCount < process.env.HANDLING_SM_TH
+      itemCount < Number(process.env.HANDLING_SM_LT)
         ? process.env.HANDLING_SM
-        : itemCount < process.env.HANDLING_MD_TH
+        : itemCount < Number(process.env.HANDLING_MD_LT)
         ? process.env.HANDLING_MD
         : process.env.HANDLING_LG;
     return data;
