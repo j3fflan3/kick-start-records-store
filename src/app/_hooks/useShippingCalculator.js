@@ -33,21 +33,21 @@ function useShippingCalculator(
     ]
   );
   useEffect(() => {
-    async function getBaseRates(sJson, count) {
-      const data = await serverGetUSPSRates(sJson, count);
+    async function getBaseRates(sBaseRatesRequest, count) {
+      const data = await serverGetUSPSRates(sBaseRatesRequest, count);
       if (data && data?.message) {
         setShippingError(data.message);
         setShippingCost(0);
         return;
       }
+      const { handling, totalBasePrice } = data;
+      const shippingAndHandling = Number(handling) + Number(totalBasePrice);
+      const roundedShippingAndHandling = shippingAndHandling.toFixed(2);
       setShippingError("");
-      let shippingAndHandling =
-        Number(data.handling) + Number(data.totalBasePrice);
-      let rounded = shippingAndHandling.toFixed(2);
-      setShippingCost(parseFloat(rounded));
+      setShippingCost(parseFloat(roundedShippingAndHandling));
     }
-    const sJson = JSON.stringify(request);
-    getBaseRates(sJson, itemCount);
+    const sBaseRatesRequest = JSON.stringify(request);
+    getBaseRates(sBaseRatesRequest, itemCount);
   }, [request, itemCount]);
 
   return { shippingCost, shippingError };

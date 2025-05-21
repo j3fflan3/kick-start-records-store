@@ -277,11 +277,11 @@ function getPackageDimensions(itemCount) {
   return { length, width, height };
 }
 
-function getBaseRatesRequestObject(sJson, itemCount) {
-  // This function assumes the sJson string was stringified from
+function getBaseRatesRequestObject(sBaseRatesRequest, itemCount) {
+  // This function assumes the sBaseRatesRequest string was stringified from
   // a client BaseRatesRequest class instance
   const { length, width, height } = getPackageDimensions(itemCount);
-  const request = JSON.parse(sJson);
+  const request = JSON.parse(sBaseRatesRequest);
   request.length = length;
   request.width = width;
   request.height = height;
@@ -297,8 +297,8 @@ function getBaseRatesRequestObject(sJson, itemCount) {
   return request;
 }
 
-async function serverGetUSPSRates(sJson, itemCount) {
-  const request = getBaseRatesRequestObject(sJson, itemCount);
+async function serverGetUSPSRates(sBaseRatesRequest, itemCount) {
+  const request = getBaseRatesRequestObject(sBaseRatesRequest, itemCount);
   // call oAuth to refresh the access token, if needed
   await oAuthUSPSRequest();
   const endpoint = process.env.USPS_API_URL + "/prices/v3/base-rates/search";
