@@ -3,9 +3,6 @@ import Spinner from "@/src/app/_components/spinners/Spinner";
 import { serverGetShoppingCart } from "@/src/app/_library/serverActions";
 import { Suspense } from "react";
 import ShoppingCart from "../_components/shopping-cart/ShoppingCart";
-
-export const revalidate = 0;
-
 async function Page() {
   const { data } = await serverGetShoppingCart();
 

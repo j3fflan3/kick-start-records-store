@@ -17,7 +17,7 @@ import {
   SidebarItem,
   SidebarSection,
 } from "@/src/app/_components/tailwind/sidebar";
-import HeaderLoginButton from "@/src/app/_components/header/HeaderLoginButton";
+import HeaderSignInButton from "@/src/app/_components/header/HeaderSignInButton";
 
 const navItems = [
   { label: "Records", url: "/records" },
@@ -46,7 +46,7 @@ function Header({ children }) {
               <MagnifyingGlassIcon />
             </NavbarItem> */}
             <NavbarSection className="max-lg:hidden">
-              <HeaderLoginButton />
+              <HeaderSignInButton />
             </NavbarSection>
             <NavbarItem>
               <CartIcon />
@@ -69,7 +69,7 @@ function Header({ children }) {
                   {label}
                 </SidebarItem>
               ))}
-              <HeaderLoginButton />
+              <HeaderSignInButton />
             </SidebarSection>
           </SidebarBody>
         </Sidebar>

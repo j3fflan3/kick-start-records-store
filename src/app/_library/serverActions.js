@@ -1,12 +1,36 @@
 "use server";
 
 import { createClient } from "@/src/app/_library/supabase/server";
+import { Redis } from "@upstash/redis";
+import { Mutex } from "async-mutex";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { OAuth2Request } from "./usps";
-import { isDateExpired } from "./utilities";
-import { Mutex } from "async-mutex";
-import { Redis } from "@upstash/redis";
+import { USPSOAuth2Request } from "./usps";
+import {
+  calculateTax,
+  cartItemsWeight,
+  cartTax,
+  cartTotal,
+  formatDollars,
+  isDateExpired,
+  printRecordFormat,
+} from "./utilities";
+import {
+  DEFAULT_CURRENCY_CODE,
+  DIGITAL_GOODS,
+  GET_FROM_FILE,
+  PayPal,
+  PayPalAmount,
+  PayPalBreakdown,
+  PayPalExperienceContext,
+  PayPalItem,
+  PayPalOrder,
+  PayPalPayee,
+  PayPalPaymentSource,
+  PayPalPurchaseUnit,
+  PayPalSimpleAmount,
+  PHYSICAL_GOODS,
+} from "./paypal";
 
 // Used for key/value storage (e.g., for USPS auth)
 const redis = Redis.fromEnv();
@@ -15,6 +39,16 @@ const USPS_ACCESS_TOKEN = "USPS_ACCESS_TOKEN";
 const USPS_ACCESS_TOKEN_EXPIRES_IN = "USPS_ACCESS_TOKEN_EXPIRES_IN";
 const USPS_ACCESS_TOKEN_TYPE = "USPS_ACCESS_TOKEN_TYPE"; // Bearer
 const USPS_ACCESS_TOKEN_ISSUED_AT = "USPS_ACCESS_TOKEN_ISSUED_AT";
+const COUNTRIES = "COUNTRIES";
+const COUNTRIES_EXPIRES_IN = "COUNTRIES_EXPIRES_IN";
+const COUNTRIES_ISSUED_AT = "COUNTRIES_ISSUED_AT";
+const CALIFORNIA_ZIPCODES = "CALIFORNIA_ZIPCODES";
+const CALIFORNIA_ZIPCODES_EXPIRES_IN = "CALIFORNIA_ZIPCODES_EXPIRES_IN";
+const CALIFORNIA_ZIPCODES_ISSUED_AT = "CALIFORNIA_ZIPCODES_ISSUED_AT";
+const PAYPAL_TOKEN = "PAYPAL_TOKEN";
+const PAYPAL_TOKEN_EXPIRES_IN = "PAYPAL_TOKEN_EXPIRES_IN";
+const PAYPAL_TOKEN_ISSUED_AT = "PAYPAL_TOKEN_ISSUED_AT";
+
 // Used for acquiring locks on shared resources when updating
 const mutex = new Mutex();
 
@@ -24,6 +58,7 @@ async function serverGetShoppingCart() {
   if (error) {
     console.log(`serverGetShoppingCart ${error.message}`);
   }
+  // revalidatePath("/cart");
   return { data, error };
 }
 async function serverUpdateShoppingCart(catalogId, count, email = null) {
@@ -67,13 +102,34 @@ const getURL = () => {
 };
 
 async function serverSignUp(prevState, formData) {
-  const firstName = formData.get("firstName");
+  let firstName = formData.get("firstName");
   const lastName = formData.get("lastName");
   const password = formData.get("password");
   const email = formData.get("email");
   const mailingList = Boolean(formData.get("mailingList"));
   const notifyList = Boolean(formData.get("notifyList"));
-  console.log(`mailingList:${mailingList}, notifyList:${notifyList}`);
+  let conCheck = formData.get("continueCheckout");
+  const continueCheckout = Boolean(formData.get("continueCheckout"));
+  console.log(
+    `serverSignUp -> conCheck:${conCheck}, continueCheckout:${continueCheckout}`
+  );
+  const address = formData.get("address");
+  const addressContinued = formData.get("addressContinued");
+  const city = formData.get("city");
+  const stateProvince = formData.get("stateProvince");
+  const postalCode = formData.get("postalCode");
+  const foreignPostalCode = formData.get("foreignPostalCode");
+  const destinationCountryCode = formData.get("destinationCountryCode");
+  if (firstName === "") {
+    // If the user signed up at the checkout page, extract the name before the
+    // @ sign in their email address.  This will be replaced by their actual name
+    // in /checkout/shipping page later (if they fill it out)
+    const at = email.indexOf("@");
+    firstName = email.substring(0, at);
+  }
+  console.log(
+    `mailingList:${mailingList}, notifyList:${notifyList}, continueCheckout:${continueCheckout}`
+  );
   const encodedEmail = encodeURIComponent(email);
   const captchaToken = formData.get("captchaToken");
   console.log(captchaToken);
@@ -93,6 +149,17 @@ async function serverSignUp(prevState, formData) {
         captchaToken,
         mailingList,
         notifyList,
+        continueCheckout,
+        shippingAddress: {
+          address,
+          addressContinued,
+          city,
+          stateProvince,
+          postalCode,
+          foreignPostalCode,
+          destinationCountryCode,
+        },
+        billingAddress: {},
       },
     },
   });
@@ -209,7 +276,27 @@ async function serverUpdateUser(prevState, formData) {
   const redirectTo = getURL() + "account/profile";
   redirect(redirectTo);
 }
-
+async function serverUpdateAnonUser(prevState, formData) {
+  const email = formData.get("email");
+  const zipCode = formData.get("zipcode");
+  const redirectURL = formData.get("redirect");
+  const supabase = await createClient();
+  const { error } = supabase.auth.updateUser({
+    email,
+    data: {
+      zipCode,
+    },
+  });
+  revalidatePath("/checkout/signin");
+  if (error) {
+    console.log(error.message);
+    const message = "error";
+    return { message };
+  }
+  const redirectTo =
+    getURL() + redirectURL + `/${email}?action=signupAnonymous&captchaToken=`;
+  redirect(redirectTo);
+}
 async function serverGetUser() {
   const supabase = await createClient();
   return await supabase.auth.getUser();
@@ -279,13 +366,17 @@ function getPackageDimensions(itemCount) {
 
 function getBaseRatesRequestObject(sBaseRatesRequest, itemCount) {
   // This function assumes the sBaseRatesRequest string was stringified from
-  // a client BaseRatesRequest class instance
+  // a client USBaseRatesRequest class or InternationalRatesRequest instance
   const { length, width, height } = getPackageDimensions(itemCount);
   const request = JSON.parse(sBaseRatesRequest);
+  const intl = request?.foreignPostalCode ?? false;
+  request.originZIPCode = process.env.USPS_ORIGIN_ZIPCODE;
   request.length = length;
   request.width = width;
   request.height = height;
-  request.mailClass = process.env.USPS_MAIL_CLASS;
+  request.mailClass = intl
+    ? process.env.USPS_MAIL_CLASS_INTL
+    : process.env.USPS_MAIL_CLASS;
   request.processingCategory = process.env.USPS_PROCESSING_CATEGORY;
   request.rateIndicator = process.env.USPS_RATE_INDICATOR;
   request.destinationEntryFacilityType =
@@ -299,9 +390,16 @@ function getBaseRatesRequestObject(sBaseRatesRequest, itemCount) {
 
 async function serverGetUSPSRates(sBaseRatesRequest, itemCount) {
   const request = getBaseRatesRequestObject(sBaseRatesRequest, itemCount);
+  const intl = request?.foreignPostalCode ?? false;
+  const sRequest = JSON.stringify(request);
+  console.log(`serverGetUSPSRates -> sRequest:\n ${sRequest}`);
   // call oAuth to refresh the access token, if needed
   await oAuthUSPSRequest();
-  const endpoint = process.env.USPS_API_URL + "/prices/v3/base-rates/search";
+  const apiPath = intl
+    ? "/international-prices/v3/base-rates/search"
+    : "/prices/v3/base-rates/search";
+  const endpoint = process.env.USPS_API_URL + apiPath;
+  console.log(endpoint);
   try {
     const access_token = await redis.get(USPS_ACCESS_TOKEN);
     const response = await fetch(endpoint, {
@@ -310,7 +408,7 @@ async function serverGetUSPSRates(sBaseRatesRequest, itemCount) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${access_token}`,
       },
-      body: JSON.stringify(request),
+      body: sRequest,
     });
     if (!response.ok) {
       const { error } = await response.json();
@@ -335,16 +433,23 @@ async function serverGetUSPSRates(sBaseRatesRequest, itemCount) {
   }
 }
 
-async function isUSPSTokenExpired() {
-  const [token, token_issued_at, token_expires_in] = await Promise.all([
-    redis.get(USPS_ACCESS_TOKEN),
-    redis.get(USPS_ACCESS_TOKEN_ISSUED_AT),
-    redis.get(USPS_ACCESS_TOKEN_EXPIRES_IN),
+class CacheObject {
+  constructor(item, issuedAt, expiresIn) {
+    this.item = item;
+    this.issuedAt = issuedAt;
+    this.expiresIn = expiresIn;
+  }
+}
+
+async function isCacheItemExpired({ item, issuedAt, expiresIn }) {
+  const [_item, _issuedAt, _expiresIn] = await Promise.all([
+    redis.get(item),
+    redis.get(issuedAt),
+    redis.get(expiresIn),
   ]);
-  if (token && token_issued_at && token) {
-    if (!isDateExpired(token_issued_at, token_expires_in)) {
-      console.log(`The token isn't expired.`);
-      // If the current token isn't expired, no need to re-auth
+  if (_item && _issuedAt && _expiresIn) {
+    if (!isDateExpired(_issuedAt, _expiresIn)) {
+      console.log(`${item} isn't expired`);
       return false;
     }
   }
@@ -352,21 +457,26 @@ async function isUSPSTokenExpired() {
 }
 
 async function oAuthUSPSRequest() {
-  let tokenExpired = await isUSPSTokenExpired();
+  const cacheObj = new CacheObject(
+    USPS_ACCESS_TOKEN,
+    USPS_ACCESS_TOKEN_ISSUED_AT,
+    USPS_ACCESS_TOKEN_EXPIRES_IN
+  );
+  let tokenExpired = await isCacheItemExpired(cacheObj);
   if (!tokenExpired) {
     return;
   }
   const release = await mutex.acquire();
   // double check expiration once again in case other ops were waiting
-  // to acquire the lock. There's probably a better way to do this.
-  tokenExpired = await isUSPSTokenExpired();
+  // to acquire the lock.
+  tokenExpired = await isCacheItemExpired(cacheObj);
   if (!tokenExpired) {
     console.log("After mutex.acquire(), but token isn't expired.");
     release();
     return;
   }
   try {
-    let oAuthRequest = new OAuth2Request(
+    let oAuthRequest = new USPSOAuth2Request(
       "client_credentials",
       process.env.USPS_CLIENT_ID,
       process.env.USPS_CLIENT_SECRET,
@@ -386,15 +496,19 @@ async function oAuthUSPSRequest() {
     }
     const { access_token, expires_in, token_type, issued_at } =
       await response.json();
-    console.log(`access_token: ${access_token}`);
     // Update redis cache with USPS token info
-    const p = Promise.all([
+    const [token, expires, type, issued] = await Promise.all([
       redis.set(USPS_ACCESS_TOKEN, access_token),
       redis.set(USPS_ACCESS_TOKEN_EXPIRES_IN, expires_in),
       redis.set(USPS_ACCESS_TOKEN_TYPE, token_type),
       redis.set(USPS_ACCESS_TOKEN_ISSUED_AT, issued_at),
     ]);
-    console.log(p);
+    console.log(
+      `set access_token: ${token}
+       set expires_in: ${expires}
+       set token_type: ${type}
+       set issued_at: ${issued}`
+    );
   } catch (error) {
     console.log(error.message);
   } finally {
@@ -402,20 +516,303 @@ async function oAuthUSPSRequest() {
     release();
   }
 }
+async function populateCountries() {
+  const cacheObj = new CacheObject(
+    COUNTRIES,
+    COUNTRIES_ISSUED_AT,
+    COUNTRIES_EXPIRES_IN
+  );
+  let tokenExpired = await isCacheItemExpired(cacheObj);
+  if (!tokenExpired) {
+    return;
+  }
+  const release = await mutex.acquire();
+  // double check expiration once again in case other ops were waiting
+  // to acquire the lock.
+  tokenExpired = await isCacheItemExpired(cacheObj);
+  if (!tokenExpired) {
+    console.log(
+      "populateCountries: After mutex.acquire(), but token isn't expired."
+    );
+    release();
+    return;
+  }
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("country")
+      .select("name, alpha2")
+      .eq("forbidden", false)
+      .order("name", { ascending: true });
+    if (error) throw error;
+    const sData = JSON.stringify(data);
+    console.log(sData);
+    const [item, expires, issued] = await Promise.all([
+      redis.set(COUNTRIES, sData),
+      redis.set(COUNTRIES_EXPIRES_IN, 60 * 60 * 24 * 7), // a week in seconds
+      redis.set(COUNTRIES_ISSUED_AT, Date.now()),
+    ]);
+    console.log(
+      `set item: ${item}\n
+       set expires_in: ${expires}\n
+       set issued_at: ${issued}`
+    );
+  } catch (error) {
+    console.log(error);
+  } finally {
+    release();
+  }
+}
 
+async function serverGetCountries() {
+  await populateCountries();
+  const countries = await redis.get(COUNTRIES);
+  const data = Array.isArray(countries) ? countries : JSON.parse(countries);
+  return { data };
+}
+
+async function populateCaliforniaZips() {
+  const cacheObj = new CacheObject(
+    CALIFORNIA_ZIPCODES,
+    CALIFORNIA_ZIPCODES_ISSUED_AT,
+    CALIFORNIA_ZIPCODES_EXPIRES_IN
+  );
+  let tokenExpired = await isCacheItemExpired(cacheObj);
+  if (!tokenExpired) {
+    return;
+  }
+  const release = await mutex.acquire();
+  // double check expiration once again in case other ops were waiting
+  // to acquire the lock.
+  tokenExpired = await isCacheItemExpired(cacheObj);
+  if (!tokenExpired) {
+    console.log(
+      "populateCaliforniaZips: After mutex.acquire(), but token isn't expired."
+    );
+    release();
+    return;
+  }
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("california_zip_codes")
+      .select("code")
+      .order("code", { ascending: true });
+    if (error) throw error;
+    const sData = JSON.stringify(data);
+    const [item, expires, issued] = await Promise.all([
+      redis.set(CALIFORNIA_ZIPCODES, sData),
+      redis.set(CALIFORNIA_ZIPCODES_EXPIRES_IN, 60 * 60 * 24 * 7), // a week in seconds
+      redis.set(CALIFORNIA_ZIPCODES_ISSUED_AT, Date.now()),
+    ]);
+    console.log(
+      `set item: ${item}\n
+       set expires_in: ${expires}\n
+       set issued_at: ${issued}`
+    );
+  } catch (error) {
+    console.log(error);
+  } finally {
+    release();
+  }
+}
+
+async function serverIsCaliforniaZip(postalCode) {
+  await populateCaliforniaZips();
+  const caliZips = await redis.get(CALIFORNIA_ZIPCODES);
+  const aCaliZips = Array.isArray(caliZips) ? caliZips : JSON.parse(caliZips);
+  // Note: postalCode should be first 5 zip characters
+  return aCaliZips.find((zip) => postalCode === zip);
+}
+
+async function oAuthPayPalRequest() {
+  const cacheObj = new CacheObject(
+    PAYPAL_TOKEN,
+    PAYPAL_TOKEN_ISSUED_AT,
+    PAYPAL_TOKEN_EXPIRES_IN
+  );
+  let tokenExpired = await isCacheItemExpired(cacheObj);
+  if (!tokenExpired) return;
+
+  const release = await mutex.acquire();
+  // double check expiration once again in case other ops were waiting
+  // to acquire the lock.
+  tokenExpired = await isCacheItemExpired(cacheObj);
+  if (!tokenExpired) {
+    console.log("After mutex.acquire(), but token isn't expired.");
+    release();
+    return;
+  }
+  try {
+    const auth_credentials = Buffer.from(
+      `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`
+    ).toString("base64");
+    // PayPal's oauth2 token endpoint
+    const oath_api_url = `${process.env.PAYPAL_API_URL}/v1/oauth2/token`;
+
+    const response = await fetch(oath_api_url, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth_credentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: "grant_type=client_credentials",
+    });
+    if (!response.ok) {
+      throw new Error(`oAuthUSPSRequest: ${response.status}`);
+    }
+    const { access_token, expires_in } = await response.json();
+    const issued_at = Date.now();
+    const [token, expires, issued] = await Promise.all([
+      redis.set(PAYPAL_TOKEN, access_token),
+      redis.set(PAYPAL_TOKEN_EXPIRES_IN, expires_in),
+      redis.set(PAYPAL_TOKEN_ISSUED_AT, issued_at),
+    ]);
+    console.log(`token: ${token}\expires: ${expires}\nissued: ${issued}`);
+  } catch (error) {
+    console.error(`Error retrieving PayPal access token: ${error.message}`);
+  } finally {
+    release();
+  }
+}
+
+async function serverCreateOrderPlaceholder(email) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("create_order_placeholder", {
+    _email: email,
+  });
+  if (error) {
+    console.error(error.message);
+  }
+  console.log(
+    `serverCreateOrderPlaceholder -> {data, error} ${JSON.stringify(
+      data
+    )}, ${JSON.stringify(error)}}`
+  );
+  return { data, error };
+}
+
+function getPayPalAmount(cart, shipping, tax) {
+  // Shipping and tax must be numbers
+  const total = cartTotal(cart);
+  const combinedTotal = cartTotal(cart, Number(shipping), Number(tax));
+  const item_total = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, total);
+  const shipping_total = new PayPalSimpleAmount(
+    DEFAULT_CURRENCY_CODE,
+    shipping
+  );
+  const tax_total = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, tax);
+  const breakdown = new PayPalBreakdown(
+    item_total,
+    shipping_total,
+    null,
+    tax_total
+  );
+
+  return new PayPalAmount(DEFAULT_CURRENCY_CODE, combinedTotal, breakdown);
+}
+
+// taxPercentFloat should be either 0, or a float representing a percentage
+// e.g, 10.25% would be .1025
+function getPayPalItems(cart, taxPercentageFloat) {
+  return cart.map((item) => {
+    const category =
+      printRecordFormat(cart.recordFormat) === "Download"
+        ? DIGITAL_GOODS
+        : PHYSICAL_GOODS;
+
+    const unit_amount = new PayPalSimpleAmount(
+      DEFAULT_CURRENCY_CODE,
+      formatDollars(item.price)
+    );
+
+    let tax_amount = null;
+    if (taxPercentageFloat > 0) {
+      tax = calculateTax(taxPercentageFloat, item.price);
+      tax_amount = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, tax);
+    }
+    return new PayPalItem(
+      item.title,
+      item.count,
+      item.description,
+      category,
+      "",
+      item.image.url,
+      unit_amount,
+      tax_amount,
+      item.sku ?? "",
+      item.upc ?? ""
+    );
+  });
+}
+
+async function serverCreateOrder(
+  cart,
+  email,
+  shipping,
+  taxPercentageFloat = 0,
+  shipping_preference = GET_FROM_FILE
+) {
+  const { data, error } = await serverCreateOrderPlaceholder(email);
+  if (error) throw new Error(error.message);
+  const { order_number: invoice_id } = data;
+
+  // Make sure the access_token isn't expired
+  await oAuthPayPalRequest();
+  const create_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders`;
+  // first, items array
+  const payPalItems = getPayPalItems(cart, taxPercentageFloat);
+  // getPayPalAmount
+  let tax = "0.00";
+  if (taxPercentageFloat > 0) {
+    tax = cartTax(cart, taxPercentageFloat);
+  }
+  const payPalAmount = getPayPalAmount(cart, shipping, tax);
+  // Payee
+  const payee = new PayPalPayee(
+    process.env.PAYPAL_MERCHANT_EMAIL,
+    process.env.PAYPAL_MERCHANT_ID
+  );
+  const description = `Kickstart Records order #${invoice_id}`;
+  const purchaseUnit = new PayPalPurchaseUnit(
+    invoice_id,
+    description,
+    payPalAmount,
+    payee,
+    payPalItems
+  );
+  const baseURL = getURL();
+  const return_url = `${baseURL}checkout/order-placed`;
+  const cancel_url = `${baseURL}checkout/payment`;
+  // payment source
+  const experienceContext = new PayPalExperienceContext(
+    shipping_preference,
+    return_url,
+    cancel_url
+  );
+  const payPal = new PayPal(experienceContext);
+  const paymentSource = new PayPalPaymentSource(payPal, null);
+  // purchaseUnit must be an array.
+  const payload = new PayPalOrder([purchaseUnit], paymentSource);
+  console.log(JSON.stringify(payload));
+}
 export {
   serverDeleteUser,
-  serverGetShoppingCart,
+  serverGetCountries,
   serverGetRecords,
+  serverGetShoppingCart,
   serverGetUser,
+  serverGetUSPSRates,
   serverResend,
   serverResetPassword,
   serverSignIn,
   serverSignOut,
   serverSignUp,
-  serverUpdateShoppingCart,
+  serverUpdateAnonUser,
   serverUpdatePassword,
+  serverUpdateShoppingCart,
   serverUpdateUser,
   serverVerifyOtp,
-  serverGetUSPSRates,
+  serverIsCaliforniaZip,
+  serverCreateOrder,
 };

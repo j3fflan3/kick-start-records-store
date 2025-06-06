@@ -9,6 +9,7 @@ export const revalidate = 0;
 
 async function Page() {
   const { data: cart, error } = await serverGetShoppingCart();
+  console.log(cart);
   if (error) {
     console.log(error);
     return <Error error="There was an error retrieving your cart" />;

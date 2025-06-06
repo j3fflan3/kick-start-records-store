@@ -18,12 +18,13 @@ function printRecordFormat(recordFormat) {
 }
 
 function formatDollars(intCents) {
+  if (intCents <= 0) return "0.00";
   const dollarFloat = intCents / 100;
-  let dollars = String(Number(parseFloat(dollarFloat)));
-  if (dollars.indexOf(".") === dollars.length - 2) {
-    dollars += "0";
-  }
-  return dollars;
+  return Number(dollarFloat).toFixed(2);
+}
+
+function calculateTax(taxPercentFloat, intCents) {
+  return Number(taxPercentFloat * (intCents / 100)).toFixed(2);
 }
 
 const cartItemsWeight = (cart) => {
@@ -31,9 +32,16 @@ const cartItemsWeight = (cart) => {
   return weight;
 };
 
-const cartSubtotal = (cart) => {
-  const subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
+const cartTotal = (cart, ...shippingAndHandling) => {
+  let subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
+  console.log(`cartTotal -> ${[...shippingAndHandling]}`);
+  subtotal += [...shippingAndHandling].reduce((sum, item) => sum + item, 0);
   return formatDollars(subtotal);
+};
+
+const cartTax = (cart, taxPercentageFloat) => {
+  let subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
+  return calculateTax(taxPercentageFloat, subtotal);
 };
 
 const cartItemCount = (cart) => {
@@ -94,7 +102,9 @@ function isDateExpired(startUnixEpoch, expirationSeconds) {
 export {
   printRecordFormat,
   formatDollars,
-  cartSubtotal,
+  calculateTax,
+  cartTotal,
+  cartTax,
   cartItemCount,
   cartItemsWeight,
   validateEmail,

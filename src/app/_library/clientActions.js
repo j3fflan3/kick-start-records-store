@@ -93,6 +93,12 @@ async function clientSignUpWithEmail(currentState, formData) {
   });
 }
 
+async function clientUpdateAnonymousUserWithEmail(email) {
+  return await supabase.auth.updateUser({
+    email,
+  });
+}
+
 async function clientGetJWT() {
   return await supabase.rpc("get_jwt");
 }
@@ -106,4 +112,5 @@ export {
   clientSignInAnonymously,
   clientSignUpWithEmail,
   clientGetJWT,
+  clientUpdateAnonymousUserWithEmail,
 };

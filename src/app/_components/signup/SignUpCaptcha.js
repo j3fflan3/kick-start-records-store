@@ -1,8 +1,7 @@
 "use client";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import SpinnerMini from "../spinners/SpinnerMini";
+import { useRef, useState } from "react";
 import Spinner from "../spinners/Spinner";
 
 const SignUpCaptcha = ({ siteKey }) => {
@@ -14,12 +13,9 @@ const SignUpCaptcha = ({ siteKey }) => {
     captchaRef.current.execute();
   };
   const disableSubmit = token === "";
-  useEffect(() => {
-    if (token !== "") {
-      // Perform any action with the token if needed
-      console.log("Captcha token:", token);
-    }
-  }, [token]);
+  // useEffect(() => {
+
+  // }, []);
   const handleSubmit = () => {
     setIsSubmitting(true);
     captchaRef.current.resetCaptcha();

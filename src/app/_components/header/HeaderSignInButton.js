@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "../../_contexts/SessionProvider";
 import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 
-function HeaderLoginButton() {
+function HeaderSignInButton() {
   const { session } = useSession();
   const { setCount } = useShoppingCart();
   const router = useRouter();
@@ -39,15 +39,15 @@ function HeaderLoginButton() {
       <NavbarItem key="login" href={loginHref}>
         {session && !session.user.is_anonymous
           ? `Hi, ${session.user.user_metadata.firstName}!`
-          : "Log In/Join"}
+          : "Sign In/Join"}
       </NavbarItem>
       {session && !session.user.is_anonymous && (
         <NavbarItem key="logout" onClick={handleSignOut}>
-          Log Out
+          Sign Out
         </NavbarItem>
       )}
     </>
   );
 }
 
-export default HeaderLoginButton;
+export default HeaderSignInButton;

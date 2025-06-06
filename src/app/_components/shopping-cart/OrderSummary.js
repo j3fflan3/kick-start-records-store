@@ -1,13 +1,18 @@
 "use client";
 
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
-import { cartItemCount, cartSubtotal } from "@/src/app/_library/utilities";
+import { cartItemCount, cartTotal } from "@/src/app/_library/utilities";
 import Link from "next/link";
+import { useSession } from "../../_contexts/SessionProvider";
 
 function OrderSummary({ cart }) {
+  const { session } = useSession();
+  const isLoggedIn = session && session.user.is_anonymous === false;
+
+  const checkoutURL = isLoggedIn ? "/checkout/payment" : "/checkout/signin";
   if (!cart) return null;
   const numItems = cartItemCount(cart);
-  const subTotal = cartSubtotal(cart);
+  const subTotal = cartTotal(cart);
   return (
     <>
       <h2
@@ -70,7 +75,7 @@ function OrderSummary({ cart }) {
       </dl>
       <div className="flex mt-6 w-full content-center">
         <Link
-          href={`/checkout`}
+          href={checkoutURL}
           className="w-full text-center rounded-md border border-transparent bg-accent-600 px-4 py-3 text-base font-medium text-white shadow-xs hover:cursor-pointer hover:bg-accent-700 focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden"
         >
           Checkout
