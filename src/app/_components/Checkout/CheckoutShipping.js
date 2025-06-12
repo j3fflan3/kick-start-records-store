@@ -3,10 +3,9 @@
 function CheckoutShipping({
   countries,
   errors,
-  showPayPalButtons,
-  shippingFields,
-  shippingHandlers,
-  shippingRefs,
+  billingSame,
+  setBillingSame,
+  shippingContext,
 }) {
   const {
     firstName,
@@ -16,39 +15,30 @@ function CheckoutShipping({
     addressContinued,
     city,
     stateProvince,
-    destinationZIPCode,
-    foreignPostalCode,
-    billingSame,
-    email,
-  } = shippingFields;
-  const {
-    setBillingSame,
+    postalCode,
+    firstNameRef,
+    lastNameRef,
+    destinationCountryCodeRef,
+    addressRef,
+    cityRef,
+    stateProvinceRef,
+    postalCodeRef,
     handleAddress,
     handleAddressContinued,
     handleCity,
     handleStateProvince,
-    handleFirst,
-    handleLast,
+    handleFirstName,
+    handleLastName,
     handleDestinationCountryCode,
     handlePostalCode,
-    handleForeignPostalCode,
-    handleEmail,
-    handleNext,
-  } = shippingHandlers;
-
-  const {
-    emailRef,
-    foreignPostalCodeRef,
-    destinationCountryCodeRef,
-    destinationZipCodeRef,
-  } = shippingRefs;
+  } = shippingContext;
   return (
     <div>
       <h3
         id="contact-info-heading"
-        className="text-lg font-medium text-gray-900"
+        className="text-2xl font-bold text-gray-900"
       >
-        Shipping information
+        Shipping Information
       </h3>
       <p className="text-primary-900 text-sm">
         Please enter your shipping address and email to calculate shipping and
@@ -68,7 +58,8 @@ function CheckoutShipping({
             placeholder=""
             className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             value={firstName}
-            onChange={handleFirst}
+            ref={firstNameRef}
+            onChange={handleFirstName}
             required
           />
         </div>
@@ -87,7 +78,8 @@ function CheckoutShipping({
             placeholder=""
             className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             required
-            onChange={handleLast}
+            onChange={handleLastName}
+            ref={lastNameRef}
             value={lastName}
           />
         </div>
@@ -134,6 +126,7 @@ function CheckoutShipping({
               className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
               required
               onChange={handleAddress}
+              ref={addressRef}
               value={address}
             />
           </div>
@@ -166,6 +159,7 @@ function CheckoutShipping({
               autoComplete="address-level2"
               className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               value={city}
+              ref={cityRef}
               onChange={handleCity}
             />
           </div>
@@ -186,6 +180,7 @@ function CheckoutShipping({
               autoComplete="state_province"
               className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               value={stateProvince}
+              ref={stateProvinceRef}
               onChange={handleStateProvince}
             />
           </div>
@@ -199,27 +194,15 @@ function CheckoutShipping({
             Postal code
           </label>
           <div className="mt-2">
-            {destinationCountryCode === "US" ? (
-              <input
-                id="postal_code"
-                name="postal_code"
-                type="text"
-                value={destinationZIPCode}
-                ref={destinationZipCodeRef}
-                onChange={handlePostalCode}
-                className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
-              />
-            ) : (
-              <input
-                id="postal_code"
-                name="postal_code"
-                type="text"
-                value={foreignPostalCode}
-                ref={foreignPostalCodeRef}
-                onChange={handleForeignPostalCode}
-                className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
-              />
-            )}
+            <input
+              id="postal_code"
+              name="postal_code"
+              type="text"
+              value={postalCode}
+              ref={postalCodeRef}
+              onChange={handlePostalCode}
+              className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
+            />
           </div>
         </div>
       </div>

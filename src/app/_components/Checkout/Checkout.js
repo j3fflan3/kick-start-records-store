@@ -14,6 +14,8 @@ import { serverCreateOrder } from "../../_library/serverActions";
 import CheckoutTotal from "./CheckoutTotal";
 import CheckoutShipping from "./CheckoutShipping";
 import CheckoutBilling from "./CheckoutBilling";
+import { useShipping } from "../../_contexts/ShippingProvider";
+import { useBilling } from "../../_contexts/BillingProvider";
 
 function Checkout({ cart, countries }) {
   // const []
@@ -24,56 +26,26 @@ function Checkout({ cart, countries }) {
   // State
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState("");
-  const [errors, setErrors] = useState({});
-  // Shipping State
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
-  const [addressContinued, setAddressContinued] = useState("");
-  const [city, setCity] = useState("");
-  const [stateProvince, setStateProvince] = useState("");
-  const [destinationZIPCode, setDestinationZipCode] = useState(
-    user?.user_metadata?.shippingAddress?.postalCode ?? ""
-  );
-  const [destinationCountryCode, setDestinationCountryCode] = useState(
-    user?.user_metadata?.shippingAddress?.destinationCountryCode ?? "US"
-  );
-  const [foreignPostalCode, setForeignPostalCode] = useState(
-    user?.user_metadata?.shippingAddress?.foreignPostalCode ?? ""
-  );
-  // Billing State
-  const [billingFirstName, setBillingFirstName] = useState("");
-  const [billingLastName, setBillingLastName] = useState("");
-  const [billingAddress, setBillingAddress] = useState("");
-  const [billingAddressContinued, setBillingAddressContinued] = useState("");
-  const [billingCity, setBillingCity] = useState("");
-  const [billingStateProvince, setBillingStateProvince] = useState("");
-  const [billingDestinationZIPCode, setBillingDestinationZipCode] = useState(
-    user?.user_metadata?.billingAddress?.postalCode ?? ""
-  );
-  const [billingDestinationCountryCode, setBillingDestinationCountryCode] =
-    useState(
-      user?.user_metadata?.billingAddress?.destinationCountryCode ?? "US"
-    );
-  const [billingForeignPostalCode, setBillingForeignPostalCode] = useState(
-    user?.user_metadata?.billingAddress?.foreignPostalCode ?? ""
-  );
+  // Instead of destructuring here, destructure in the child component
+  // and take only what you need for checkout.js from here.
+  const shippingContext = useShipping();
+  const {
+    errors,
+    firstName,
+    lastName,
+    address,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+  } = shippingContext;
+  // Billing
+  const billingContext = useBilling();
 
   // functional, email
   const [billingSame, setBillingSame] = useState(true);
   const [showPayPalButtons, setShowPayPalButtons] = useState(false);
   const [email, setEmail] = useState(user?.user_metadata?.email ?? "");
-
-  // Refs
-  // Shipping
-  const destinationCountryCodeRef = useRef(null);
-  const destinationZipCodeRef = useRef(null);
-  const foreignPostalCodeRef = useRef(null);
-
-  // Billing
-  const billingDestinationCountryCodeRef = useRef(null);
-  const billingDestinationZipCodeRef = useRef(null);
-  const billingForeignPostalCodeRef = useRef(null);
 
   // Common
   const emailRef = useRef(null);
@@ -84,8 +56,7 @@ function Checkout({ cart, countries }) {
   const { shippingCost, shippingError } = useShippingCalculator({
     itemCount,
     weight,
-    destinationZIPCode,
-    foreignPostalCode,
+    postalCode,
     destinationCountryCode,
   });
   useEffect(
@@ -102,97 +73,6 @@ function Checkout({ cart, countries }) {
     }, cartJson: ${cartJson}`
   );
 
-  // Shipping handlers
-  function handleFirst(e) {
-    setErrors({});
-    setFirstName(e.target.value);
-  }
-  function handleLast(e) {
-    setErrors({});
-    setLastName(e.target.value);
-  }
-  function handleAddress(e) {
-    setErrors({});
-    setAddress(e.target.value);
-  }
-  function handleAddressContinued(e) {
-    setErrors({});
-    setAddressContinued(e.target.value);
-  }
-  function handleCity(e) {
-    setErrors({});
-    setCity(e.target.value);
-  }
-  function handleStateProvince(e) {
-    setErrors({});
-    setStateProvince(e.target.value);
-  }
-  function handleDestinationCountryCode(e) {
-    setErrors({});
-    setDestinationCountryCode(e.target.value);
-    if (destinationCountryCode !== "US") setDestinationZipCode("");
-    else setForeignPostalCode("");
-    console.log(
-      `handleDestinationCountryCode -> shippingCost = ${shippingCost}`
-    );
-  }
-  function handlePostalCode(e) {
-    setErrors({});
-    setForeignPostalCode("");
-    setDestinationZipCode(e.target.value);
-  }
-
-  function handleForeignPostalCode(e) {
-    setErrors({});
-    setDestinationZipCode("");
-    setForeignPostalCode(e.target.value);
-  }
-  // Billing handlers.
-  function handleBillingFirst(e) {
-    setErrors({});
-    setBillingFirstName(e.target.value);
-  }
-  function handleBillingLast(e) {
-    setErrors({});
-    setBillingLastName(e.target.value);
-  }
-  function handleBillingAddress(e) {
-    setErrors({});
-    setBillingAddress(e.target.value);
-  }
-  function handleBillingAddressContinued(e) {
-    setErrors({});
-    setBillingAddressContinued(e.target.value);
-  }
-  function handleBillingCity(e) {
-    setErrors({});
-    setBillingCity(e.target.value);
-  }
-  function handleBillingStateProvince(e) {
-    setErrors({});
-    setBillingStateProvince(e.target.value);
-  }
-  function handleBillingDestinationCountryCode(e) {
-    setErrors({});
-    setBillingDestinationCountryCode(e.target.value);
-    if (destinationCountryCode !== "US") setBillingDestinationZipCode("");
-    else setBillingForeignPostalCode("");
-    console.log(
-      `handleBillingDestinationCountryCode -> shippingCost = ${shippingCost}`
-    );
-  }
-  function handleBillingPostalCode(e) {
-    setErrors({});
-    setBillingForeignPostalCode("");
-    setBillingDestinationZipCode(e.target.value);
-  }
-
-  function handleBillingForeignPostalCode(e) {
-    setErrors({});
-    setBillingDestinationZipCode("");
-    setBillingForeignPostalCode(e.target.value);
-  }
-
   // Common
   function handleEmail(e) {
     setErrors({});
@@ -201,7 +81,7 @@ function Checkout({ cart, countries }) {
   const requiredValidator = (val) => val !== "";
 
   function handleNext(e) {
-    const valid = validateForm(
+    let valid = validateForm(
       setErrors,
       {
         field: "first_name",
@@ -235,10 +115,7 @@ function Checkout({ cart, countries }) {
       },
       {
         field: "postal_code",
-        value:
-          destinationCountryCode === "US"
-            ? destinationZIPCode
-            : foreignPostalCode,
+        value: postalCode,
         validator: requiredValidator,
         message: "Postal Code is required.",
       }
@@ -258,71 +135,6 @@ function Checkout({ cart, countries }) {
   function onError() {}
   const isProcessing = false;
 
-  const shippingFields = {
-    firstName,
-    lastName,
-    destinationCountryCode,
-    address,
-    addressContinued,
-    city,
-    stateProvince,
-    destinationZIPCode,
-    foreignPostalCode,
-    billingSame,
-    email,
-  };
-
-  const shippingRefs = {
-    emailRef,
-    foreignPostalCodeRef,
-    destinationCountryCodeRef,
-    destinationZipCodeRef,
-  };
-
-  const shippingHandlers = {
-    setBillingSame,
-    handleAddress,
-    handleAddressContinued,
-    handleCity,
-    handleStateProvince,
-    handleFirst,
-    handleLast,
-    handleDestinationCountryCode,
-    handlePostalCode,
-    handleForeignPostalCode,
-    handleEmail,
-    handleNext,
-  };
-
-  const billingFields = {
-    billingFirstName,
-    billingLastName,
-    billingDestinationCountryCode,
-    billingAddress,
-    billingAddressContinued,
-    billingCity,
-    billingStateProvince,
-    billingDestinationZIPCode,
-    billingForeignPostalCode,
-  };
-
-  const billingRefs = {
-    billingForeignPostalCodeRef,
-    billingDestinationCountryCodeRef,
-    billingDestinationZipCodeRef,
-  };
-
-  const billingHandlers = {
-    handleBillingAddress,
-    handleBillingAddressContinued,
-    handleBillingCity,
-    handleBillingStateProvince,
-    handleBillingFirst,
-    handleBillingLast,
-    handleBillingDestinationCountryCode,
-    handleBillingPostalCode,
-    handleBillingForeignPostalCode,
-  };
   const payPalStyle = { layout: "vertical", disableMaxWidth: true };
   return (
     <div className="bg-white">
@@ -348,18 +160,15 @@ function Checkout({ cart, countries }) {
             <CheckoutShipping
               countries={countries}
               errors={errors}
-              showPayPalButtons={showPayPalButtons}
-              shippingFields={shippingFields}
-              shippingHandlers={shippingHandlers}
-              shippingRefs={shippingRefs}
+              billingSame={billingSame}
+              setBillingSame={setBillingSame}
+              shippingContext={shippingContext}
             />
             {!billingSame && (
               <CheckoutBilling
                 countries={countries}
                 errors={errors}
-                billingFields={billingFields}
-                billingHandlers={billingHandlers}
-                billingRefs={billingRefs}
+                billingContext={billingContext}
               />
             )}
 

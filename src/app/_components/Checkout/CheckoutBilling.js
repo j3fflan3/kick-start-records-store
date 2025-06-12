@@ -1,45 +1,36 @@
 "use client";
 
-export default function CheckoutBilling({
-  countries,
-  errors,
-  billingFields,
-  billingHandlers,
-  billingRefs,
-}) {
+export default function CheckoutBilling({ countries, errors, billingContext }) {
   const {
-    billingFirstName,
-    billingLastName,
-    billingDestinationCountryCode,
-    billingAddress,
-    billingAddressContinued,
-    billingCity,
-    billingStateProvince,
-    billingDestinationZIPCode,
-    billingForeignPostalCode,
-  } = billingFields;
-  const {
-    handleBillingAddress,
-    handleBillingAddressContinued,
-    handleBillingCity,
-    handleBillingStateProvince,
-    handleBillingFirst,
-    handleBillingLast,
-    handleBillingDestinationCountryCode,
-    handleBillingPostalCode,
-    handleBillingForeignPostalCode,
-  } = billingHandlers;
-
-  const {
-    billingForeignPostalCodeRef,
-    billingDestinationCountryCodeRef,
-    billingDestinationZipCodeRef,
-  } = billingRefs;
+    firstName,
+    lastName,
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+    firstNameRef,
+    lastNameRef,
+    addressRef,
+    cityRef,
+    stateProvinceRef,
+    postalCodeRef,
+    destinationCountryCodeRef,
+    handleAddress,
+    handleAddressContinued,
+    handleCity,
+    handleStateProvince,
+    handleFirstName,
+    handleLastName,
+    handleDestinationCountryCode,
+    handlePostalCode,
+  } = billingContext;
   return (
     <div className="mt-6">
       <h3
         id="billing_info_heading"
-        className="text-lg font-medium text-gray-900"
+        className="text-2xl font-bold text-gray-900"
       >
         Billing information
       </h3>
@@ -56,8 +47,9 @@ export default function CheckoutBilling({
             name="billing_first_name"
             placeholder=""
             className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
-            value={billingFirstName}
-            onChange={handleBillingFirst}
+            value={firstName}
+            ref={firstNameRef}
+            onChange={handleFirstName}
             required
           />
         </div>
@@ -76,8 +68,9 @@ export default function CheckoutBilling({
             placeholder=""
             className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
             required
-            onChange={handleBillingLast}
-            value={billingLastName}
+            onChange={handleLastName}
+            ref={lastNameRef}
+            value={lastName}
           />
         </div>
       </div>
@@ -92,9 +85,9 @@ export default function CheckoutBilling({
           <select
             name="billing_country"
             className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
-            onChange={handleBillingDestinationCountryCode}
-            ref={billingDestinationCountryCodeRef}
-            value={billingDestinationCountryCode}
+            onChange={handleDestinationCountryCode}
+            ref={destinationCountryCodeRef}
+            value={destinationCountryCode}
           >
             {countries.map((country) => (
               <option value={country.alpha2} key={country.alpha2}>
@@ -122,8 +115,9 @@ export default function CheckoutBilling({
               placeholder=""
               className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
               required
-              onChange={handleBillingAddress}
-              value={billingAddress}
+              onChange={handleAddress}
+              ref={addressRef}
+              value={address}
             />
           </div>
           <div className="sm:col-span-3 mt-6">
@@ -134,8 +128,8 @@ export default function CheckoutBilling({
                 placeholder="(optional)"
                 className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
                 required
-                onChange={handleBillingAddressContinued}
-                value={billingAddressContinued}
+                onChange={handleAddressContinued}
+                value={addressContinued}
               />
             </div>
           </div>
@@ -154,8 +148,9 @@ export default function CheckoutBilling({
               type="text"
               autoComplete="address-level2"
               className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-              value={billingCity}
-              onChange={handleBillingCity}
+              value={city}
+              ref={cityRef}
+              onChange={handleCity}
             />
           </div>
         </div>
@@ -174,8 +169,9 @@ export default function CheckoutBilling({
               type="text"
               autoComplete="billing_state_province"
               className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-              value={billingStateProvince}
-              onChange={handleBillingStateProvince}
+              value={stateProvince}
+              ref={stateProvinceRef}
+              onChange={handleStateProvince}
             />
           </div>
         </div>
@@ -188,27 +184,15 @@ export default function CheckoutBilling({
             Postal code
           </label>
           <div className="mt-2">
-            {billingDestinationCountryCode === "US" ? (
-              <input
-                id="billing_postal_code"
-                name="billing_postal_code"
-                type="text"
-                value={billingDestinationZIPCode}
-                ref={billingDestinationZipCodeRef}
-                onChange={handleBillingPostalCode}
-                className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
-              />
-            ) : (
-              <input
-                id="billing_postal_code"
-                name="billing_postal_code"
-                type="text"
-                value={billingForeignPostalCode}
-                ref={billingForeignPostalCodeRef}
-                onChange={handleBillingForeignPostalCode}
-                className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
-              />
-            )}
+            <input
+              id="billing_postal_code"
+              name="billing_postal_code"
+              type="text"
+              value={postalCode}
+              ref={postalCodeRef}
+              onChange={handlePostalCode}
+              className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
+            />
           </div>
         </div>
       </div>

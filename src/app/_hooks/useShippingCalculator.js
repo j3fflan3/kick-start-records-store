@@ -10,23 +10,22 @@ import {
 function useShippingCalculator({
   itemCount,
   weight,
-  destinationZIPCode = "",
-  foreignPostalCode = "",
-  destinationCountryCode = "",
+  postalCode = "",
+  destinationCountryCode = "US",
 }) {
   const [shippingCost, setShippingCost] = useState(0);
   const [shippingError, setShippingError] = useState("");
 
   const request = useMemo(() => {
-    return foreignPostalCode
+    return destinationCountryCode !== "US"
       ? new InternalationRatesRequest(
           "92339",
-          foreignPostalCode,
+          postalCode, // foreignPostalCode
           destinationCountryCode,
           weight
         )
-      : new USBaseRatesRequest("92339", destinationZIPCode, weight);
-  }, [destinationCountryCode, destinationZIPCode, foreignPostalCode, weight]);
+      : new USBaseRatesRequest("92339", postalCode, weight);
+  }, [destinationCountryCode, postalCode, weight]);
 
   useEffect(() => {
     async function getBaseRates(sBaseRatesRequest, count) {
@@ -45,20 +44,13 @@ function useShippingCalculator({
     // if the user hasn't stored a zipcode, they'll need to enter one on the
     // checkout/payment page.
 
-    if (!destinationZIPCode && !foreignPostalCode) return;
-    if (destinationZIPCode && destinationZIPCode < 5) return;
+    if (!postalCode || (postalCode && postalCode < 5)) return;
     const sBaseRatesRequest = JSON.stringify(request);
     console.log(
       `useShippingCalculator -> sBaseRatesRequest: ${sBaseRatesRequest}`
     );
     getBaseRates(sBaseRatesRequest, itemCount);
-  }, [
-    request,
-    itemCount,
-    destinationCountryCode,
-    foreignPostalCode,
-    destinationZIPCode,
-  ]);
+  }, [request, itemCount, destinationCountryCode, postalCode]);
 
   return { shippingCost, shippingError };
 }
