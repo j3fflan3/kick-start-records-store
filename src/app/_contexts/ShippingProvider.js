@@ -111,6 +111,8 @@ function ShippingProvider({ children }) {
         stateProvince,
         postalCode,
         destinationCountryCode,
+        // Setters
+        setErrors,
         // Handler functions
         handleFirstName,
         handleLastName,

@@ -31,6 +31,7 @@ function Checkout({ cart, countries }) {
   const shippingContext = useShipping();
   const {
     errors,
+    setErrors: setShippingErrors,
     firstName,
     lastName,
     address,
@@ -75,14 +76,15 @@ function Checkout({ cart, countries }) {
 
   // Common
   function handleEmail(e) {
-    setErrors({});
+    setShippingErrors({});
     setEmail(e.target.value);
   }
   const requiredValidator = (val) => val !== "";
 
   function handleNext(e) {
-    let valid = validateForm(
-      setErrors,
+    let validBilling = true; // Placeholder bool
+    let validShipping = validateForm(
+      setShippingErrors,
       {
         field: "first_name",
         value: firstName,
