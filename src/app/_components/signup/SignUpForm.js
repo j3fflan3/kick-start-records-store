@@ -115,12 +115,12 @@ function SignUpForm({ token }) {
       <form action={formAction} ref={formRef} className="space-y-6">
         {/* continueCheckout "" for false, "true" for true */}
         <input type="hidden" name="continueCheckout" value="" />
+        <input type="hidden" name="billingSameAsShipping" value="true" />
         <input type="hidden" name="address" value="" />
         <input type="hidden" name="addressContinued" value="" />
         <input type="hidden" name="city" value="" />
         <input type="hidden" name="stateProvince" value="" />
         <input type="hidden" name="postalCode" value="" />
-        <input type="hidden" name="foreignPostalCode" value="" />
         <input type="hidden" name="destinationCountryCode" value="US" />
         <div className="mt-2">
           <input

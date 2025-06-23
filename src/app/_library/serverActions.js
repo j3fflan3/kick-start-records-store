@@ -110,15 +110,17 @@ async function serverSignUp(prevState, formData) {
   const notifyList = Boolean(formData.get("notifyList"));
   let conCheck = formData.get("continueCheckout");
   const continueCheckout = Boolean(formData.get("continueCheckout"));
+  const billingSameAsShipping = Boolean(formData.get("billingSameAsShipping"));
   console.log(
     `serverSignUp -> conCheck:${conCheck}, continueCheckout:${continueCheckout}`
   );
+  // These are blank during signup (and signup short form) and used as defaults
+  // Therefore we use the same fields for both shipping and billing initially
   const address = formData.get("address");
   const addressContinued = formData.get("addressContinued");
   const city = formData.get("city");
   const stateProvince = formData.get("stateProvince");
   const postalCode = formData.get("postalCode");
-  const foreignPostalCode = formData.get("foreignPostalCode");
   const destinationCountryCode = formData.get("destinationCountryCode");
   if (firstName === "") {
     // If the user signed up at the checkout page, extract the name before the
@@ -150,16 +152,23 @@ async function serverSignUp(prevState, formData) {
         mailingList,
         notifyList,
         continueCheckout,
+        billingSameAsShipping,
         shippingAddress: {
           address,
           addressContinued,
           city,
           stateProvince,
           postalCode,
-          foreignPostalCode,
           destinationCountryCode,
         },
-        billingAddress: {},
+        billingAddress: {
+          address,
+          addressContinued,
+          city,
+          stateProvince,
+          postalCode,
+          destinationCountryCode,
+        },
       },
     },
   });

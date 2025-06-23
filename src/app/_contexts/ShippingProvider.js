@@ -70,6 +70,17 @@ function ShippingProvider({ children }) {
   // to set the state values when session (and therefore user) is not null.
   useEffect(() => {
     if (user && !initialized) {
+      console.log(
+        `inside Shipping Provider useEffect: firstName:${
+          user?.user_metadata?.firstName ?? ""
+        }`
+      );
+      console.log(
+        `inside Shipping Provider useEffect: lastName:${
+          user?.user_metadata?.lastName ?? ""
+        }`
+      );
+
       setFirstName(user?.user_metadata?.firstName ?? "");
       setLastName(user?.user_metadata?.lastName ?? "");
       setAddress(user?.user_metadata?.shippingAddress?.address ?? "");
