@@ -104,12 +104,14 @@ function SignUpFormShort({ token }) {
     <>
       <form action={formAction} ref={formRef} className="space-y-6">
         {/* These values may be updated later at checkout or in the profile */}
-        <input type="hidden" name="firstName" value="" />
-        <input type="hidden" name="lastName" value="" />
-        <input type="hidden" name="postalCode" value="" />
-        <input type="hidden" name="foreignPostalCode" value="" />
-        <input type="hidden" name="destinationCountryCode" value="" />
         <input type="hidden" name="continueCheckout" value="true" />
+        <input type="hidden" name="billingSameAsShipping" value="true" />
+        <input type="hidden" name="address" value="" />
+        <input type="hidden" name="addressContinued" value="" />
+        <input type="hidden" name="city" value="" />
+        <input type="hidden" name="stateProvince" value="" />
+        <input type="hidden" name="postalCode" value="" />
+        <input type="hidden" name="destinationCountryCode" value="US" />
         <div className="mt-2">
           <input
             type="email"
@@ -155,7 +157,6 @@ function SignUpFormShort({ token }) {
             {errors?.password && errors.password}
           </p>
         </div>
-
         <div className="mt-2">
           <input
             type="checkbox"

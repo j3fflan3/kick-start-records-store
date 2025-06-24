@@ -122,7 +122,7 @@ async function serverSignUp(prevState, formData) {
   const stateProvince = formData.get("stateProvince");
   const postalCode = formData.get("postalCode");
   const destinationCountryCode = formData.get("destinationCountryCode");
-  if (firstName === "") {
+  if (!firstName) {
     // If the user signed up at the checkout page, extract the name before the
     // @ sign in their email address.  This will be replaced by their actual name
     // in /checkout/shipping page later (if they fill it out)
