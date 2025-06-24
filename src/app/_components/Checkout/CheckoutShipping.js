@@ -226,7 +226,7 @@ function CheckoutShipping({
           type="checkbox"
           checked={billingSame}
           onChange={() => setBillingSame(!billingSame)}
-          name="billing"
+          name="billingSameAsShipping"
         />
         &nbsp;Billing address is the same as Shipping
       </div>

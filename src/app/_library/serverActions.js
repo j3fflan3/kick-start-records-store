@@ -356,7 +356,7 @@ function getPackageDimensions(itemCount) {
   let length = 0;
   let width = 0;
   let height = 0;
-  // These values should probably be stored somewhere where they can be updated
+  // These values should be stored somewhere where they can be updated
   // via config file or DB lookup.
   if (itemCount < Number(process.env.HANDLING_SM_TH)) {
     length = 8;
