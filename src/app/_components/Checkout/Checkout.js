@@ -10,16 +10,19 @@ import {
 } from "@/src/app/_library/utilities";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useEffect, useRef, useState } from "react";
-import { serverCreateOrder } from "../../_library/serverActions";
-import CheckoutTotal from "./CheckoutTotal";
-import CheckoutShipping from "./CheckoutShipping";
-import CheckoutBilling from "./CheckoutBilling";
-import { useShipping } from "../../_contexts/ShippingProvider";
 import { useBilling } from "../../_contexts/BillingProvider";
+import { useShipping } from "../../_contexts/ShippingProvider";
+import { Address, UserAddress } from "../../_library/address";
+import { serverCreateOrder } from "../../_library/serverActions";
+import { serverSaveUserAddress } from "@/src/app/_library/settings/serverSettingsActions";
+import CheckoutBilling from "./CheckoutBilling";
+import CheckoutShipping from "./CheckoutShipping";
+import CheckoutTotal from "./CheckoutTotal";
 
 function Checkout({ cart, countries }) {
   // const []
   // use hooks and funcs
+
   const { session } = useSession();
   const { user } = session;
   console.log(user);
@@ -30,11 +33,12 @@ function Checkout({ cart, countries }) {
   // and take only what you need for checkout.js from here.
   const shippingContext = useShipping();
   const {
-    errors,
+    errors: shippingErrors,
     setErrors: setShippingErrors,
     firstName,
     lastName,
     address,
+    addressContinued,
     city,
     stateProvince,
     postalCode,
@@ -42,6 +46,18 @@ function Checkout({ cart, countries }) {
   } = shippingContext;
   // Billing
   const billingContext = useBilling();
+  const {
+    errors: billingErrors,
+    setErrors: setBillingErrors,
+    firstName: billingFirstName,
+    lastName: billingLastName,
+    address: billingAddress,
+    addressContinued: billingAddressContinued,
+    city: billingCity,
+    stateProvince: billingStateProvince,
+    postalCode: billingPostalCode,
+    destinationCountryCode: billingDestinationCountryCode,
+  } = billingContext;
 
   // functional, email
   const [billingSame, setBillingSame] = useState(true);
@@ -81,7 +97,7 @@ function Checkout({ cart, countries }) {
   }
   const requiredValidator = (val) => val !== "";
 
-  function handleNext(e) {
+  async function handleNext(e) {
     let validBilling = true; // Placeholder bool
     let validShipping = validateForm(
       setShippingErrors,
@@ -122,10 +138,88 @@ function Checkout({ cart, countries }) {
         message: "Postal Code is required.",
       }
     );
-    if (valid) {
-      // Save values to DB, switch to ShippingDisplay, show PayPal buttons
+    if (!billingSame) {
+      //validBilling = validateForm()
+      validBilling = validateForm(
+        setBillingErrors,
+        {
+          field: "billing_first_name",
+          value: billingFirstName,
+          validator: requiredValidator,
+          message: "First Name is required.",
+        },
+        {
+          field: "billing_last_name",
+          value: billingLastName,
+          validator: requiredValidator,
+          message: "Last Name is required.",
+        },
+        {
+          field: "billing_address",
+          value: billingAddress,
+          validator: requiredValidator,
+          message: "Address is required.",
+        },
+        {
+          field: "billing_city",
+          value: billingCity,
+          validator: requiredValidator,
+          message: "City is required.",
+        },
+        {
+          field: "billing_state_province",
+          value: billingStateProvince,
+          validator: requiredValidator,
+          message: "State/Province is required.",
+        },
+        {
+          field: "billing_postal_code",
+          value: billingPostalCode,
+          validator: requiredValidator,
+          message: "Postal Code is required.",
+        }
+      );
+    }
+
+    if (validShipping && validBilling) {
+      const shippingAdd = new Address(
+        address,
+        city,
+        stateProvince,
+        postalCode,
+        destinationCountryCode,
+        addressContinued,
+        firstName,
+        lastName
+      );
+      const billingAdd = billingSame
+        ? new Address("", "", "", "", "US", "", "", "")
+        : new Address(
+            billingAddress,
+            billingCity,
+            billingStateProvince,
+            billingPostalCode,
+            billingDestinationCountryCode,
+            billingAddressContinued,
+            billingFirstName,
+            billingLastName
+          );
+      const userAddress = new UserAddress(
+        firstName,
+        lastName,
+        billingSame,
+        shippingAdd,
+        billingAdd
+      );
+      await saveShipping(userAddress);
     }
   }
+
+  const saveShipping = async (userAddress) => {
+    const { data, error } = await serverSaveUserAddress(
+      JSON.stringify(userAddress)
+    );
+  };
 
   const createOrder = async () => {
     try {
@@ -157,11 +251,10 @@ function Checkout({ cart, countries }) {
           <h2 id="payment-and-shipping-heading" className="sr-only">
             Shipping Info
           </h2>
-
           <div className="mx-auto max-w-2xl px-4 lg:max-w-none lg:px-0">
             <CheckoutShipping
               countries={countries}
-              errors={errors}
+              errors={shippingErrors}
               billingSame={billingSame}
               setBillingSame={setBillingSame}
               shippingContext={shippingContext}
@@ -169,7 +262,7 @@ function Checkout({ cart, countries }) {
             {!billingSame && (
               <CheckoutBilling
                 countries={countries}
-                errors={errors}
+                errors={billingErrors}
                 billingContext={billingContext}
               />
             )}

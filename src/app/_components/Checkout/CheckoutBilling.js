@@ -103,7 +103,7 @@ export default function CheckoutBilling({ countries, errors, billingContext }) {
       <div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
         <div className="sm:col-span-3">
           <label
-            htmlFor="billing_address_line_1"
+            htmlFor="billing_address"
             className=" text-sm/6 font-medium text-gray-700"
           >
             Address
@@ -111,7 +111,7 @@ export default function CheckoutBilling({ countries, errors, billingContext }) {
           <div className="mt-2">
             <input
               type="text"
-              name="billing_address_line_1"
+              name="billing_address"
               placeholder=""
               className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
               required
@@ -124,7 +124,7 @@ export default function CheckoutBilling({ countries, errors, billingContext }) {
             <div className="mt-2">
               <input
                 type="text"
-                name="billing_address_line_2"
+                name="billing_address_continued"
                 placeholder="(optional)"
                 className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
                 required
@@ -157,7 +157,7 @@ export default function CheckoutBilling({ countries, errors, billingContext }) {
 
         <div>
           <label
-            htmlFor="state_province"
+            htmlFor="billing_state_province"
             className="block text-sm/6 font-medium text-gray-700"
           >
             State / Province

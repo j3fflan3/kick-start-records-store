@@ -105,6 +105,7 @@ function BillingProvider({ children }) {
     <BillingContext.Provider
       value={{
         errors,
+        setErrors,
         firstName,
         lastName,
         address,
