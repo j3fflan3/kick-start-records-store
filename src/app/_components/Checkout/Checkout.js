@@ -28,6 +28,7 @@ function Checkout({ cart, countries }) {
   const { user } = session;
   console.log(user);
   // State
+  const [editAddresses, setEditAddresses] = useState(false);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState("");
   // Instead of destructuring here, destructure in the child component
@@ -46,6 +47,7 @@ function Checkout({ cart, countries }) {
     destinationCountryCode,
   } = shippingContext;
   const shippingReadOnly =
+    !editAddresses &&
     firstName &&
     lastName &&
     address &&
@@ -69,6 +71,7 @@ function Checkout({ cart, countries }) {
     destinationCountryCode: billingDestinationCountryCode,
   } = billingContext;
   const billingReadOnly =
+    !editAddresses &&
     billingFirstName &&
     billingLastName &&
     billingAddress &&
@@ -284,7 +287,9 @@ function Checkout({ cart, countries }) {
                 shippingContext={shippingContext}
               />
             )}
-            {!billingSame && billingReadOnly ? (
+            {billingSame ? (
+              ""
+            ) : billingReadOnly ? (
               <CheckoutAddressList
                 billingSame={null}
                 title="Billing Address"
