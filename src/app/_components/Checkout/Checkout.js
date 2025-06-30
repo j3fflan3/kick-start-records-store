@@ -17,6 +17,7 @@ import { serverCreateOrder } from "../../_library/serverActions";
 import { serverSaveUserAddress } from "@/src/app/_library/settings/serverSettingsActions";
 import CheckoutBilling from "./CheckoutBilling";
 import CheckoutShipping from "./CheckoutShipping";
+import CheckoutAddressList from "@/src/app/_components/checkout/CheckoutAddressList";
 import CheckoutTotal from "./CheckoutTotal";
 
 function Checkout({ cart, countries }) {
@@ -44,6 +45,15 @@ function Checkout({ cart, countries }) {
     postalCode,
     destinationCountryCode,
   } = shippingContext;
+  const shippingReadOnly =
+    firstName &&
+    lastName &&
+    address &&
+    city &&
+    stateProvince &&
+    postalCode &&
+    destinationCountryCode;
+
   // Billing
   const billingContext = useBilling();
   const {
@@ -58,7 +68,14 @@ function Checkout({ cart, countries }) {
     postalCode: billingPostalCode,
     destinationCountryCode: billingDestinationCountryCode,
   } = billingContext;
-
+  const billingReadOnly =
+    billingFirstName &&
+    billingLastName &&
+    billingAddress &&
+    billingCity &&
+    billingStateProvince &&
+    billingPostalCode &&
+    billingDestinationCountryCode;
   // functional, email
   const [billingSame, setBillingSame] = useState(true);
   const [showPayPalButtons, setShowPayPalButtons] = useState(false);
@@ -252,14 +269,28 @@ function Checkout({ cart, countries }) {
             Shipping Info
           </h2>
           <div className="mx-auto max-w-2xl px-4 lg:max-w-none lg:px-0">
-            <CheckoutShipping
-              countries={countries}
-              errors={shippingErrors}
-              billingSame={billingSame}
-              setBillingSame={setBillingSame}
-              shippingContext={shippingContext}
-            />
-            {!billingSame && (
+            {shippingReadOnly ? (
+              <CheckoutAddressList
+                billingSame={billingSame}
+                title="Shipping Address"
+                context={shippingContext}
+              />
+            ) : (
+              <CheckoutShipping
+                countries={countries}
+                errors={shippingErrors}
+                billingSame={billingSame}
+                setBillingSame={setBillingSame}
+                shippingContext={shippingContext}
+              />
+            )}
+            {!billingSame && billingReadOnly ? (
+              <CheckoutAddressList
+                billingSame={null}
+                title="Billing Address"
+                context={billingContext}
+              />
+            ) : (
               <CheckoutBilling
                 countries={countries}
                 errors={billingErrors}
