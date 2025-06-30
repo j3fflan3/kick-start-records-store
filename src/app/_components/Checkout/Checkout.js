@@ -81,7 +81,13 @@ function Checkout({ cart, countries }) {
     billingDestinationCountryCode;
   // functional, email
   const [billingSame, setBillingSame] = useState(true);
-  const [showPayPalButtons, setShowPayPalButtons] = useState(false);
+  // const [showPayPalButtons, setShowPayPalButtons] = useState(false);
+  const showPayPalButtons =
+    shippingReadOnly &&
+    (billingSame || (!billingSame && billingReadOnly)) &&
+    !editAddresses;
+  console.log(`showPayPalButtons: ${showPayPalButtons}`);
+
   const [email, setEmail] = useState(user?.user_metadata?.email ?? "");
 
   // Common
