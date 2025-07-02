@@ -55,6 +55,7 @@ function Checkout({ cart, countries }) {
     stateProvince &&
     postalCode &&
     destinationCountryCode;
+  console.log(`shippingReadOnly: ${shippingReadOnly}`);
 
   // Billing
   const billingContext = useBilling();
@@ -238,6 +239,7 @@ function Checkout({ cart, countries }) {
         billingAdd
       );
       await saveShipping(userAddress);
+      setEditAddresses(false);
     }
   }
 
@@ -281,6 +283,7 @@ function Checkout({ cart, countries }) {
             {shippingReadOnly ? (
               <CheckoutAddressList
                 billingSame={billingSame}
+                setEditAddresses={setEditAddresses}
                 title="Shipping Address"
                 context={shippingContext}
               />
@@ -298,6 +301,7 @@ function Checkout({ cart, countries }) {
             ) : billingReadOnly ? (
               <CheckoutAddressList
                 billingSame={null}
+                setEditAddresses={setEditAddresses}
                 title="Billing Address"
                 context={billingContext}
               />

@@ -69,16 +69,11 @@ function ShippingProvider({ children }) {
   // When NEXT first loads this provider, session is null, so we want
   // to set the state values when session (and therefore user) is not null.
   useEffect(() => {
-    if (user && !initialized) {
+    if ((user?.user_metadata?.firstName ?? "") && !initialized) {
       console.log(
-        `inside Shipping Provider useEffect: firstName:${
-          user?.user_metadata?.firstName ?? ""
-        }`
-      );
-      console.log(
-        `inside Shipping Provider useEffect: lastName:${
-          user?.user_metadata?.lastName ?? ""
-        }`
+        `inside Shipping Provider useEffect: user_metadata:${JSON.stringify(
+          user.user_metadata
+        )}`
       );
 
       setFirstName(user?.user_metadata?.firstName ?? "");

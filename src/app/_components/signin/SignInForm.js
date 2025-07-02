@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
@@ -22,6 +22,7 @@ function SignInForm({
   const [state, formAction] = useActionState(clientSignIn, initialState);
 
   const [email, setEmail] = useState("");
+  const emailRef = useRef(null);
   const [password, setPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState(false);
   const isValidEmail = validateEmail(email) || email === "";
@@ -39,8 +40,10 @@ function SignInForm({
         if (checkoutMessage) router.push("/checkout/payment");
         else router.push("/records");
       } else if (message === "error") {
+        emailRef.current.focus();
         setEmail("");
         setPassword("");
+
         toast.error(
           "Log In failed.  Please verify your email or password and try again",
           { id: "loginError", position: "top-right" }
@@ -55,6 +58,7 @@ function SignInForm({
     successMessage,
     setSuccessMessage,
     checkoutMessage,
+    emailRef,
   ]);
 
   function handleEmail(e) {
@@ -85,6 +89,7 @@ function SignInForm({
                   name="email"
                   type="email"
                   placeholder="Email Address"
+                  ref={emailRef}
                   value={email}
                   onChange={handleEmail}
                   required

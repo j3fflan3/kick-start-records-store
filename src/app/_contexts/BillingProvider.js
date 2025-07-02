@@ -71,7 +71,7 @@ function BillingProvider({ children }) {
   // When NEXT first loads this provider, session is null, so we want
   // to set the state values when session (and therefore user) is not null.
   useEffect(() => {
-    if (user && !initialized) {
+    if ((user?.user_metadata?.firstName ?? "") && !initialized) {
       setFirstName(user?.user_metadata?.firstName ?? "");
       setLastName(user?.user_metadata?.lastName ?? "");
       setAddress(user?.user_metadata?.billingAddress?.address ?? "");

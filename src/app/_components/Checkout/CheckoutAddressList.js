@@ -1,10 +1,16 @@
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
 } from "../tailwind/description-list";
 
-function CheckoutAddressList({ billingSame, title, context }) {
+function CheckoutAddressList({
+  billingSame,
+  setEditAddresses,
+  title,
+  context,
+}) {
   const {
     firstName,
     lastName,
@@ -19,9 +25,12 @@ function CheckoutAddressList({ billingSame, title, context }) {
     <div>
       <h3
         id="contact-info-heading"
-        className="text-2xl font-bold text-gray-900"
+        className="text-2xl w-full inline font-bold text-gray-900"
       >
-        {title}
+        {title}&nbsp;
+        <button onClick={() => setEditAddresses(true)}>
+          <PencilSquareIcon className="size-5" />
+        </button>
       </h3>
       <DescriptionList>
         <DescriptionTerm className="!text-primary-950">Name</DescriptionTerm>
