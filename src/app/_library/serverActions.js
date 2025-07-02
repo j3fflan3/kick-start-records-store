@@ -76,6 +76,8 @@ async function serverUpdateShoppingCart(catalogId, count, email = null) {
 }
 
 async function serverGetRecords(id = null, limit = 10) {
+  console.log("Top of serverGetRecords");
+
   const supabase = await createClient();
 
   const { data, error } = await supabase.rpc("get_records", {
@@ -85,6 +87,10 @@ async function serverGetRecords(id = null, limit = 10) {
   if (error) {
     console.error(error.message);
   }
+  console.log(
+    `serverGetRecords -> data = ${data ? JSON.stringify(data) : data}`
+  );
+
   return data;
 }
 

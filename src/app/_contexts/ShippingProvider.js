@@ -6,15 +6,14 @@ const ShippingContext = createContext();
 
 function ShippingProvider({ children }) {
   const { session } = useSession();
-  console.log(
-    `ShippingProvider -> session = ${
-      session ? JSON.stringify(session) : session
-    }`
-  );
+  // console.log(
+  //   `ShippingProvider -> session = ${
+  //     session ? JSON.stringify(session) : session
+  //   }`
+  // );
   // This is always initially null
   const { user } = session || { user: null };
 
-  // Will these ever be valid when it first loads?
   const [errors, setErrors] = useState({});
   const [initialized, setInitialized] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -25,6 +24,7 @@ function ShippingProvider({ children }) {
   const [stateProvince, setStateProvince] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [destinationCountryCode, setDestinationCountryCode] = useState("US");
+  const [billingSame, setBillingSame] = useState(true);
   // Create refs for each state variable
   const firstNameRef = useRef(null);
   const lastNameRef = useRef(null);
@@ -90,20 +90,14 @@ function ShippingProvider({ children }) {
       setDestinationCountryCode(
         user?.user_metadata?.shippingAddress?.destinationCountryCode ?? ""
       );
+
+      setBillingSame(user?.user_metadata?.billingSameAsShipping ?? true);
+      console.log(
+        `ShippingProvider -> billingSame = ${user?.user_metadata?.billingSameAsShipping}`
+      );
       setInitialized(true);
     }
-  }, [
-    user,
-    initialized,
-    firstName,
-    lastName,
-    address,
-    addressContinued,
-    city,
-    stateProvince,
-    postalCode,
-    destinationCountryCode,
-  ]);
+  }, [user, initialized]);
 
   return (
     <ShippingContext.Provider
@@ -117,7 +111,9 @@ function ShippingProvider({ children }) {
         stateProvince,
         postalCode,
         destinationCountryCode,
+        billingSame,
         // Setters
+        setBillingSame,
         setErrors,
         // Handler functions
         handleFirstName,
