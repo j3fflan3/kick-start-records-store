@@ -25,7 +25,7 @@ function Checkout({ cart, countries }) {
   // use hooks and funcs
 
   const { session } = useSession();
-  const { user } = session;
+  const { user } = session || { user: null };
   console.log(user);
   // State
   const [editAddresses, setEditAddresses] = useState(false);
@@ -45,6 +45,8 @@ function Checkout({ cart, countries }) {
     stateProvince,
     postalCode,
     destinationCountryCode,
+    billingSame,
+    setBillingSame,
   } = shippingContext;
   const shippingReadOnly =
     !editAddresses &&
@@ -80,8 +82,6 @@ function Checkout({ cart, countries }) {
     billingStateProvince &&
     billingPostalCode &&
     billingDestinationCountryCode;
-  // functional, email
-  const [billingSame, setBillingSame] = useState(true);
   // const [showPayPalButtons, setShowPayPalButtons] = useState(false);
   const showPayPalButtons =
     shippingReadOnly &&

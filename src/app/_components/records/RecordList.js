@@ -3,8 +3,6 @@ import { serverGetRecords } from "@/src/app/_library/serverActions";
 import ProductCard from "../products/ProductCard";
 import AddToCartSlider from "../shopping-cart/AddToCartSlider";
 
-export const revalidate = 0;
-
 export default async function RecordList() {
   const records = await serverGetRecords();
   if (!records?.length) return null;
