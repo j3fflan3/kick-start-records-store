@@ -6,11 +6,6 @@ const ShippingContext = createContext();
 
 function ShippingProvider({ children }) {
   const { session } = useSession();
-  // console.log(
-  //   `ShippingProvider -> session = ${
-  //     session ? JSON.stringify(session) : session
-  //   }`
-  // );
   // This is always initially null
   const { user } = session || { user: null };
 
