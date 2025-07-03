@@ -113,7 +113,7 @@ function Checkout({ cart, countries }) {
       shippingError && shippingError
     }, cartJson: ${cartJson}`
   );
-  ß;
+
   const requiredValidator = (val) => val !== "";
 
   async function handleNext(e) {
