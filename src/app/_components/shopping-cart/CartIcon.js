@@ -6,10 +6,13 @@ import { ShoppingCartIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
+import { useSession } from "../../_contexts/SessionProvider";
 
 export const revalidate = 0;
 
 function CartIcon() {
+  const { session } = useSession();
+  const { user } = session || { user: null };
   const context = useShoppingCart();
   const { cartCount: itemCount, setCartCount, localCartIds } = context;
   useEffect(
@@ -28,10 +31,9 @@ function CartIcon() {
           console.log(error);
         }
       }
-
-      getCartCount();
+      if (user) getCartCount();
     },
-    [setCartCount]
+    [setCartCount, user]
   );
   // Need to figure out if there is a way to avoid this hydration warning in the first place
   return (

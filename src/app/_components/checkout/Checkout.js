@@ -6,6 +6,7 @@ import { useShippingCalculator } from "@/src/app/_hooks/useShippingCalculator";
 import {
   cartItemsWeight,
   cartTotal,
+  validateEmail,
   validateForm,
 } from "@/src/app/_library/utilities";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -37,6 +38,7 @@ function Checkout({ cart, countries }) {
   const {
     errors: shippingErrors,
     setErrors: setShippingErrors,
+    email,
     firstName,
     lastName,
     address,
@@ -89,11 +91,6 @@ function Checkout({ cart, countries }) {
     !editAddresses;
   console.log(`showPayPalButtons: ${showPayPalButtons}`);
 
-  const [email, setEmail] = useState(user?.user_metadata?.email ?? "");
-
-  // Common
-  const emailRef = useRef(null);
-
   const { cartCount: itemCount } = useShoppingCart();
   const weight = cartItemsWeight(cart);
 
@@ -116,12 +113,7 @@ function Checkout({ cart, countries }) {
       shippingError && shippingError
     }, cartJson: ${cartJson}`
   );
-
-  // Common
-  function handleEmail(e) {
-    setShippingErrors({});
-    setEmail(e.target.value);
-  }
+  ß;
   const requiredValidator = (val) => val !== "";
 
   async function handleNext(e) {
@@ -251,6 +243,12 @@ function Checkout({ cart, countries }) {
 
   const createOrder = async () => {
     try {
+      if (!validateEmail(email)) {
+        const message = `invaid email address: ${email}`;
+        console.log(message);
+
+        throw new Error(message);
+      }
       // Call a server function
       await serverCreateOrder(cart, email, shippingCost);
     } catch (error) {}
@@ -313,26 +311,6 @@ function Checkout({ cart, countries }) {
               />
             )}
 
-            <div className="mt-6">
-              <label
-                htmlFor="email-address"
-                className="block text-sm/6 font-medium text-gray-700"
-              >
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email-address"
-                  name="email-address"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  ref={emailRef}
-                  onChange={handleEmail}
-                  className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-accent-600 sm:text-sm/6"
-                />
-              </div>
-            </div>
             {!showPayPalButtons && (
               <div className="mt-6 justify-center w-full flex">
                 <button
