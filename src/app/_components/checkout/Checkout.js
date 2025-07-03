@@ -6,6 +6,7 @@ import { useShippingCalculator } from "@/src/app/_hooks/useShippingCalculator";
 import {
   cartItemsWeight,
   cartTotal,
+  validateEmail,
   validateForm,
 } from "@/src/app/_library/utilities";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -37,6 +38,7 @@ function Checkout({ cart, countries }) {
   const {
     errors: shippingErrors,
     setErrors: setShippingErrors,
+    email,
     firstName,
     lastName,
     address,
@@ -89,11 +91,6 @@ function Checkout({ cart, countries }) {
     !editAddresses;
   console.log(`showPayPalButtons: ${showPayPalButtons}`);
 
-  const [email, setEmail] = useState(user?.user_metadata?.email ?? "");
-
-  // Common
-  const emailRef = useRef(null);
-
   const { cartCount: itemCount } = useShoppingCart();
   const weight = cartItemsWeight(cart);
 
@@ -116,12 +113,7 @@ function Checkout({ cart, countries }) {
       shippingError && shippingError
     }, cartJson: ${cartJson}`
   );
-
-  // Common
-  function handleEmail(e) {
-    setShippingErrors({});
-    setEmail(e.target.value);
-  }
+  ß;
   const requiredValidator = (val) => val !== "";
 
   async function handleNext(e) {
@@ -251,6 +243,12 @@ function Checkout({ cart, countries }) {
 
   const createOrder = async () => {
     try {
+      if (!validateEmail(email)) {
+        const message = `invaid email address: ${email}`;
+        console.log(message);
+
+        throw new Error(message);
+      }
       // Call a server function
       await serverCreateOrder(cart, email, shippingCost);
     } catch (error) {}
