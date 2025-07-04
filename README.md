@@ -12,6 +12,14 @@ Visit, sign up, and play around at the test site [Kick Start Records](https://ki
 - [x] Implement shopping cart using localstorage, anonymous login for guest users, and store cart in DB.
 - [ ] Implement checkout using PayPal checkout APIs and buttons, as well as order, shipping, and tracking DB. _**In Progress**_
 - [ ] Integrate USPS APIs to calculate shipping cost.
+- [ ] Integrate California Sales Tax API to calculate California sales tax:
+
+`https://services.maps.cdtfa.ca.gov/api/taxrate/GetRateByAddress?address={address}&city={city}&zip={zipcode}`
+
 - [ ] Stream mp3 snippets of one or more songs from each album or single.
 - [ ] Install and implement Cypress testing
 - [ ] Refactor TailwindCSS to implement responsive web design and finalize look and feel of the site.
+
+```
+
+```
