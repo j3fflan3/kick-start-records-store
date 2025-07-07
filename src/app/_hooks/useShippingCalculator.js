@@ -6,6 +6,7 @@ import {
   InternalationRatesRequest,
   USBaseRatesRequest,
 } from "../_library/usps";
+import { formatDollars } from "../_library/utilities";
 
 function useShippingCalculator({
   itemCount,
@@ -13,7 +14,8 @@ function useShippingCalculator({
   postalCode = "",
   destinationCountryCode = "US",
 }) {
-  const [shippingCost, setShippingCost] = useState(0);
+  const [shippingCost, setShippingCost] = useState("0.00");
+  const [shippingCostCents, setShippingCostCents] = useState(0);
   const [shippingError, setShippingError] = useState("");
 
   const request = useMemo(() => {
@@ -32,14 +34,16 @@ function useShippingCalculator({
       const data = await serverGetUSPSRates(sBaseRatesRequest, count);
       if (data && data?.message) {
         setShippingError(data.message);
-        setShippingCost(0);
+        setShippingCost("0.00");
         return;
       }
       const { handling, totalBasePrice } = data;
       const shippingAndHandling = Number(handling) + Number(totalBasePrice);
-      const roundedShippingAndHandling = shippingAndHandling.toFixed(2);
       setShippingError("");
-      setShippingCost(Math.round(parseFloat(roundedShippingAndHandling) * 100)); // This needs to be in cents!
+      setShippingCostCents(shippingAndHandling * 100); // this needs to be in cents
+      console.log(`shippingAndHandling = ${shippingAndHandling}`);
+
+      setShippingCost(shippingAndHandling.toFixed(2)); // String formatted for PayPal
     }
     // if the user hasn't stored a zipcode, they'll need to enter one on the
     // checkout/payment page.
@@ -52,7 +56,7 @@ function useShippingCalculator({
     getBaseRates(sBaseRatesRequest, itemCount);
   }, [request, itemCount, destinationCountryCode, postalCode]);
 
-  return { shippingCost, shippingError };
+  return { shippingCost, shippingCostCents, shippingError };
 }
 
 export { useShippingCalculator };

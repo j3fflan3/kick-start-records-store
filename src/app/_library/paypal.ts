@@ -167,6 +167,7 @@ interface IPayPalPurchaseUnit {
   amount: IPayPalAmount;
   payee: IPayPalPayee;
   items: IPayPalItem;
+  shipping: IPayPalShipping;
 }
 
 class PayPalPurchaseUnit {
@@ -175,19 +176,22 @@ class PayPalPurchaseUnit {
   amount: IPayPalAmount;
   payee: IPayPalPayee;
   items: IPayPalItem[];
+  shipping: IPayPalShipping;
 
   constructor(
     invoice_id: string,
     description: string,
     amount: IPayPalAmount,
     payee: IPayPalPayee,
-    items: IPayPalItem[]
+    items: IPayPalItem[],
+    shipping: IPayPalShipping
   ) {
     this.invoice_id = invoice_id;
     this.description = description;
     this.amount = amount; // type PayPalAmount
     this.payee = payee; // type PayPalPayee
     this.items = items; // array of type PayPalItem
+    this.shipping = shipping;
   }
 }
 
@@ -213,8 +217,8 @@ interface IPayPalAddress {
 class PayPalAddress {
   address_line_1: string;
   address_line_2: string;
-  admin_area_2: string;
-  admin_area_1: string;
+  admin_area_2: string; // Town, City
+  admin_area_1: string; // State (US), County, Province, Prefecture, Kanton
   postal_code: string;
   country_code: string;
 
@@ -294,6 +298,12 @@ interface IPayPalExperienceContext {
   shipping_preference: string;
   return_url: string;
   cancel_url: string;
+  brand_name: string;
+  contact_preference: string;
+  landing_page: string;
+  user_action: string;
+  payment_method_preference: string;
+  address: IPayPalAddress; // Billing Address
 }
 
 class PayPalExperienceContext {
@@ -307,10 +317,12 @@ class PayPalExperienceContext {
   landing_page: string;
   user_action: string;
   payment_method_preference: string;
+  address: IPayPalAddress;
   constructor(
     shipping_preference: string,
     return_url: string,
-    cancel_url: string
+    cancel_url: string,
+    billingAddress: IPayPalAddress
   ) {
     this.brand_name = KICK_START_RECORDS;
     this.shipping_preference = shipping_preference;
@@ -320,6 +332,7 @@ class PayPalExperienceContext {
     this.payment_method_preference = IMMEDIATE_PAYMENT_REQUIRED;
     this.return_url = return_url;
     this.cancel_url = cancel_url;
+    this.address = billingAddress;
   }
 }
 

@@ -438,6 +438,8 @@ async function serverGetUSPSRates(sBaseRatesRequest, itemCount) {
         : itemCount < Number(process.env.HANDLING_MD_LT)
         ? process.env.HANDLING_MD
         : process.env.HANDLING_LG;
+    console.log(`serverGetUSPSRates -> data: ${JSON.stringify(data)}`);
+
     return data;
   } catch (error) {
     const { message } = error;
@@ -762,12 +764,27 @@ function getPayPalItems(cart, taxPercentageFloat) {
 }
 
 async function serverCreateOrder(
-  cart,
+  sCart,
   email,
   shipping,
+  sShippingAddress,
+  sBillingAddress,
   taxPercentageFloat = 0,
   shipping_preference = GET_FROM_FILE
 ) {
+  console.log(
+    `serverCreateOrder params -> sCart = ${sCart},
+      email = ${email},
+      shipping = ${shipping},
+      sShippingAddress = ${sShippingAddress},
+      sBillingAddress = ${sBillingAddress},
+      taxPercentageFloat = ${taxPercentageFloat},
+      shipping_preference = ${shipping_preference}`
+  );
+
+  const cart = JSON.parse(sCart);
+  const shipAddress = JSON.parse(sShippingAddress);
+  const billAddress = JSON.parse(sBillingAddress);
   const { data, error } = await serverCreateOrderPlaceholder(email);
   if (error) throw new Error(error.message);
   const { order_number: invoice_id } = data;
@@ -794,7 +811,8 @@ async function serverCreateOrder(
     description,
     payPalAmount,
     payee,
-    payPalItems
+    payPalItems,
+    shipAddress
   );
   const baseURL = getURL();
   const return_url = `${baseURL}checkout/order-placed`;
@@ -803,7 +821,8 @@ async function serverCreateOrder(
   const experienceContext = new PayPalExperienceContext(
     shipping_preference,
     return_url,
-    cancel_url
+    cancel_url,
+    billAddress
   );
   const payPal = new PayPal(experienceContext);
   const paymentSource = new PayPalPaymentSource(payPal, null);

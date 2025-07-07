@@ -20,6 +20,7 @@ import CheckoutBilling from "./CheckoutBilling";
 import CheckoutShipping from "./CheckoutShipping";
 import CheckoutAddressList from "@/src/app/_components/checkout/CheckoutAddressList";
 import CheckoutTotal from "./CheckoutTotal";
+import { PayPalAddress } from "../../_library/paypal";
 
 function Checkout({ cart, countries }) {
   // const []
@@ -32,6 +33,12 @@ function Checkout({ cart, countries }) {
   const [editAddresses, setEditAddresses] = useState(false);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState("");
+  const [shippingAddress, setShippingAddress] = useState(
+    new PayPalAddress("", "", "", "", "", "")
+  );
+  const [billAddress, setBillAddress] = useState(
+    new PayPalAddress("", "", "", "", "", "")
+  );
   // Instead of destructuring here, destructure in the child component
   // and take only what you need for checkout.js from here.
   const shippingContext = useShipping();
@@ -94,17 +101,19 @@ function Checkout({ cart, countries }) {
   const { cartCount: itemCount } = useShoppingCart();
   const weight = cartItemsWeight(cart);
 
-  const { shippingCost, shippingError } = useShippingCalculator({
-    itemCount,
-    weight,
-    postalCode,
-    destinationCountryCode,
-  });
+  const { shippingCost, shippingCostCents, shippingError } =
+    useShippingCalculator({
+      itemCount,
+      weight,
+      postalCode,
+      destinationCountryCode,
+    });
+
   useEffect(
     function () {
-      setTotal(cartTotal(cart, shippingCost, tax));
+      setTotal(cartTotal(cart, shippingCostCents, tax));
     },
-    [shippingCost, cart, tax]
+    [shippingCostCents, cart, tax]
   );
   // For debugging.  Remove when done with this component
   const cartJson = cart ? JSON.stringify(cart) : "";
@@ -230,6 +239,7 @@ function Checkout({ cart, countries }) {
         shippingAdd,
         billingAdd
       );
+
       await saveShipping(userAddress);
       setEditAddresses(false);
     }
@@ -249,9 +259,45 @@ function Checkout({ cart, countries }) {
 
         throw new Error(message);
       }
+      setShippingAddress((_) => {
+        new PayPalAddress(
+          address,
+          addressContinued,
+          city,
+          stateProvince,
+          postalCode,
+          destinationCountryCode
+        );
+      });
+      billingSame
+        ? setBillAddress((_) => shippingAddress)
+        : setBillAddress((_) => {
+            new PayPalAddress(
+              billingAddress,
+              billingAddressContinued,
+              billingCity,
+              billingStateProvince,
+              billingPostalCode,
+              billingDestinationCountryCode
+            );
+          });
+      console.log(
+        `Checkout.js -> shippingAddress: ${JSON.stringify(
+          shippingAddress
+        )},\nbillAddress: ${JSON.stringify(billAddress)}`
+      );
+
       // Call a server function
-      await serverCreateOrder(cart, email, shippingCost);
-    } catch (error) {}
+      await serverCreateOrder(
+        JSON.stringify(cart),
+        email,
+        shippingCost,
+        JSON.stringify(shippingAddress),
+        JSON.stringify(billAddress)
+      );
+    } catch (error) {
+      console.log(`error: ${JSON.stringify(error)}`);
+    }
   };
   function onApprove() {}
   function onError() {}
