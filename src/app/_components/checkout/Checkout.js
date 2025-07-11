@@ -1,26 +1,34 @@
 "use client";
 
+import CheckoutAddressList from "@/src/app/_components/checkout/CheckoutAddressList";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
 import { useShippingCalculator } from "@/src/app/_hooks/useShippingCalculator";
+import { serverSaveUserAddress } from "@/src/app/_library/settings/serverSettingsActions";
 import {
   cartItemsWeight,
   cartTotal,
   validateEmail,
   validateForm,
 } from "@/src/app/_library/utilities";
-import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
-import { useEffect, useRef, useState } from "react";
+import {
+  PayPalButtons,
+  PayPalCardFieldsProvider,
+  PayPalCVVField,
+  PayPalExpiryField,
+  PayPalNameField,
+  PayPalNumberField,
+  PayPalScriptProvider,
+} from "@paypal/react-paypal-js";
+import { useEffect, useState } from "react";
 import { useBilling } from "../../_contexts/BillingProvider";
 import { useShipping } from "../../_contexts/ShippingProvider";
 import { Address, UserAddress } from "../../_library/address";
+import { PayPalAddress } from "../../_library/paypal";
 import { serverCreateOrder } from "../../_library/serverActions";
-import { serverSaveUserAddress } from "@/src/app/_library/settings/serverSettingsActions";
 import CheckoutBilling from "./CheckoutBilling";
 import CheckoutShipping from "./CheckoutShipping";
-import CheckoutAddressList from "@/src/app/_components/checkout/CheckoutAddressList";
 import CheckoutTotal from "./CheckoutTotal";
-import { PayPalAddress } from "../../_library/paypal";
 
 function Checkout({ cart, countries }) {
   // const []
@@ -31,6 +39,8 @@ function Checkout({ cart, countries }) {
   console.log(user);
   // State
   const [editAddresses, setEditAddresses] = useState(false);
+  const [editShipping, setEditShipping] = useState(false);
+  const [editBilling, setEditBilling] = useState(false);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState("");
   const [shippingAddress, setShippingAddress] = useState(
@@ -58,7 +68,7 @@ function Checkout({ cart, countries }) {
     setBillingSame,
   } = shippingContext;
   const shippingReadOnly =
-    !editAddresses &&
+    !editShipping &&
     firstName &&
     lastName &&
     address &&
@@ -83,7 +93,7 @@ function Checkout({ cart, countries }) {
     destinationCountryCode: billingDestinationCountryCode,
   } = billingContext;
   const billingReadOnly =
-    !editAddresses &&
+    !editBilling &&
     billingFirstName &&
     billingLastName &&
     billingAddress &&
@@ -95,7 +105,8 @@ function Checkout({ cart, countries }) {
   const showPayPalButtons =
     shippingReadOnly &&
     (billingSame || (!billingSame && billingReadOnly)) &&
-    !editAddresses;
+    !editBilling &&
+    !editShipping;
   console.log(`showPayPalButtons: ${showPayPalButtons}`);
 
   const { cartCount: itemCount } = useShoppingCart();
@@ -241,7 +252,8 @@ function Checkout({ cart, countries }) {
       );
 
       await saveShipping(userAddress);
-      setEditAddresses(false);
+      setEditShipping(false);
+      setEditBilling(false);
     }
   }
 
@@ -251,15 +263,20 @@ function Checkout({ cart, countries }) {
     );
   };
 
-  const createOrder = async () => {
+  const createOrder = async (...payPalArgs) => {
     try {
+      const [a, b, c] = payPalArgs;
+      const { paymentSource } = a;
+      console.log(`payPalArgs = ${JSON.stringify(payPalArgs)}`);
+      console.log(`paymentSource: ${JSON.stringify(paymentSource)}`);
+
       if (!validateEmail(email)) {
         const message = `invaid email address: ${email}`;
         console.log(message);
 
         throw new Error(message);
       }
-      setShippingAddress((_) => {
+      setShippingAddress(
         new PayPalAddress(
           address,
           addressContinued,
@@ -267,11 +284,20 @@ function Checkout({ cart, countries }) {
           stateProvince,
           postalCode,
           destinationCountryCode
-        );
-      });
+        )
+      );
       billingSame
-        ? setBillAddress((_) => shippingAddress)
-        : setBillAddress((_) => {
+        ? setBillAddress(
+            new PayPalAddress(
+              address,
+              addressContinued,
+              city,
+              stateProvince,
+              postalCode,
+              destinationCountryCode
+            )
+          )
+        : setBillAddress(
             new PayPalAddress(
               billingAddress,
               billingAddressContinued,
@@ -279,8 +305,8 @@ function Checkout({ cart, countries }) {
               billingStateProvince,
               billingPostalCode,
               billingDestinationCountryCode
-            );
-          });
+            )
+          );
       console.log(
         `Checkout.js -> shippingAddress: ${JSON.stringify(
           shippingAddress
@@ -289,11 +315,14 @@ function Checkout({ cart, countries }) {
 
       // Call a server function
       await serverCreateOrder(
-        JSON.stringify(cart),
-        email,
-        shippingCost,
-        JSON.stringify(shippingAddress),
-        JSON.stringify(billAddress)
+        JSON.stringify({
+          cart: JSON.stringify(cart),
+          email,
+          shippingCost,
+          shippingAddress: JSON.stringify(shippingAddress),
+          billAddress: JSON.stringify(billAddress),
+          taxPercentageFloat: 0,
+        })
       );
     } catch (error) {
       console.log(`error: ${JSON.stringify(error)}`);
@@ -327,8 +356,8 @@ function Checkout({ cart, countries }) {
             {shippingReadOnly ? (
               <CheckoutAddressList
                 billingSame={billingSame}
-                setEditAddresses={setEditAddresses}
-                title="Shipping Address"
+                setEditAddresses={setEditShipping}
+                title="Shipping"
                 context={shippingContext}
               />
             ) : (
@@ -345,8 +374,8 @@ function Checkout({ cart, countries }) {
             ) : billingReadOnly ? (
               <CheckoutAddressList
                 billingSame={null}
-                setEditAddresses={setEditAddresses}
-                title="Billing Address"
+                setEditAddresses={setEditBilling}
+                title="Billing"
                 context={billingContext}
               />
             ) : (
@@ -358,7 +387,7 @@ function Checkout({ cart, countries }) {
             )}
 
             {!showPayPalButtons && (
-              <div className="mt-6 justify-center w-full flex">
+              <div className="mt-4 justify-center w-full flex">
                 <button
                   className="text-primary-50 font-bold border border-primary-400 rounded-md px-3 py-2 bg-accent-600 w-full hover:cursor-pointer"
                   onClick={handleNext}
@@ -368,24 +397,63 @@ function Checkout({ cart, countries }) {
               </div>
             )}
 
-            <div className="mt-10 flex w-full justify-center border-t border-gray-200 pt-6">
-              {showPayPalButtons && (
-                <PayPalScriptProvider
-                  options={{
-                    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
-                    currency: "USD",
-                    intent: "capture",
+            <div
+              className={`mt-10 flex-row w-full justify-center ${
+                showPayPalButtons ? "" : "hidden"
+              }`}
+            >
+              <PayPalScriptProvider
+                options={{
+                  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
+                  currency: "USD",
+                  intent: "capture",
+                  components: "buttons,card-fields",
+                }}
+              >
+                <PayPalButtons
+                  createOrder={createOrder}
+                  onApprove={onApprove}
+                  onError={onError}
+                  style={payPalStyle}
+                  disabled={isProcessing}
+                />
+                <div className="divider">
+                  <span>OR</span>
+                </div>
+                <PayPalCardFieldsProvider
+                  createOrder={createOrder}
+                  onApprove={onApprove}
+                  style={{
+                    input: {
+                      "font-size": "16px",
+                      "font-family": "courier, monospace",
+                      "font-weight": "lighter",
+                      color: "#ccc",
+                    },
+                    ".invalid": { color: "purple" },
                   }}
                 >
-                  <PayPalButtons
-                    createOrder={createOrder}
-                    onApprove={onApprove}
-                    onError={onError}
-                    style={payPalStyle}
-                    disabled={isProcessing}
+                  <PayPalNameField
+                    style={{
+                      input: { color: "blue" },
+                      ".invalid": { color: "purple" },
+                    }}
                   />
-                </PayPalScriptProvider>
-              )}
+                  <PayPalNumberField />
+                  <PayPalExpiryField />
+                  <PayPalCVVField />
+                </PayPalCardFieldsProvider>
+                <button
+                  className="w-full block p-3 mt-6 rounded-sm text-lg cursor-pointer font-bold bg-accent-600 text-primary-50 hover:opacity-80"
+                  onClick={() => {
+                    console.log(
+                      `handler goes here.  Maybe make this is a separate component?`
+                    );
+                  }}
+                >
+                  Pay now with Card
+                </button>
+              </PayPalScriptProvider>
             </div>
           </div>
         </section>

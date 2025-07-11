@@ -403,6 +403,43 @@ class PayPalOrder {
   }
 }
 
+interface ICreateOrderArgs {
+  cart: any;
+  email: string;
+  shipping: string;
+  shippingAddress: IPayPalAddress;
+  billingAddress: IPayPalAddress;
+  taxPercentageFloat: Number;
+  shipping_preference: string;
+}
+
+class CreateOrderArgs {
+  cart: any;
+  email: string;
+  shipping: string;
+  shippingAddress: IPayPalAddress;
+  billingAddress: IPayPalAddress;
+  taxPercentageFloat: Number;
+  shipping_preference: string;
+  constructor(
+    cart: any,
+    email: string,
+    shipping: string,
+    shippingAddress: IPayPalAddress,
+    billingAddress: IPayPalAddress,
+    taxPercentageFloat: Number,
+    shipping_preference: string
+  ) {
+    this.cart = cart;
+    this.email = email;
+    this.shipping = shipping;
+    this.shippingAddress = shippingAddress;
+    this.billingAddress = billingAddress;
+    this.taxPercentageFloat = taxPercentageFloat;
+    this.shipping_preference = shipping_preference;
+  }
+}
+
 export {
   DIGITAL_GOODS,
   PHYSICAL_GOODS,
@@ -443,4 +480,6 @@ export {
   Venmo,
   type IVenmoExperienceContext,
   VenmoExperienceContext,
+  type ICreateOrderArgs,
+  CreateOrderArgs,
 };

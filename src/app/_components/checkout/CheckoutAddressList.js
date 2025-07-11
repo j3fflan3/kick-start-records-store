@@ -4,6 +4,7 @@ import {
   DescriptionList,
   DescriptionTerm,
 } from "../tailwind/description-list";
+import { useState } from "react";
 
 function CheckoutAddressList({
   billingSame,
@@ -21,18 +22,31 @@ function CheckoutAddressList({
     stateProvince,
     postalCode,
   } = context;
+  const [showAddress, setShowAddress] = useState(false);
+
   return (
-    <div>
+    <div className="outline text-gray-300 p-4 rounded-sm mb-3">
       <h3
         id="contact-info-heading"
-        className="text-2xl w-full inline font-bold text-gray-900"
+        className="text-2xl font-bold text-gray-900 rounded-sm bg-gray-100 p-2 cursor-pointer"
+        onClick={() => setShowAddress((state) => !state)}
       >
         {title}&nbsp;
-        <button onClick={() => setEditAddresses(true)}>
-          <PencilSquareIcon className="size-5" />
-        </button>
       </h3>
-      <DescriptionList>
+      <DescriptionList className={`${showAddress ? "" : "hidden"}`}>
+        <DescriptionTerm className="!text-primary-950">
+          {" "}
+          <button
+            className="cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditAddresses(true);
+            }}
+          >
+            <PencilSquareIcon className="size-5" />
+          </button>
+        </DescriptionTerm>
+        <DescriptionDetails className="!text-primary-950"> </DescriptionDetails>
         <DescriptionTerm className="!text-primary-950">Name</DescriptionTerm>
         <DescriptionDetails className="!text-primary-900">
           {firstName} {lastName}
@@ -42,9 +56,12 @@ function CheckoutAddressList({
           {address}
         </DescriptionDetails>
         {addressContinued && (
-          <DescriptionDetails className="!text-primary-900">
-            {addressContinued}
-          </DescriptionDetails>
+          <>
+            <DescriptionTerm></DescriptionTerm>
+            <DescriptionDetails className="!text-primary-900">
+              {addressContinued}
+            </DescriptionDetails>
+          </>
         )}
         <DescriptionTerm className="!text-primary-950">
           City, State/Province, Postal Code
