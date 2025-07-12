@@ -54,7 +54,7 @@ function CheckoutTotal({ cart, tax, total, shippingCost }) {
 
           <div className="flex items-center justify-between">
             <dt>Shipping</dt>
-            <dd>${formatDollars(shippingCost)}</dd>
+            <dd>${shippingCost}</dd>
           </div>
 
           <div className="flex items-center justify-between">

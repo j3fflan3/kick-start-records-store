@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 import { useSession } from "../../_contexts/SessionProvider";
+import SpinnerMini from "../spinners/SpinnerMini";
 
 export const revalidate = 0;
 
@@ -40,17 +41,23 @@ function CartIcon() {
     <Link suppressHydrationWarning={true} href="/cart">
       <div className="shoppingCartContainer">
         <div className="shoppingCartIcon ">
-          <ShoppingCartIcon
-            title="Cart"
-            className="shoppingCartIcon h-11  w-11  text-primary-200 z-50"
-          />
+          {user ? (
+            <ShoppingCartIcon
+              title="Cart"
+              className="shoppingCartIcon h-11  w-11  text-primary-200 z-50"
+            />
+          ) : (
+            <SpinnerMini />
+          )}
         </div>
 
         <div className="shoppingCartCount">
           <div className=" text-center align-top w-8">
-            <span className="text-accent-600 text-lg">
-              <strong>{itemCount}</strong>
-            </span>
+            {user && (
+              <span className="text-accent-600 text-lg">
+                <strong>{itemCount}</strong>
+              </span>
+            )}
           </div>
         </div>
       </div>
