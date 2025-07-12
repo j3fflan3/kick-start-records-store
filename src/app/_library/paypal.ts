@@ -370,8 +370,10 @@ class Venmo {
   }
 }
 
+interface ICard {}
 interface IPayPalPaymentSource {
   paypal: IPayPal;
+  card: any;
   venmo: IVenmo;
 }
 

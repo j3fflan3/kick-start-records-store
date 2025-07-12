@@ -362,7 +362,7 @@ function getPackageDimensions(itemCount) {
   let length = 0;
   let width = 0;
   let height = 0;
-  // These values should be stored somewhere where they can be updated
+  // TODO: These values should be stored somewhere where they can be updated
   // via config file or DB lookup.
   if (itemCount < Number(process.env.HANDLING_SM_TH)) {
     length = 8;
@@ -709,20 +709,40 @@ async function serverCreateOrderPlaceholder(email) {
   return { data, error };
 }
 
-function getPayPalAmount(cart, shipping, tax) {
+function getPayPalAmount(cart, shippingCents, taxCents) {
+  console.log(
+    `getPayPalAmount\n\t${JSON.stringify(
+      cart
+    )}\n\tshippingCents: ${shippingCents}\n\ttaxCents: ${taxCents}`
+  );
+
   // Shipping and tax must be numbers
   const total = cartTotal(cart);
-  const combinedTotal = cartTotal(cart, Number(shipping), Number(tax));
+  const combinedTotal = cartTotal(
+    cart,
+    Number(shippingCents),
+    Number(taxCents)
+  );
+  let tax = "0.00";
+  if (taxCents > 0) {
+    tax = (taxCents / 100).toFixed(2);
+  }
+  let shipping = "0.00";
+  if (shippingCents > 0) {
+    shipping = (shippingCents / 100).toFixed(2);
+  }
   const item_total = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, total);
   const shipping_total = new PayPalSimpleAmount(
     DEFAULT_CURRENCY_CODE,
     shipping
   );
+  // Handling is hard coded as "0.00" for now.
+  const handling_total = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, "0.00");
   const tax_total = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, tax);
   const breakdown = new PayPalBreakdown(
     item_total,
     shipping_total,
-    null,
+    handling_total,
     tax_total
   );
 
@@ -743,17 +763,24 @@ function getPayPalItems(cart, taxPercentageFloat) {
       formatDollars(item.price)
     );
 
-    let tax_amount = null;
+    let tax_amount = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, "0.00");
     if (taxPercentageFloat > 0) {
       tax = calculateTax(taxPercentageFloat, item.price);
-      tax_amount = new PayPalSimpleAmount(DEFAULT_CURRENCY_CODE, tax);
+      tax_amount = new PayPalSimpleAmount(
+        DEFAULT_CURRENCY_CODE,
+        (tax / 100).toFixed(2)
+      );
     }
+    // hard coding the api path "records" for now.
+    // TODO: Need to come up with a reusable
+    // design to dynamically set the api path info.
+    const itemURL = `${getURL()}records/${item.catalogId}`;
     return new PayPalItem(
       item.title,
       item.count,
       item.description,
       category,
-      "",
+      itemURL,
       item.image.url,
       unit_amount,
       tax_amount,
@@ -763,81 +790,17 @@ function getPayPalItems(cart, taxPercentageFloat) {
   });
 }
 
-async function _serverCreateOrder(
-  sCart,
-  email,
-  shipping,
-  sShippingAddress,
-  sBillingAddress,
-  taxPercentageFloat = 0,
-  shipping_preference = GET_FROM_FILE
-) {
-  console.log(
-    `serverCreateOrder params -> sCart = ${sCart},
-      email = ${email},
-      shipping = ${shipping},
-      sShippingAddress = ${sShippingAddress},
-      sBillingAddress = ${sBillingAddress},
-      taxPercentageFloat = ${taxPercentageFloat},
-      shipping_preference = ${shipping_preference}`
-  );
-
-  const cart = JSON.parse(sCart);
-  const shipAddress = JSON.parse(sShippingAddress);
-  const billAddress = JSON.parse(sBillingAddress);
-  const { data, error } = await serverCreateOrderPlaceholder(email);
-  if (error) throw new Error(error.message);
-  const { order_number: invoice_id } = data;
-
-  // Make sure the access_token isn't expired
-  await oAuthPayPalRequest();
-  const create_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders`;
-  // first, items array
-  const payPalItems = getPayPalItems(cart, taxPercentageFloat);
-  // getPayPalAmount
-  let tax = "0.00";
-  if (taxPercentageFloat > 0) {
-    tax = cartTax(cart, taxPercentageFloat);
-  }
-  const payPalAmount = getPayPalAmount(cart, shipping, tax);
-  // Payee
-  const payee = new PayPalPayee(
-    process.env.PAYPAL_MERCHANT_EMAIL,
-    process.env.PAYPAL_MERCHANT_ID
-  );
-  const description = `Kickstart Records order #${invoice_id}`;
-  const purchaseUnit = new PayPalPurchaseUnit(
-    invoice_id,
-    description,
-    payPalAmount,
-    payee,
-    payPalItems,
-    shipAddress
-  );
-  const baseURL = getURL();
-  const return_url = `${baseURL}checkout/order-placed`;
-  const cancel_url = `${baseURL}checkout/payment`;
-  // payment source
-  const experienceContext = new PayPalExperienceContext(
-    shipping_preference,
-    return_url,
-    cancel_url,
-    billAddress
-  );
-  const payPal = new PayPal(experienceContext);
-  const paymentSource = new PayPalPaymentSource(payPal, null);
-  // purchaseUnit must be an array.
-  const payload = new PayPalOrder([purchaseUnit], paymentSource);
-  console.log(JSON.stringify(payload));
-}
-
 async function serverCreateOrder(sCreateOrderArgs) {
   const coa = JSON.parse(sCreateOrderArgs);
-
-  console.log(`sCreateOrderArgs: ${coa}
-    createOrderArgs: ${JSON.stringify(coa)}`);
-
-  const { cart, email, shippingAddress, billAddress, taxPercentageFloat } = coa;
+  console.log(`createOrderArgs: ${JSON.stringify(coa)}`);
+  const {
+    cart,
+    email,
+    shippingCostCents,
+    taxPercentageFloat,
+    shippingAddress,
+    billAddress,
+  } = coa;
   const { data, error } = await serverCreateOrderPlaceholder(email);
   if (error) throw new Error(error.message);
   const { order_number: invoice_id } = data;
@@ -847,12 +810,17 @@ async function serverCreateOrder(sCreateOrderArgs) {
   const create_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders`;
   // first, items array
   const payPalItems = getPayPalItems(cart, taxPercentageFloat);
+  console.log(
+    `serverCreateOrder\n\t payPalItems = ${JSON.stringify(payPalItems)}`
+  );
+
   // getPayPalAmount
-  let tax = "0.00";
+  let tax = 0;
   if (taxPercentageFloat > 0) {
     tax = cartTax(cart, taxPercentageFloat);
+    console.log(`tax: ${tax}\n`);
   }
-  const payPalAmount = getPayPalAmount(cart, shipping, tax);
+  const payPalAmount = getPayPalAmount(cart, shippingCostCents, tax);
   // Payee
   const payee = new PayPalPayee(
     process.env.PAYPAL_MERCHANT_EMAIL,
@@ -872,7 +840,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
   const cancel_url = `${baseURL}checkout/payment`;
   // payment source
   const experienceContext = new PayPalExperienceContext(
-    shipping_preference,
+    "SET_PROVIDED_ADDRESS",
     return_url,
     cancel_url,
     coa.billingAddress
@@ -881,7 +849,9 @@ async function serverCreateOrder(sCreateOrderArgs) {
   const paymentSource = new PayPalPaymentSource(payPal, null);
   // purchaseUnit must be an array.
   const payload = new PayPalOrder([purchaseUnit], paymentSource);
-  console.log(JSON.stringify(payload));
+  console.log(
+    `serverCreateOrder \n\t PayPal payload = ${JSON.stringify(payload)}`
+  );
 }
 export {
   serverDeleteUser,

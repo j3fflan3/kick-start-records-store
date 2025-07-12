@@ -24,7 +24,7 @@ function formatDollars(intCents) {
 }
 
 function calculateTax(taxPercentFloat, intCents) {
-  return Number(taxPercentFloat * (intCents / 100)).toFixed(2);
+  return Number(taxPercentFloat * intCents);
 }
 
 const cartItemsWeight = (cart) => {
