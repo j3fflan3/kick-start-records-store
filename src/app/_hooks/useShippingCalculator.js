@@ -40,8 +40,9 @@ function useShippingCalculator({
       const { handling, totalBasePrice } = data;
       const shippingAndHandling = Number(handling) + Number(totalBasePrice);
       setShippingError("");
-      setShippingCostCents(shippingAndHandling * 100); // this needs to be in cents
+      setShippingCostCents(Number(Math.round(shippingAndHandling * 100))); // this needs to be in cents
       console.log(`shippingAndHandling = ${shippingAndHandling}`);
+      console.log(`shippingCostCents = ${shippingCostCents}`);
 
       setShippingCost(shippingAndHandling.toFixed(2)); // String formatted for PayPal
     }

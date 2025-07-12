@@ -265,8 +265,8 @@ function Checkout({ cart, countries }) {
 
   const createOrder = async (...payPalArgs) => {
     try {
-      const [a, b, c] = payPalArgs;
-      const { paymentSource } = a;
+      const [source, order] = payPalArgs;
+      const { paymentSource } = source;
       console.log(`payPalArgs = ${JSON.stringify(payPalArgs)}`);
       console.log(`paymentSource: ${JSON.stringify(paymentSource)}`);
 
@@ -316,12 +316,12 @@ function Checkout({ cart, countries }) {
       // Call a server function
       await serverCreateOrder(
         JSON.stringify({
-          cart: JSON.stringify(cart),
+          cart,
           email,
-          shippingCost,
-          shippingAddress: JSON.stringify(shippingAddress),
-          billAddress: JSON.stringify(billAddress),
+          shippingCostCents,
           taxPercentageFloat: 0,
+          shippingAddress,
+          billAddress,
         })
       );
     } catch (error) {
@@ -446,9 +446,10 @@ function Checkout({ cart, countries }) {
                 <button
                   className="w-full block p-3 mt-6 rounded-sm text-lg cursor-pointer font-bold bg-accent-600 text-primary-50 hover:opacity-80"
                   onClick={() => {
-                    console.log(
-                      `handler goes here.  Maybe make this is a separate component?`
-                    );
+                    createOrder([
+                      { paymentSource: "card" },
+                      { order: {}, payment: null },
+                    ]);
                   }}
                 >
                   Pay now with Card
