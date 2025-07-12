@@ -370,18 +370,67 @@ class Venmo {
   }
 }
 
-interface ICard {}
+interface ICard {
+  name: string; // Max length 300
+  number: string; // 13-19 length
+  security_code: string; // 3-4 length
+  expiry: string; // 7 char, example: 2024-08
+  billing_address: IPayPalAddress;
+  // The following are optional.  Keeping them here for placeholders.
+  attributes: any;
+  stored_credential: any;
+  vault_id: any;
+  single_use_token: any;
+  network_token: any;
+  experience_context: any;
+}
+
+class Card {
+  name: string;
+  number: string;
+  security_code: string; // 3-4 length
+  expiry: string; // 7 char, example: 2024-08
+  billing_address: IPayPalAddress;
+  // The following are optional.  Keeping them here for placeholders.
+  attributes: any;
+  stored_credential: any;
+  vault_id: any;
+  single_use_token: any;
+  network_token: any;
+  experience_context: any;
+  constructor(
+    name: string,
+    number: string,
+    security_code: string,
+    expiry: string,
+    billing_address: IPayPalAddress
+  ) {
+    this.name = name;
+    this.number = number;
+    this.security_code = security_code;
+    this.expiry = expiry;
+    this.billing_address = billing_address;
+    this.attributes = null;
+    this.stored_credential = null;
+    this.vault_id = null;
+    this.single_use_token = null;
+    this.network_token = null;
+    this.experience_context = null;
+  }
+}
 interface IPayPalPaymentSource {
   paypal: IPayPal;
-  card: any;
+  card: ICard;
   venmo: IVenmo;
 }
 
 class PayPalPaymentSource {
   paypal: IPayPal;
+  card: ICard;
   venmo: IVenmo;
-  constructor(paypal: IPayPal, venmo: IVenmo) {
+  constructor(paypal: IPayPal, card: ICard, venmo: IVenmo) {
     this.paypal = paypal; // type PayPal
+    this.card = card; // Credit Card
     this.venmo = venmo; // type Venmo
   }
 }
@@ -408,33 +457,33 @@ class PayPalOrder {
 interface ICreateOrderArgs {
   cart: any;
   email: string;
-  shipping: string;
+  shippingCostCents: number;
+  taxPercentageFloat: Number;
   shippingAddress: IPayPalAddress;
   billingAddress: IPayPalAddress;
-  taxPercentageFloat: Number;
   shipping_preference: string;
 }
 
 class CreateOrderArgs {
   cart: any;
   email: string;
-  shipping: string;
+  shippingCostCents: number;
+  taxPercentageFloat: number;
   shippingAddress: IPayPalAddress;
   billingAddress: IPayPalAddress;
-  taxPercentageFloat: Number;
   shipping_preference: string;
   constructor(
     cart: any,
     email: string,
-    shipping: string,
+    shippingCostCents: number,
+    taxPercentageFloat: number,
     shippingAddress: IPayPalAddress,
     billingAddress: IPayPalAddress,
-    taxPercentageFloat: Number,
     shipping_preference: string
   ) {
     this.cart = cart;
     this.email = email;
-    this.shipping = shipping;
+    this.shippingCostCents = shippingCostCents;
     this.shippingAddress = shippingAddress;
     this.billingAddress = billingAddress;
     this.taxPercentageFloat = taxPercentageFloat;
@@ -482,6 +531,8 @@ export {
   Venmo,
   type IVenmoExperienceContext,
   VenmoExperienceContext,
+  type ICard,
+  Card,
   type ICreateOrderArgs,
   CreateOrderArgs,
 };
