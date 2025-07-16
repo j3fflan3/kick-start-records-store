@@ -43,12 +43,6 @@ function Checkout({ cart, countries }) {
   const [editBilling, setEditBilling] = useState(false);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState("");
-  const [shippingAddress, setShippingAddress] = useState(
-    new PayPalAddress("", "", "", "", "", "")
-  );
-  const [billAddress, setBillAddress] = useState(
-    new PayPalAddress("", "", "", "", "", "")
-  );
   // Instead of destructuring here, destructure in the child component
   // and take only what you need for checkout.js from here.
   const shippingContext = useShipping();
@@ -108,6 +102,30 @@ function Checkout({ cart, countries }) {
     !editBilling &&
     !editShipping;
   console.log(`showPayPalButtons: ${showPayPalButtons}`);
+
+  // Because the paypal buttons won't be shown until the address(es) are
+  // complete, this state will be up to date, either when the page loads or
+  // after HandleNext...
+  const [shippingAddress, setShippingAddress] = useState(
+    new PayPalAddress(
+      address,
+      addressContinued,
+      city,
+      stateProvince,
+      postalCode,
+      destinationCountryCode
+    )
+  );
+  const [billAddress, setBillAddress] = useState(
+    new PayPalAddress(
+      billingAddress,
+      billingAddressContinued,
+      billingCity,
+      billingStateProvince,
+      billingPostalCode,
+      billingDestinationCountryCode
+    )
+  );
 
   const { cartCount: itemCount } = useShoppingCart();
   const weight = cartItemsWeight(cart);
@@ -276,37 +294,6 @@ function Checkout({ cart, countries }) {
 
         throw new Error(message);
       }
-      setShippingAddress(
-        new PayPalAddress(
-          address,
-          addressContinued,
-          city,
-          stateProvince,
-          postalCode,
-          destinationCountryCode
-        )
-      );
-      billingSame
-        ? setBillAddress(
-            new PayPalAddress(
-              address,
-              addressContinued,
-              city,
-              stateProvince,
-              postalCode,
-              destinationCountryCode
-            )
-          )
-        : setBillAddress(
-            new PayPalAddress(
-              billingAddress,
-              billingAddressContinued,
-              billingCity,
-              billingStateProvince,
-              billingPostalCode,
-              billingDestinationCountryCode
-            )
-          );
       console.log(
         `Checkout.js -> shippingAddress: ${JSON.stringify(
           shippingAddress
@@ -320,7 +307,12 @@ function Checkout({ cart, countries }) {
           email,
           shippingCostCents,
           taxPercentageFloat: 0,
+          billingSame,
+          firstName,
+          lastName,
           shippingAddress,
+          billingFirstName,
+          billingLastName,
           billAddress,
         })
       );
