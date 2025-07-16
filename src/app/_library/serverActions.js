@@ -693,10 +693,16 @@ async function oAuthPayPalRequest() {
   }
 }
 
-async function serverCreateOrderPlaceholder(email) {
+async function serverCreateOrderPlaceholder(
+  email,
+  shippingAddress,
+  billingAddress
+) {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_order_placeholder", {
     _email: email,
+    _shipping_address: shippingAddress,
+    _billing_address: billingAddress,
   });
   if (error) {
     console.error(error.message);
@@ -798,10 +804,29 @@ async function serverCreateOrder(sCreateOrderArgs) {
     email,
     shippingCostCents,
     taxPercentageFloat,
+    billingSame,
+    firstName,
+    lastName,
     shippingAddress,
+    billingFirstName,
+    billingLastName,
     billAddress,
   } = coa;
-  const { data, error } = await serverCreateOrderPlaceholder(email);
+  const orderShipAdd = {
+    ...shippingAddress,
+    firstName,
+    lastName,
+  };
+  const orderBillAdd = {
+    ...billAddress,
+    firstName: billingFirstName,
+    lastName: billingLastName,
+  };
+  const { data, error } = await serverCreateOrderPlaceholder(
+    email,
+    orderShipAdd,
+    billingSame ? orderShipAdd : orderBillAdd
+  );
   if (error) throw new Error(error.message);
   const { order_number: invoice_id } = data;
 
@@ -833,7 +858,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
     payPalAmount,
     payee,
     payPalItems,
-    coa.shippingAddress
+    shippingAddress
   );
   const baseURL = getURL();
   const return_url = `${baseURL}checkout/order-placed`;
@@ -843,7 +868,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
     "SET_PROVIDED_ADDRESS",
     return_url,
     cancel_url,
-    coa.billingAddress
+    billAddress
   );
   const payPal = new PayPal(experienceContext);
   const paymentSource = new PayPalPaymentSource(payPal, null);
@@ -854,11 +879,6 @@ async function serverCreateOrder(sCreateOrderArgs) {
   );
 }
 
-async function serverCreateAddress(sAddress) {
-  console.log(`sAddress: ${sAddress}`);
-  const orderAddress = JSON.parse(sAddress);
-  console.log(`JSON.stringify(sAddress) = ${JSON.stringify(orderAddress)}`);
-}
 export {
   serverDeleteUser,
   serverGetCountries,
@@ -878,5 +898,4 @@ export {
   serverVerifyOtp,
   serverIsCaliforniaZip,
   serverCreateOrder,
-  serverCreateAddress,
 };
