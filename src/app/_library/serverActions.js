@@ -853,6 +853,10 @@ async function serverCreateOrder(sCreateOrderArgs) {
     `serverCreateOrder \n\t PayPal payload = ${JSON.stringify(payload)}`
   );
 }
+
+async function serverCreateAddress(sAddress) {
+  console.log(`sAddress: ${sAddress}`);
+}
 export {
   serverDeleteUser,
   serverGetCountries,
@@ -872,4 +876,5 @@ export {
   serverVerifyOtp,
   serverIsCaliforniaZip,
   serverCreateOrder,
+  serverCreateAddress,
 };
