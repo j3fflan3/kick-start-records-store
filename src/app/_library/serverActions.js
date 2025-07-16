@@ -856,6 +856,8 @@ async function serverCreateOrder(sCreateOrderArgs) {
 
 async function serverCreateAddress(sAddress) {
   console.log(`sAddress: ${sAddress}`);
+  const orderAddress = JSON.parse(sAddress);
+  console.log(`JSON.stringify(sAddress) = ${JSON.stringify(orderAddress)}`);
 }
 export {
   serverDeleteUser,
