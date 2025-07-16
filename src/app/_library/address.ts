@@ -1,6 +1,16 @@
-import { U } from "@upstash/redis/zmscore-CjoCv9kz";
+type AddressType = "Shipping" | "Billing" | "Both";
 
 // Interface and Class for Address(es)
+interface IOrderAddress {
+  addressType: AddressType;
+  addressLine1: string;
+  addressLine2: string;
+  cityTownVillage: string;
+  stateProvinceCounty: string;
+  postalCode: string;
+  countryCode: string;
+}
+
 interface IAddress {
   firstName?: string | undefined;
   lastName?: string | undefined;
@@ -71,4 +81,38 @@ class UserAddress implements IUserAddress {
   }
 }
 
-export { Address, UserAddress, type IAddress, type IUserAddress };
+class OrderAddress implements IOrderAddress {
+  addressType: AddressType;
+  addressLine1: string;
+  addressLine2: string;
+  cityTownVillage: string;
+  stateProvinceCounty: string;
+  postalCode: string;
+  countryCode: string;
+  constructor(
+    addressType: AddressType,
+    addressLine1: string,
+    addressLine2: string,
+    cityTownVillage: string,
+    stateProvinceCounty: string,
+    postalCode: string,
+    countryCode: string
+  ) {
+    this.addressType = addressType;
+    this.addressLine1 = addressLine1;
+    this.addressLine2 = addressLine2;
+    this.cityTownVillage = cityTownVillage;
+    this.stateProvinceCounty = stateProvinceCounty;
+    this.postalCode = postalCode;
+    this.countryCode = countryCode;
+  }
+}
+export {
+  Address,
+  UserAddress,
+  OrderAddress,
+  type IAddress,
+  type IUserAddress,
+  type IOrderAddress,
+  type AddressType,
+};
