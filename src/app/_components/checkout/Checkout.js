@@ -301,7 +301,7 @@ function Checkout({ cart, countries }) {
       );
 
       // Call a server function
-      await serverCreateOrder(
+      const result = await serverCreateOrder(
         JSON.stringify({
           cart,
           email,
@@ -316,6 +316,17 @@ function Checkout({ cart, countries }) {
           billAddress,
         })
       );
+      console.log(`result: ${JSON.stringify(result)}`);
+      if (result?.data?.id) {
+        return result.data.id;
+      } else {
+        const errorDetail = result?.data?.details?.[0];
+        const errorMessage = errorDetail
+          ? `${errorDetail.issue} ${errorDetail.description} (${result.data.debug_id})`
+          : JSON.stringify(result);
+
+        throw new Error(errorMessage);
+      }
     } catch (error) {
       console.log(`error: ${JSON.stringify(error)}`);
     }
