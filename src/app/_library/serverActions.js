@@ -850,7 +850,10 @@ async function serverCreateOrder(sCreateOrderArgs) {
   }
   const payPalAmount = getPayPalAmount(cart, shippingCostCents, tax);
   // Payee
-  const payee = new PayPalPayee(process.env.PAYPAL_MERCHANT_EMAIL);
+  const payee = new PayPalPayee(
+    process.env.PAYPAL_MERCHANT_EMAIL,
+    process.env.PAYPAL_MERCHANT_ID
+  );
   const description = `Kickstart Records order #${invoice_id}`;
   const fullName = new PayPalName(`${firstName} ${lastName}`);
   const shipping = new PayPalShipping(

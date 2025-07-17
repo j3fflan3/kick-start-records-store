@@ -147,18 +147,17 @@ class PayPalAmount {
     this.breakdown = breakdown;
   }
 }
-/*
-PayPalPayee requires either the Merchant ID or the Merchant Email, so only 
-using the Merchant email for now.
-*/
+
 interface IPayPalPayee {
   email_address: string;
-  // merchant_id: string;
+  merchant_id: string;
 }
 class PayPalPayee {
   email_address: string;
-  constructor(email_address: string) {
+  merchant_id: string;
+  constructor(email_address: string, merchant_id: string) {
     this.email_address = email_address;
+    this.merchant_id = merchant_id;
   }
 }
 
