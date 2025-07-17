@@ -24,11 +24,14 @@ import {
   PayPalBreakdown,
   PayPalExperienceContext,
   PayPalItem,
+  PayPalName,
   PayPalOrder,
   PayPalPayee,
   PayPalPaymentSource,
   PayPalPurchaseUnit,
+  PayPalShipping,
   PayPalSimpleAmount,
+  PayPalUPC,
   PHYSICAL_GOODS,
 } from "./paypal";
 
@@ -791,7 +794,7 @@ function getPayPalItems(cart, taxPercentageFloat) {
       unit_amount,
       tax_amount,
       item.sku ?? "",
-      item.upc ?? ""
+      item.upc ? new PayPalUPC("UPC-A", item.upc) : null
     );
   });
 }
@@ -847,19 +850,26 @@ async function serverCreateOrder(sCreateOrderArgs) {
   }
   const payPalAmount = getPayPalAmount(cart, shippingCostCents, tax);
   // Payee
-  const payee = new PayPalPayee(
-    process.env.PAYPAL_MERCHANT_EMAIL,
-    process.env.PAYPAL_MERCHANT_ID
-  );
+  const payee = new PayPalPayee(process.env.PAYPAL_MERCHANT_EMAIL);
   const description = `Kickstart Records order #${invoice_id}`;
+  const fullName = new PayPalName(`${firstName} ${lastName}`);
+  const shipping = new PayPalShipping(
+    "SHIPPING",
+    fullName,
+    email,
+    null,
+    shippingAddress
+  );
   const purchaseUnit = new PayPalPurchaseUnit(
     invoice_id,
     description,
     payPalAmount,
     payee,
     payPalItems,
-    shippingAddress
+    shipping
   );
+  console.log(`PayPalPurchaseUnit = ${JSON.stringify(purchaseUnit)}`);
+
   const baseURL = getURL();
   const return_url = `${baseURL}checkout/order-placed`;
   const cancel_url = `${baseURL}checkout/payment`;
@@ -870,6 +880,8 @@ async function serverCreateOrder(sCreateOrderArgs) {
     cancel_url,
     billAddress
   );
+  console.log(`experienceContext = ${JSON.stringify(experienceContext)}`);
+
   const payPal = new PayPal(experienceContext);
   const paymentSource = new PayPalPaymentSource(payPal, null);
   // purchaseUnit must be an array.
@@ -877,6 +889,35 @@ async function serverCreateOrder(sCreateOrderArgs) {
   console.log(
     `serverCreateOrder \n\t PayPal payload = ${JSON.stringify(payload)}`
   );
+  const accessToken = await redis.get(PAYPAL_TOKEN);
+  const response = await fetch(create_order_endpoint, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  try {
+    const result = await handlePayPalResponse(response);
+    return result;
+  } catch (err) {
+    console.log(`PayPal error: ${err.message}`);
+    throw err;
+  }
+}
+
+async function handlePayPalResponse(response) {
+  try {
+    const json = await response.json();
+    return {
+      data: json,
+      httpStatusCode: response.status,
+    };
+  } catch (err) {
+    const errorMessage = await response.text();
+    throw new Error(errorMessage);
+  }
 }
 
 export {
