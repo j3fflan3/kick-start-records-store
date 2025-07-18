@@ -12,6 +12,7 @@
     "@hcaptcha/react-hcaptcha": "^1.12.0",
     "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
+    "@paypal/paypal-server-sdk": "^1.1.0",
     "@paypal/react-paypal-js": "^8.8.2",
     "@supabase/auth-js": "^2.69.0",
     "@supabase/ssr": "^0.6.1",

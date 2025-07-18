@@ -34,6 +34,7 @@ import {
   PayPalUPC,
   PHYSICAL_GOODS,
 } from "./paypal";
+import { ApiError } from "@paypal/paypal-server-sdk";
 
 // Used for key/value storage (e.g., for USPS auth)
 const redis = Redis.fromEnv();
@@ -831,7 +832,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
     billingSame ? orderShipAdd : orderBillAdd
   );
   if (error) throw new Error(error.message);
-  const { order_number: invoice_id } = data;
+  const { order_number: invoice_id, order_id: reference_id } = data;
 
   // Make sure the access_token isn't expired
   await oAuthPayPalRequest();
@@ -864,6 +865,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
     shippingAddress
   );
   const purchaseUnit = new PayPalPurchaseUnit(
+    reference_id,
     invoice_id,
     description,
     payPalAmount,
@@ -923,6 +925,33 @@ async function handlePayPalResponse(response) {
   }
 }
 
+async function serverCaptureOrder(orderId) {
+  // Make sure the access_token isn't expired
+  await oAuthPayPalRequest();
+  const capture_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders/${orderId}/capture`;
+  console.log(`capture_order_endpoint: ${capture_order_endpoint}`);
+
+  const accessToken = await redis.get(PAYPAL_TOKEN);
+
+  try {
+    const response = await fetch(capture_order_endpoint, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      method: "POST",
+      body: "{}",
+    });
+    const { data } = await handlePayPalResponse(response);
+    return data;
+  } catch (err) {
+    console.log(`serverCaptureOrder: ${JSON.stringify(err)}`);
+    if (err instanceof ApiError) {
+      throw new Error(error.message);
+    }
+  }
+}
+
 export {
   serverDeleteUser,
   serverGetCountries,
@@ -942,4 +971,5 @@ export {
   serverVerifyOtp,
   serverIsCaliforniaZip,
   serverCreateOrder,
+  serverCaptureOrder,
 };

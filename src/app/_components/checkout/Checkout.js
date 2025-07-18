@@ -25,7 +25,10 @@ import { useBilling } from "../../_contexts/BillingProvider";
 import { useShipping } from "../../_contexts/ShippingProvider";
 import { Address, UserAddress } from "../../_library/address";
 import { PayPalAddress } from "../../_library/paypal";
-import { serverCreateOrder } from "../../_library/serverActions";
+import {
+  serverCaptureOrder,
+  serverCreateOrder,
+} from "../../_library/serverActions";
 import CheckoutBilling from "./CheckoutBilling";
 import CheckoutShipping from "./CheckoutShipping";
 import CheckoutTotal from "./CheckoutTotal";
@@ -331,8 +334,23 @@ function Checkout({ cart, countries }) {
       console.log(`error: ${JSON.stringify(error)}`);
     }
   };
-  function onApprove() {}
-  function onError() {}
+  async function onApprove(data, actions) {
+    console.log(
+      `data: ${JSON.stringify(data)}, actions: ${JSON.stringify(actions)}`
+    );
+
+    try {
+      const order = await serverCaptureOrder(data.orderID);
+      console.log(`order: ${JSON.stringify(order)}`);
+    } catch (error) {
+      console.log(`error: ${error.message}`);
+    }
+  }
+  function onError(err) {
+    console.log(`error: ${err}`);
+
+    console.log(`onError called.`);
+  }
   const isProcessing = false;
 
   const payPalStyle = { layout: "vertical", disableMaxWidth: true };
