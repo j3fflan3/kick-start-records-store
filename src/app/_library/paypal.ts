@@ -1,9 +1,11 @@
 // PayPal related objects
 const CAPTURE = "CAPTURE";
 const NO_CONTACT_INFO = "NO_CONTACT_INFO";
+const UPDATE_CONTACT_INFO = "UPDATE_CONTACT_INFO";
 const NO_PREFERENCE = "NO_PREFERENCE";
 const PAY_NOW = "PAY_NOW";
 const IMMEDIATE_PAYMENT_REQUIRED = "IMMEDIATE_PAYMENT_REQUIRED";
+const UNRESTRICTED = "UNRESTRICTED";
 const KICK_START_RECORDS = "Kickstart Records";
 const DIGITAL_GOODS = "DIGITAL_GOODS";
 const PHYSICAL_GOODS = "PHYSICAL_GOODS";
@@ -162,6 +164,7 @@ class PayPalPayee {
 }
 
 interface IPayPalPurchaseUnit {
+  reference_id: string;
   invoice_id: string;
   description: string;
   amount: IPayPalAmount;
@@ -171,6 +174,7 @@ interface IPayPalPurchaseUnit {
 }
 
 class PayPalPurchaseUnit {
+  reference_id: string;
   invoice_id: string;
   description: string;
   amount: IPayPalAmount;
@@ -179,6 +183,7 @@ class PayPalPurchaseUnit {
   shipping: IPayPalShipping;
 
   constructor(
+    reference_id: string,
     invoice_id: string,
     description: string,
     amount: IPayPalAmount,
@@ -186,6 +191,7 @@ class PayPalPurchaseUnit {
     items: IPayPalItem[],
     shipping: IPayPalShipping
   ) {
+    this.reference_id = reference_id;
     this.invoice_id = invoice_id;
     this.description = description;
     this.amount = amount; // type PayPalAmount
@@ -326,10 +332,10 @@ class PayPalExperienceContext {
   ) {
     this.brand_name = KICK_START_RECORDS;
     this.shipping_preference = shipping_preference;
-    this.contact_preference = NO_CONTACT_INFO;
+    this.contact_preference = UPDATE_CONTACT_INFO;
     this.landing_page = NO_PREFERENCE;
     this.user_action = PAY_NOW;
-    this.payment_method_preference = IMMEDIATE_PAYMENT_REQUIRED;
+    this.payment_method_preference = UNRESTRICTED;
     this.return_url = return_url;
     this.cancel_url = cancel_url;
     this.address = billingAddress;
