@@ -12,21 +12,19 @@ import { useActionState, useEffect, useRef, useState } from "react";
 const initialState = {
   data: {},
 };
-function SignUpForm({ token }) {
+function SignUpFormShort({ token }) {
   // const router = useRouter();
   const [state, formAction, isPending] = useActionState(
     serverSignUp,
     initialState
   );
   // const [token, setToken] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [errors, setErrors] = useState({});
   const [mailingChecked, setMailingChecked] = useState(false);
-  const [notifyChecked, setNotifyChecked] = useState(false);
   const [showPending, setShowPending] = useState(false);
   // refs
   const emailRef = useRef(null);
@@ -58,14 +56,6 @@ function SignUpForm({ token }) {
     [errors]
   );
 
-  function handleFirst(e) {
-    setErrors({});
-    setFirstName(e.target.value);
-  }
-  function handleLast(e) {
-    setErrors({});
-    setLastName(e.target.value);
-  }
   function handleEmail(e) {
     setErrors({});
     setEmail(e.target.value);
@@ -98,8 +88,8 @@ function SignUpForm({ token }) {
       {
         field: "confirm",
         value: confirm,
-        validator: (conf) => conf === password,
-        message: "Password confirmation does not match",
+        validator: (conf) => conf === email,
+        message: "Email confirmation does not match",
       }
     );
     if (valid) {
@@ -113,8 +103,8 @@ function SignUpForm({ token }) {
   return (
     <>
       <form action={formAction} ref={formRef} className="space-y-6">
-        {/* continueCheckout "" for false, "true" for true */}
-        <input type="hidden" name="continueCheckout" value="" />
+        {/* These values may be updated later at checkout or in the profile */}
+        <input type="hidden" name="continueCheckout" value="true" />
         <input type="hidden" name="billingSameAsShipping" value="true" />
         <input type="hidden" name="address" value="" />
         <input type="hidden" name="addressContinued" value="" />
@@ -122,28 +112,6 @@ function SignUpForm({ token }) {
         <input type="hidden" name="stateProvince" value="" />
         <input type="hidden" name="postalCode" value="" />
         <input type="hidden" name="destinationCountryCode" value="US" />
-        <div className="mt-2">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
-            value={firstName}
-            onChange={handleFirst}
-            required
-          />
-        </div>
-        <div className="mt-2">
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
-            required
-            onChange={handleLast}
-            value={lastName}
-          />
-        </div>
         <div className="mt-2">
           <input
             type="email"
@@ -162,6 +130,21 @@ function SignUpForm({ token }) {
         </div>
         <div className="mt-2">
           <input
+            type="email"
+            name="confirm"
+            placeholder="Confirm Email Address"
+            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+            onChange={handleConfirm}
+            ref={confirmRef}
+            value={confirm}
+            required
+          />
+          <p className="ml-2 mt-2 text-sm text-red-700">
+            {errors?.confirm && errors.confirm}
+          </p>
+        </div>
+        <div className="mt-2">
+          <input
             type="password"
             name="password"
             placeholder="Password"
@@ -176,21 +159,6 @@ function SignUpForm({ token }) {
         </div>
         <div className="mt-2">
           <input
-            type="password"
-            name="confirm"
-            placeholder="Confirm Password"
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
-            onChange={handleConfirm}
-            ref={confirmRef}
-            value={confirm}
-            required
-          />
-          <p className="ml-2 mt-2 text-sm text-red-700">
-            {errors?.confirm && errors.confirm}
-          </p>
-        </div>
-        <div className="mt-2">
-          <input
             type="checkbox"
             name="mailingList"
             value="true"
@@ -199,19 +167,10 @@ function SignUpForm({ token }) {
           />
           &nbsp; Sign me up for new release and sale notifications!
         </div>
-        <div className="mt-2">
-          <input
-            type="checkbox"
-            name="notifyList"
-            value="true"
-            checked={notifyChecked}
-            onChange={() => setNotifyChecked(!notifyChecked)}
-          />
-          &nbsp; Email me when the site launches!
-        </div>
         <input type="hidden" value={token} name="captchaToken" />
+        <input type="hidden" value="/checkout/shipping" name="next" />
       </form>
-      <div className="flex w-full pt-6 content-center">
+      <div className="flex w-full content-center">
         <SubmitButton
           disabled={!isSubmittable}
           cssClasses={
@@ -222,11 +181,11 @@ function SignUpForm({ token }) {
           onClick={handleSubmit}
           showPending={showPending}
         >
-          Sign Up
+          Continue
         </SubmitButton>
       </div>
     </>
   );
 }
 
-export default SignUpForm;
+export default SignUpFormShort;

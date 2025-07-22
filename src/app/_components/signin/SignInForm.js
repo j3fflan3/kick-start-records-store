@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
@@ -11,11 +11,18 @@ import Link from "next/link";
 const initialState = {
   message: "",
 };
-function SignInForm() {
+function SignInForm({
+  titlePlacement = "text-center",
+  hideNewCustomer = false,
+  title = "Sign In",
+  checkoutMessage = null,
+  buttonText = "Sign In",
+}) {
   const router = useRouter();
   const [state, formAction] = useActionState(clientSignIn, initialState);
 
   const [email, setEmail] = useState("");
+  const emailRef = useRef(null);
   const [password, setPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState(false);
   const isValidEmail = validateEmail(email) || email === "";
@@ -30,17 +37,29 @@ function SignInForm() {
         !successMessage
       ) {
         setSuccessMessage(true); // this is to avoid double success messages
-        router.push("/records");
+        if (checkoutMessage) router.push("/checkout/payment");
+        else router.push("/records");
       } else if (message === "error") {
+        emailRef.current.focus();
         setEmail("");
         setPassword("");
+
         toast.error(
           "Log In failed.  Please verify your email or password and try again",
           { id: "loginError", position: "top-right" }
         );
       }
     }
-  }, [state, setEmail, setPassword, router, successMessage, setSuccessMessage]);
+  }, [
+    state,
+    setEmail,
+    setPassword,
+    router,
+    successMessage,
+    setSuccessMessage,
+    checkoutMessage,
+    emailRef,
+  ]);
 
   function handleEmail(e) {
     setEmail(e.target.value);
@@ -51,27 +70,26 @@ function SignInForm() {
   return (
     <>
       <Toaster position="top-right" />
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-4 lg:px-6">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
-            Sign in to your account
+          <h2
+            className={`mt-4 ${titlePlacement} text-2xl/9 font-bold tracking-tight dark:text-white`}
+          >
+            {title}
           </h2>
+          {checkoutMessage && <p className="mt-2">{checkoutMessage}</p>}
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
           <form action={formAction} className="space-y-6">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium dark:text-white"
-              >
-                Email address
-              </label>
               <div className="mt-2">
                 <input
                   id="email"
                   name="email"
                   type="email"
+                  placeholder="Email Address"
+                  ref={emailRef}
                   value={email}
                   onChange={handleEmail}
                   required
@@ -82,27 +100,12 @@ function SignInForm() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium dark:text-white"
-                >
-                  Password
-                </label>
-                <div className="text-sm">
-                  <Link
-                    href="/account/reset-password"
-                    className="font-semibold text-accent-500 hover:text-accent-400"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-              </div>
               <div className="mt-2">
                 <input
                   id="password"
                   name="password"
                   type="password"
+                  placeholder="Password"
                   value={password}
                   onChange={handlePassword}
                   required
@@ -112,7 +115,7 @@ function SignInForm() {
               </div>
             </div>
 
-            <div>
+            <div className="mt-8">
               {/* className="flex w-full justify-center rounded-md bg-accent-500
               px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs
               hover:bg-accent-400 focus-visible:outline-2
@@ -121,24 +124,33 @@ function SignInForm() {
                 disabled={!isSubmittable}
                 cssClasses={
                   isSubmittable
-                    ? `rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-primary-50 hover:bg-accent-600 active:bg-yellow-500 cursor-pointer`
+                    ? `rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-primary-50 hover:bg-accent-600 active:bg-accent-500 cursor-pointer`
                     : `rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-primary-100 cursor-not-allowed`
                 }
               >
-                Sign in
+                {buttonText}
               </SubmitButton>
             </div>
           </form>
-
-          <p className="mt-10 text-center text-sm/6 text-gray-400">
-            New customer?{" "}
+          <p className="mt-4 text-center text-sm/6 text-gray-400">
             <Link
-              href="/account/verify-human"
+              href="/account/reset-password"
               className="font-semibold text-accent-500 hover:text-accent-400"
             >
-              Sign up here
+              Forgot password?
             </Link>
           </p>
+          {!hideNewCustomer && (
+            <p className="mt-2 text-center text-sm/6 text-gray-400">
+              New customer?{" "}
+              <Link
+                href="/account/verify-human"
+                className="font-semibold text-accent-500 hover:text-accent-400"
+              >
+                Sign up here
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </>

@@ -53,7 +53,9 @@ export default function Product({ record }) {
               </div>
 
               <div className="mt-2 space-y-6">
-                <p className="text-base text-primary-500">{description}</p>
+                <p className="text-base text-primary-950 dark:text-primary-300">
+                  {description}
+                </p>
               </div>
 
               {format !== "Download" && (

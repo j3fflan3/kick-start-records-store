@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import ShoppingCart from "../_components/shopping-cart/ShoppingCart";
 
 export const revalidate = 0;
-
 async function Page() {
   const { data } = await serverGetShoppingCart();
 

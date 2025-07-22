@@ -69,17 +69,18 @@ function DeleteAccountDialog({ userId }) {
           Delete Account
         </DialogTitle>
         <DialogDescription className="!text-black dark:!text-primary-50">
-          <div className="text-xl mb-2">We&apos;re sorry to see you go!</div>
+          <span className="text-xl mb-2">We&apos;re sorry to see you go!</span>
         </DialogDescription>
         <DialogBody>
           <Field>
             <Label>
-              Confirm you want to delete your account.{" "}
+              Confirm you want to delete your account. <br />
+              <br />
               <span className="text-accent-600 dark:text-accent-500 font-bold">
                 This is permanent and non-recoverable.
               </span>
               <div className="mt-4">
-                Are you sure you want to delete your account? Enter{" "}
+                To permanently delete your account type&nbsp;
                 <strong>delete my account</strong> in the field below, then
                 click Delete Account.
               </div>

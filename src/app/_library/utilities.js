@@ -18,17 +18,30 @@ function printRecordFormat(recordFormat) {
 }
 
 function formatDollars(intCents) {
+  if (intCents <= 0) return "0.00";
   const dollarFloat = intCents / 100;
-  let dollars = String(Number(parseFloat(dollarFloat)));
-  if (dollars.indexOf(".") === dollars.length - 2) {
-    dollars += "0";
-  }
-  return dollars;
+  return Number(dollarFloat).toFixed(2);
 }
 
-const cartSubtotal = (cart) => {
-  const subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
+function calculateTax(taxPercentFloat, intCents) {
+  return Number(taxPercentFloat * intCents);
+}
+
+const cartItemsWeight = (cart) => {
+  const weight = cart.reduce((sum, item) => sum + item.count * item.weight, 0);
+  return weight;
+};
+
+const cartTotal = (cart, ...shippingAndHandling) => {
+  let subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
+  console.log(`cartTotal -> ${[...shippingAndHandling]}`);
+  subtotal += [...shippingAndHandling].reduce((sum, item) => sum + item, 0);
   return formatDollars(subtotal);
+};
+
+const cartTax = (cart, taxPercentageFloat) => {
+  let subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
+  return calculateTax(taxPercentageFloat, subtotal);
 };
 
 const cartItemCount = (cart) => {
@@ -70,13 +83,34 @@ function shoppingCartKey(id, is_anonymous, expirationDate) {
   this.expirationDate = expirationDate;
 }
 
+function getDateForUSPS() {
+  const today = new Date();
+  let day = today.getDate();
+  let month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  day = day < 10 ? "0" + day : day;
+  month = month < 10 ? "0" + month : month;
+  return year + "-" + month + "-" + day;
+}
+
+function isDateExpired(startUnixEpoch, expirationSeconds) {
+  const expirationDate = new Date(startUnixEpoch + expirationSeconds * 1000);
+  const now = new Date();
+  return now > expirationDate;
+}
+
 export {
   printRecordFormat,
   formatDollars,
-  cartSubtotal,
+  calculateTax,
+  cartTotal,
+  cartTax,
   cartItemCount,
+  cartItemsWeight,
   validateEmail,
   validatePassword,
   validateForm,
   shoppingCartKey,
+  getDateForUSPS,
+  isDateExpired,
 };

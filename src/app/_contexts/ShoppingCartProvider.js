@@ -75,8 +75,10 @@ function ShoppingCartProvider({ children }) {
   }
 
   function createLocalShoppingCart(id = null, is_anonymous = null) {
+    let date = new Date();
+    date.setDate(date.getDate() + 30);
     return () => {
-      return new shoppingCartKey(id, is_anonymous, new Date());
+      return new shoppingCartKey(id, is_anonymous, date);
     };
   }
   async function addToShoppingCart(catalogId, is_anonymous, count = 1) {
@@ -97,11 +99,11 @@ function ShoppingCartProvider({ children }) {
     const { data, error } = await serverGetShoppingCart();
     if (error) {
       console.log(error.message);
-      return { error };
+      return { data };
     }
     console.log(`data: ${JSON.stringify(data)}`);
     setCount(data);
-    return { error };
+    return { data };
   }
   async function updateShoppingCart(catalogId, count, email = null) {
     let cnt = count;

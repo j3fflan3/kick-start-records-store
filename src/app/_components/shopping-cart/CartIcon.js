@@ -6,10 +6,14 @@ import { ShoppingCartIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
+import { useSession } from "../../_contexts/SessionProvider";
+import SpinnerMini from "../spinners/SpinnerMini";
 
 export const revalidate = 0;
 
 function CartIcon() {
+  const { session } = useSession();
+  const { user } = session || { user: null };
   const context = useShoppingCart();
   const { cartCount: itemCount, setCartCount, localCartIds } = context;
   useEffect(
@@ -28,27 +32,32 @@ function CartIcon() {
           console.log(error);
         }
       }
-
-      getCartCount();
+      if (user) getCartCount();
     },
-    [setCartCount]
+    [setCartCount, user]
   );
   // Need to figure out if there is a way to avoid this hydration warning in the first place
   return (
     <Link suppressHydrationWarning={true} href="/cart">
       <div className="shoppingCartContainer">
         <div className="shoppingCartIcon ">
-          <ShoppingCartIcon
-            title="Cart"
-            className="shoppingCartIcon h-11  w-11  text-primary-200 z-50"
-          />
+          {user ? (
+            <ShoppingCartIcon
+              title="Cart"
+              className="shoppingCartIcon h-11  w-11  text-primary-200 z-50"
+            />
+          ) : (
+            <SpinnerMini />
+          )}
         </div>
 
         <div className="shoppingCartCount">
           <div className=" text-center align-top w-8">
-            <span className="text-accent-600 text-lg">
-              <strong>{itemCount}</strong>
-            </span>
+            {user && (
+              <span className="text-accent-600 text-lg">
+                <strong>{itemCount}</strong>
+              </span>
+            )}
           </div>
         </div>
       </div>

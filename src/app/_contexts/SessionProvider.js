@@ -1,8 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/src/app/_library/supabase/client";
-import { clientSignInAnonymously } from "../_library/clientActions";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const SessionContext = createContext(null);
 

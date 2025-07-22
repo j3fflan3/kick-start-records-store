@@ -14,12 +14,12 @@ function Logo() {
       />
       <div>
         <span
-          className={`text-3xl/6 font-semibold align-middle pb-2 text-primary-950 dark:text-primary-50`}
+          className={`text-xl/6 font-semibold align-middle pb-2 text-primary-950 dark:text-primary-50`}
         >
           kickstart
         </span>
         <span
-          className={`text-3xl/6 font-semibold align-middle pb-2 text-accent-600`}
+          className={`text-xl/6 font-semibold align-middle pb-2 text-accent-600`}
         >
           records
         </span>
