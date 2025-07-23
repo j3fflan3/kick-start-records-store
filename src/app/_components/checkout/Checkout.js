@@ -28,16 +28,18 @@ import { PayPalAddress } from "../../_library/paypal";
 import {
   serverCaptureOrder,
   serverCreateOrder,
+  serverUpdateOrder,
 } from "../../_library/serverActions";
 import CheckoutBilling from "./CheckoutBilling";
 import CheckoutShipping from "./CheckoutShipping";
 import CheckoutTotal from "./CheckoutTotal";
+import { useRouter } from "next/navigation";
 
 function Checkout({ cart, countries }) {
   // Checkout will always have a cart of at least one item.  All items will have the same
   // shopping_cart_id
   const { shopping_cart_id: shoppingCartId } = cart[0];
-
+  const router = useRouter();
   // use hooks and funcs
   const { session } = useSession();
   const { user } = session || { user: null };
@@ -47,6 +49,7 @@ function Checkout({ cart, countries }) {
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
   const [tax, setTax] = useState(0);
+  const [subtotal, setSubtotal] = useState("");
   const [total, setTotal] = useState("");
   // Instead of destructuring here, destructure in the child component
   // and take only what you need for checkout.js from here.
@@ -145,6 +148,7 @@ function Checkout({ cart, countries }) {
 
   useEffect(
     function () {
+      setSubtotal(cartTotal(cart));
       setTotal(cartTotal(cart, shippingCostCents, tax));
     },
     [shippingCostCents, cart, tax]
@@ -322,6 +326,14 @@ function Checkout({ cart, countries }) {
         })
       );
       console.log(`result: ${JSON.stringify(result)}`);
+      // console.log(`result.error.message = ${result.error.message}`);
+
+      if (result.error) {
+        console.log(`in result.error.message closure`);
+        const errMessage = result.error.message;
+        throw new Error(errMessage);
+      }
+
       if (result?.data?.id) {
         return result.data.id;
       } else {
@@ -333,6 +345,8 @@ function Checkout({ cart, countries }) {
         throw new Error(errorMessage);
       }
     } catch (error) {
+      console.log(error);
+
       console.log(`error: ${JSON.stringify(error)}`);
     }
   };
@@ -344,8 +358,22 @@ function Checkout({ cart, countries }) {
     try {
       const order = await serverCaptureOrder(data.orderID);
       console.log(`order: ${JSON.stringify(order)}`);
-    } catch (error) {
-      console.log(`error: ${error.message}`);
+      const sCapturedOrderArgs = JSON.stringify({
+        _paypal_capture_response: order,
+        _subtotal: Number(subtotal),
+        _shipping: Number(shippingCost),
+      });
+      const { data: updateData, error } = await serverUpdateOrder(
+        sCapturedOrderArgs
+      );
+      if (error) throw error;
+      console.log(`updateData: ${updateData}, error: ${error}`);
+
+      router.push(
+        `/checkout/order-placed/${order.purchase_units[0].reference_id}`
+      );
+    } catch (err) {
+      console.log(`error: ${err.message}`);
     }
   }
   function onError(err) {
