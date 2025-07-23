@@ -698,12 +698,14 @@ async function oAuthPayPalRequest() {
 }
 
 async function serverCreateOrderPlaceholder(
+  shoppingCartId,
   email,
   shippingAddress,
   billingAddress
 ) {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_order_placeholder", {
+    _shopping_cart_id: shoppingCartId,
     _email: email,
     _shipping_address: shippingAddress,
     _billing_address: billingAddress,
@@ -826,7 +828,9 @@ async function serverCreateOrder(sCreateOrderArgs) {
     firstName: billingFirstName,
     lastName: billingLastName,
   };
+  const { shopping_cart_id: shoppingCartId } = cart[0];
   const { data, error } = await serverCreateOrderPlaceholder(
+    shoppingCartId,
     email,
     orderShipAdd,
     billingSame ? orderShipAdd : orderBillAdd

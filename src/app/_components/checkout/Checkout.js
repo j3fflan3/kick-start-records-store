@@ -34,9 +34,11 @@ import CheckoutShipping from "./CheckoutShipping";
 import CheckoutTotal from "./CheckoutTotal";
 
 function Checkout({ cart, countries }) {
-  // const []
-  // use hooks and funcs
+  // Checkout will always have a cart of at least one item.  All items will have the same
+  // shopping_cart_id
+  const { shopping_cart_id: shoppingCartId } = cart[0];
 
+  // use hooks and funcs
   const { session } = useSession();
   const { user } = session || { user: null };
   console.log(user);
@@ -104,7 +106,7 @@ function Checkout({ cart, countries }) {
     (billingSame || (!billingSame && billingReadOnly)) &&
     !editBilling &&
     !editShipping;
-  console.log(`showPayPalButtons: ${showPayPalButtons}`);
+  // console.log(`showPayPalButtons: ${showPayPalButtons}`);
 
   // Because the paypal buttons won't be shown until the address(es) are
   // complete, this state will be up to date, either when the page loads or
@@ -271,13 +273,13 @@ function Checkout({ cart, countries }) {
         shippingAdd,
         billingAdd
       );
-
-      await saveShipping(userAddress);
+      if (!user.id_anonymous) await saveShipping(userAddress);
       setEditShipping(false);
       setEditBilling(false);
     }
   }
-
+  // This should only be called for signed up users, not anonymous users
+  // See example in handleNext
   const saveShipping = async (userAddress) => {
     const { data, error } = await serverSaveUserAddress(
       JSON.stringify(userAddress)
