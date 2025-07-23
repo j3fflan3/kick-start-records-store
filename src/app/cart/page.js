@@ -9,7 +9,7 @@ async function Page() {
   const { data } = await serverGetShoppingCart();
 
   if (!data) return <CartIsEmpty />;
-  // console.log(data);
+  console.log(data);
   return (
     <Suspense fallback={<Spinner />}>
       <ShoppingCart cart={data} />

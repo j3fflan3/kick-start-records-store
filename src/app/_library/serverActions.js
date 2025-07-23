@@ -697,16 +697,11 @@ async function oAuthPayPalRequest() {
   }
 }
 
-async function serverCreateOrderPlaceholder(
-  email,
-  shippingAddress,
-  billingAddress
-) {
+async function serverCreateOrderPlaceholder(shoppingCartId, email) {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_order_placeholder", {
+    _shopping_cart_id: shoppingCartId,
     _email: email,
-    _shipping_address: shippingAddress,
-    _billing_address: billingAddress,
   });
   if (error) {
     console.error(error.message);
@@ -826,10 +821,25 @@ async function serverCreateOrder(sCreateOrderArgs) {
     firstName: billingFirstName,
     lastName: billingLastName,
   };
+  console.log(
+    `orderShipAdd = ${JSON.stringify(
+      orderShipAdd
+    )}\norderBillAdd = ${JSON.stringify(orderBillAdd)}`
+  );
+
+  if (
+    orderShipAdd.postal_code === "" ||
+    (!billingSame && orderBillAdd.postal_code === "")
+  )
+    return {
+      data: null,
+      error: { message: "Shipping and/or Billing address is required." },
+      httpStatusCode: 500,
+    };
+  const { shopping_cart_id: shoppingCartId } = cart[0];
   const { data, error } = await serverCreateOrderPlaceholder(
-    email,
-    orderShipAdd,
-    billingSame ? orderShipAdd : orderBillAdd
+    shoppingCartId,
+    email
   );
   if (error) throw new Error(error.message);
   const { order_number: invoice_id, order_id: reference_id } = data;
@@ -898,6 +908,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
   const response = await fetch(create_order_endpoint, {
     headers: {
       "Content-Type": "application/json",
+      "PayPal-Request-Id": `${reference_id}`,
       Authorization: `Bearer ${accessToken}`,
     },
     method: "POST",
@@ -905,6 +916,8 @@ async function serverCreateOrder(sCreateOrderArgs) {
   });
   try {
     const result = await handlePayPalResponse(response);
+    console.log(`serverCreateOrder -> result = \n\t${JSON.stringify(result)}`);
+
     return result;
   } catch (err) {
     console.log(`PayPal error: ${err.message}`);
@@ -917,6 +930,7 @@ async function handlePayPalResponse(response) {
     const json = await response.json();
     return {
       data: json,
+      error: null,
       httpStatusCode: response.status,
     };
   } catch (err) {
@@ -952,6 +966,27 @@ async function serverCaptureOrder(orderId) {
   }
 }
 
+async function serverUpdateOrder(sCapturedOrderArgs) {
+  console.log(`sCapturedOrderArgs = ${sCapturedOrderArgs}`);
+  const coa = JSON.parse(sCapturedOrderArgs);
+  const { _paypal_capture_response, _subtotal, _shipping } = coa;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("update_order", {
+    _paypal_capture_response,
+    _subtotal,
+    _shipping,
+  });
+  if (error) {
+    console.error(error.message);
+  }
+  console.log(
+    `serverUpdateOrder -> {data, error} ${JSON.stringify(
+      data
+    )}, ${JSON.stringify(error)}}`
+  );
+  return { data, error };
+}
+
 export {
   serverDeleteUser,
   serverGetCountries,
@@ -972,4 +1007,5 @@ export {
   serverIsCaliforniaZip,
   serverCreateOrder,
   serverCaptureOrder,
+  serverUpdateOrder,
 };
