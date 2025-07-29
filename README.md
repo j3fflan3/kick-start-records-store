@@ -3,7 +3,7 @@
 An Indie Label Record Store built with NEXT.js React Framework, JavaScript, TailwindCSS, and PostgreSQL (Supabase), RESEND for smtp, and Cypress for E2E testing.
 _This is a work in progress!_
 
-Visit, sign up, and play around at the test site [Kick Start Records](https://kick-start-records-store.vercel.app)
+Visit, sign up, and play around at the test site [Kick Start Records](https://www.kickstartrecords.com)
 
 ## Task List
 
@@ -11,7 +11,7 @@ Visit, sign up, and play around at the test site [Kick Start Records](https://ki
 - [x] Implement Auth with PCKE using Supabase and RESEND, including signup, confirmation email, login, and password reset.
 - [x] Implement shopping cart using localstorage, anonymous login for guest users, and store cart in DB.
 - [ ] Implement checkout using PayPal checkout APIs and buttons, as well as order, shipping, and tracking DB. _**In Progress**_
-- [ ] Integrate USPS APIs to calculate shipping cost.
+- [x] Integrate USPS APIs to calculate shipping cost.
 - [ ] Integrate California Sales Tax API to calculate California sales tax:
 
 `https://services.maps.cdtfa.ca.gov/api/taxrate/GetRateByAddress?address={address}&city={city}&zip={zipcode}`

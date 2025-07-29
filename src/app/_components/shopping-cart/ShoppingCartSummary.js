@@ -5,7 +5,7 @@ import { cartItemCount, cartTotal } from "@/src/app/_library/utilities";
 import Link from "next/link";
 import { useSession } from "../../_contexts/SessionProvider";
 
-function OrderSummary({ cart }) {
+function ShoppingCartSummary({ cart }) {
   const { session } = useSession();
   const isLoggedIn = session && session.user.is_anonymous === false;
 
@@ -85,4 +85,4 @@ function OrderSummary({ cart }) {
   );
 }
 
-export default OrderSummary;
+export default ShoppingCartSummary;
