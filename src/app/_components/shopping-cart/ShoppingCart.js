@@ -1,6 +1,6 @@
 "use client";
 import CartItemCard from "./CartItemCard";
-import OrderSummary from "./OrderSummary";
+import ShoppingCartSummary from "./ShoppingCartSummary";
 
 function ShoppingCart({ cart, guestId, cartId }) {
   return (
@@ -30,7 +30,7 @@ function ShoppingCart({ cart, guestId, cartId }) {
             aria-labelledby="summary-heading"
             className="mt-8 rounded-lg bg-gray-50 dark:bg-primary-900/13 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
           >
-            <OrderSummary cart={cart} />
+            <ShoppingCartSummary cart={cart} />
           </section>
         </div>
       </div>
