@@ -12,13 +12,13 @@ export default function OrderEmailTemplate({
   orderLink,
 }: OrderEmailTemplateProps) {
   return (
-    <div>
+    <div className="ml-6">
       <h1>Hi, {firstName}!</h1>
-      <p>Thank you for your order!</p>
-      <p>
-        Follow this link to view your order:
+      <h2>Thank you for your order!</h2>
+      <h2>
+        Follow this link to view your order details:&nbsp;
         <a href={orderLink}>{orderNumber}</a>
-      </p>
+      </h2>
     </div>
   );
 }
