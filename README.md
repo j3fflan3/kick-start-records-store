@@ -10,7 +10,7 @@ Visit, sign up, and play around at the test site [Kick Start Records](https://ww
 - [x] Create product DB with artists, labels, catalog, cart.
 - [x] Implement Auth with PCKE using Supabase and RESEND, including signup, confirmation email, login, and password reset.
 - [x] Implement shopping cart using localstorage, anonymous login for guest users, and store cart in DB.
-- [x] Implement checkout using PayPal checkout APIs and buttons, as well as order, shipping, and tracking DB. _**In Progress**_
+- [ ] Implement checkout using PayPal checkout APIs and buttons, as well as order, shipping, and tracking DB. _**In Progress**_
 - [x] Integrate USPS APIs to calculate shipping cost.
 - [ ] Integrate California Sales Tax API to calculate California sales tax:
 
