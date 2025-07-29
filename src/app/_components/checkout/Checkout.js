@@ -363,8 +363,11 @@ function Checkout({ cart, countries }) {
         _subtotal: Number(subtotal),
         _shipping: Number(shippingCost),
       });
-      const { data: updateData, error } =
-        await serverUpdateOrder(sCapturedOrderArgs);
+
+      const { data: updateData, error } = await serverUpdateOrder(
+        sCapturedOrderArgs
+      );
+
       if (error) throw error;
       console.log(`updateData: ${updateData}, error: ${error}`);
 
