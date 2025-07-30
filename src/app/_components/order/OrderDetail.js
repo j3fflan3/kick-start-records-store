@@ -8,6 +8,18 @@ function OrderDetail({ order }) {
         <h1 className="text-2xl font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-4xl">
           Order #{order[0].order_number}
         </h1>
+        <div className="mt-6">
+          <p className="font-bold">Ship To</p>
+          <p className="mt-2">{order[0].shippingAddress.name.full_name}</p>
+          <p>{order[0].shippingAddress.address.address_line_1}</p>
+          <p>{order[0].shippingAddress.address.address_line_2}</p>
+          <p>
+            {order[0].shippingAddress.address.admin_area_2},{" "}
+            {order[0].shippingAddress.address.admin_area_1}
+          </p>
+          <p>{order[0].shippingAddress.address.postal_code}</p>
+          <p>{order[0].shippingAddress.address.country_code}</p>
+        </div>
         <p className="mt-6">
           Order Date:{" "}
           {new Date(order[0].orderedDate).toLocaleDateString("en-US", {
