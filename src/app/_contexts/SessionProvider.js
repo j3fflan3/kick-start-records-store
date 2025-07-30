@@ -19,23 +19,23 @@ function SessionProvider({ children }) {
         .getSession()
         .then(({ data: { session } }) => {
           if (session === null) {
-            console.log(
-              "inside supabase.auth.getSession().then()\n session is null.\n signing in anonymously."
-            );
+            // console.log(
+            //   "inside supabase.auth.getSession().then()\n session is null.\n signing in anonymously."
+            // );
             return supabase.auth.signInAnonymously();
           } else {
-            console.log(
-              `inside supabase.auth.getSession().then() session: ${
-                session && JSON.stringify(session)
-              }\n`
-            );
+            // console.log(
+            //   `inside supabase.auth.getSession().then() session: ${
+            //     session && JSON.stringify(session)
+            //   }\n`
+            // );
             setSession(session);
             return { data: { session: null } };
           }
         })
         .then(({ data: { session } }) => {
           if (session) {
-            console.log("Anonymous sign in was successful.");
+            // console.log("Anonymous sign in was successful.");
             setSession(session);
           }
         })

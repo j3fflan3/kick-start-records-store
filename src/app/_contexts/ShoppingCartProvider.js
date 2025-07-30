@@ -37,9 +37,9 @@ function ShoppingCartProvider({ children }) {
   // update anytime the user changes
   useEffect(() => {
     async function mergeCarts(anonUserId, userId) {
-      console.log(
-        `ShoppingCartProvider -> mergeCarts: anonUserId: ${anonUserId}, userId: ${userId}`
-      );
+      // console.log(
+      //   `ShoppingCartProvider -> mergeCarts: anonUserId: ${anonUserId}, userId: ${userId}`
+      // );
       const { data } = await clientMergeShoppingCarts(anonUserId, userId);
       setCount(data);
       // set localCartIds
@@ -47,11 +47,11 @@ function ShoppingCartProvider({ children }) {
     }
 
     if (user) {
-      console.log(
-        `ShoppingCartProvider::useEffect -> user: ${JSON.stringify(
-          user
-        )}, anonCartUserId: ${cartUserId}`
-      );
+      // console.log(
+      //   `ShoppingCartProvider::useEffect -> user: ${JSON.stringify(
+      //     user
+      //   )}, anonCartUserId: ${cartUserId}`
+      // );
       // If user was anonymous, logged in cart was merged, the localStorage was updated,
       // we want to exit to avoid a loop
       if (!user.is_anonymous && user.id === cartUserId) return;
@@ -91,7 +91,7 @@ function ShoppingCartProvider({ children }) {
       console.log(error);
       return { data, error };
     }
-    console.log(`data: ${JSON.stringify(data)}`);
+    // console.log(`data: ${JSON.stringify(data)}`);
     setCount(data);
     return { data, error };
   }
@@ -119,8 +119,8 @@ function ShoppingCartProvider({ children }) {
       console.log(error);
       return { data, error };
     }
-    console.log(`data: ${JSON.stringify(data)}`);
-    console.log("CartProvider: finishing updateShoppingCart");
+    // console.log(`data: ${JSON.stringify(data)}`);
+    // console.log("CartProvider: finishing updateShoppingCart");
     setCount(data);
     return { data, error };
   }

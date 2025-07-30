@@ -35,15 +35,6 @@ function OrderSummary({ order }) {
         <div className="flex items-center justify-between border-t border-primary-200 dark:border-primary-600 pt-4">
           <dt className="flex items-center text-sm text-gray-600 dark:text-primary-300">
             <span>Shipping</span>
-            <a
-              href="#"
-              className="ml-2 shrink-0 text-gray-400 hover:text-gray-500"
-            >
-              <span className="sr-only">
-                Learn more about how shipping is calculated
-              </span>
-              <QuestionMarkCircleIcon aria-hidden="true" className="size-5" />
-            </a>
           </dt>
           <dd className="text-sm font-medium text-gray-900 dark:text-primary-100">
             ${order[0].shipping}
@@ -52,15 +43,6 @@ function OrderSummary({ order }) {
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">
           <dt className="flex text-sm text-gray-600 dark:text-primary-300">
             <span>Tax</span>
-            <a
-              href="#"
-              className="ml-2 shrink-0 text-gray-400 hover:text-gray-500"
-            >
-              <span className="sr-only">
-                Learn more about how tax is calculated
-              </span>
-              <QuestionMarkCircleIcon aria-hidden="true" className="size-5" />
-            </a>
           </dt>
           <dd className="text-sm font-medium text-gray-900 dark:text-primary-100">
             ${order[0].tax ?? 0.0}

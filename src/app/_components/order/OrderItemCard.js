@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDollars } from "@/src/app/_library/utilities";
+import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 
@@ -21,7 +21,9 @@ function OrderItemCard({ item }) {
         <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
           <div>
             <div className="flex justify-between">
-              <h3 className="text-sm dark:text-primary-100">{item.title}</h3>
+              <h3 className="text-sm dark:text-primary-100">
+                {item.title} {printRecordFormat(item.recordFormat)}
+              </h3>
             </div>
             <div className="mt-1 flex text-sm">
               {/* <p className="text-gray-500">{product.color}</p>
@@ -37,9 +39,9 @@ function OrderItemCard({ item }) {
           </div>
 
           <div className="mt-4 sm:mt-0 sm:pr-9">
-            <div className="grid w-full max-w-16 grid-cols-1">{item.count}</div>
+            <div className="grid w-full max-w-16 grid-cols-1"></div>
 
-            <div className="absolute top-0 right-0"></div>
+            <div className="absolute top-0 right-0">x {item.count}</div>
           </div>
         </div>
       </div>
