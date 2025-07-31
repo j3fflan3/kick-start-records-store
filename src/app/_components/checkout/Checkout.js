@@ -20,7 +20,7 @@ import {
   PayPalNumberField,
   PayPalScriptProvider,
 } from "@paypal/react-paypal-js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useBilling } from "../../_contexts/BillingProvider";
 import { useShipping } from "../../_contexts/ShippingProvider";
 import { Address, UserAddress } from "../../_library/address";
@@ -51,6 +51,8 @@ function Checkout({ cart, countries }) {
   const [tax, setTax] = useState(0);
   const [subtotal, setSubtotal] = useState("");
   const [total, setTotal] = useState("");
+  const [anonEmail, setAnonEmail] = useState("");
+  const [anonEmailError, setAnonEmailError] = useState({});
   // Instead of destructuring here, destructure in the child component
   // and take only what you need for checkout.js from here.
   const shippingContext = useShipping();
@@ -104,16 +106,19 @@ function Checkout({ cart, countries }) {
     billingPostalCode &&
     billingDestinationCountryCode;
   // const [showPayPalButtons, setShowPayPalButtons] = useState(false);
-  const showPayPalButtons =
+  let showPayPalButtons =
     shippingReadOnly &&
     (billingSame || (!billingSame && billingReadOnly)) &&
     !editBilling &&
+    (!user.is_anonymous || (user.is_anonymous && anonEmail)) &&
     !editShipping;
+  if (user.is_anonymous) {
+    // If the user is anonymous, we need to show the email field
+    showPayPalButtons = showPayPalButtons && anonEmail;
+  }
+
   // console.log(`showPayPalButtons: ${showPayPalButtons}`);
 
-  // Because the paypal buttons won't be shown until the address(es) are
-  // complete, this state will be up to date, either when the page loads or
-  // after HandleNext...
   const [shippingAddress, setShippingAddress] = useState(
     new PayPalAddress(
       address,
@@ -124,6 +129,29 @@ function Checkout({ cart, countries }) {
       destinationCountryCode
     )
   );
+
+  useEffect(() => {
+    console.log(`Checkout.js -> shippingAddress useEffect called`);
+
+    setShippingAddress(
+      new PayPalAddress(
+        address,
+        addressContinued,
+        city,
+        stateProvince,
+        postalCode,
+        destinationCountryCode
+      )
+    );
+  }, [
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+  ]);
+
   const [billAddress, setBillAddress] = useState(
     new PayPalAddress(
       billingAddress,
@@ -135,7 +163,29 @@ function Checkout({ cart, countries }) {
     )
   );
 
-  const { cartCount: itemCount } = useShoppingCart();
+  useEffect(() => {
+    console.log(`Checkout.js -> billAddress useEffect called`);
+
+    setBillAddress(
+      new PayPalAddress(
+        billingAddress,
+        billingAddressContinued,
+        billingCity,
+        billingStateProvince,
+        billingPostalCode,
+        billingDestinationCountryCode
+      )
+    );
+  }, [
+    billingAddress,
+    billingAddressContinued,
+    billingCity,
+    billingStateProvince,
+    billingPostalCode,
+    billingDestinationCountryCode,
+  ]);
+
+  const { cartCount: itemCount, getShoppingCart } = useShoppingCart();
   const weight = cartItemsWeight(cart);
 
   const { shippingCost, shippingCostCents, shippingError } =
@@ -145,7 +195,7 @@ function Checkout({ cart, countries }) {
       postalCode,
       destinationCountryCode,
     });
-
+  const anonEmailRef = useRef(null);
   useEffect(
     function () {
       setSubtotal(cartTotal(cart));
@@ -204,6 +254,16 @@ function Checkout({ cart, countries }) {
         message: "Postal Code is required.",
       }
     );
+    let validEmail = !user.is_anonymous;
+    if (user.is_anonymous) {
+      // If the user is anonymous, we need to set the email address
+      validEmail = validateForm(setAnonEmailError, {
+        field: "anon_email",
+        value: anonEmail,
+        validator: validateEmail,
+        message: "Email is invalid/required.",
+      });
+    }
     if (!billingSame) {
       //validBilling = validateForm()
       validBilling = validateForm(
@@ -247,7 +307,7 @@ function Checkout({ cart, countries }) {
       );
     }
 
-    if (validShipping && validBilling) {
+    if (validShipping && validBilling && validEmail) {
       const shippingAdd = new Address(
         address,
         city,
@@ -296,9 +356,9 @@ function Checkout({ cart, countries }) {
       const { paymentSource } = source;
       console.log(`payPalArgs = ${JSON.stringify(payPalArgs)}`);
       console.log(`paymentSource: ${JSON.stringify(paymentSource)}`);
-
-      if (!validateEmail(email)) {
-        const message = `invaid email address: ${email}`;
+      let purchaseEmail = user.is_anonymous ? anonEmail : email;
+      if (!validateEmail(purchaseEmail)) {
+        const message = `invaid email address: ${purchaseEmail}`;
         console.log(message);
 
         throw new Error(message);
@@ -313,7 +373,7 @@ function Checkout({ cart, countries }) {
       const result = await serverCreateOrder(
         JSON.stringify({
           cart,
-          email,
+          purchaseEmail,
           shippingCostCents,
           taxPercentageFloat: 0,
           billingSame,
@@ -363,15 +423,21 @@ function Checkout({ cart, countries }) {
         _subtotal: Number(subtotal),
         _shipping: Number(shippingCost),
       });
-      const { data: updateData, error } = await serverUpdateOrder(
-        sCapturedOrderArgs
-      );
+
+      const { data: updateData, error } =
+        await serverUpdateOrder(sCapturedOrderArgs);
+
       if (error) throw error;
       console.log(`updateData: ${updateData}, error: ${error}`);
-
-      router.push(
-        `/checkout/order-placed/${order.purchase_units[0].reference_id}`
+      // re-retrieve the shopping cart (which should now be empty)
+      await getShoppingCart();
+      // Redirect to order placed page
+      const encodedEmail = btoa(order.purchase_units[0].shipping.email_address);
+      console.log(
+        `encodedEmail: ${encodedEmail}, email ${order.purchase_units[0].shipping.email_address}`
       );
+      const orderId = order.purchase_units[0].reference_id;
+      router.push(`/checkout/order-placed/${orderId}/${encodedEmail}`);
     } catch (err) {
       console.log(`error: ${err.message}`);
     }
@@ -436,7 +502,31 @@ function Checkout({ cart, countries }) {
                 billingContext={billingContext}
               />
             )}
-
+            {user.is_anonymous && !showPayPalButtons && (
+              <div className="mt-6">
+                <label
+                  htmlFor="first_name"
+                  className=" text-sm/6 font-medium text-gray-700"
+                >
+                  Email
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="anon_email"
+                    placeholder=""
+                    className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+                    value={anonEmail}
+                    ref={anonEmailRef}
+                    onChange={(e) => setAnonEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <p className="ml-2 mt-2 text-sm text-red-700">
+                  {anonEmailError?.anon_email && anonEmailError.anon_email}
+                </p>
+              </div>
+            )}
             {!showPayPalButtons && (
               <div className="mt-4 justify-center w-full flex">
                 <button

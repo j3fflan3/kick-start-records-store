@@ -6,11 +6,11 @@ const BillingContext = createContext();
 
 function BillingProvider({ children }) {
   const { session } = useSession();
-  console.log(
-    `BillingProvider -> session = ${
-      session ? JSON.stringify(session) : session
-    }`
-  );
+  // console.log(
+  //   `BillingProvider -> session = ${
+  //     session ? JSON.stringify(session) : session
+  //   }`
+  // );
   // This is always initially null
   const { user } = session || { user: null };
 

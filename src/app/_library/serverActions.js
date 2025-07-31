@@ -35,6 +35,8 @@ import {
   PHYSICAL_GOODS,
 } from "./paypal";
 import { ApiError } from "@paypal/paypal-server-sdk";
+import { Resend } from "resend";
+import OrderEmailTemplate from "../_components/email/OrderEmailTemplate";
 
 // Used for key/value storage (e.g., for USPS auth)
 const redis = Redis.fromEnv();
@@ -80,7 +82,7 @@ async function serverUpdateShoppingCart(catalogId, count, email = null) {
 }
 
 async function serverGetRecords(id = null, limit = 10) {
-  console.log("Top of serverGetRecords");
+  // console.log("Top of serverGetRecords");
 
   const supabase = await createClient();
 
@@ -91,9 +93,9 @@ async function serverGetRecords(id = null, limit = 10) {
   if (error) {
     console.error(error.message);
   }
-  console.log(
-    `serverGetRecords -> data = ${data ? JSON.stringify(data) : data}`
-  );
+  // console.log(
+  //   `serverGetRecords -> data = ${data ? JSON.stringify(data) : data}`
+  // );
 
   return data;
 }
@@ -440,8 +442,8 @@ async function serverGetUSPSRates(sBaseRatesRequest, itemCount) {
       itemCount < Number(process.env.HANDLING_SM_LT)
         ? process.env.HANDLING_SM
         : itemCount < Number(process.env.HANDLING_MD_LT)
-        ? process.env.HANDLING_MD
-        : process.env.HANDLING_LG;
+          ? process.env.HANDLING_MD
+          : process.env.HANDLING_LG;
     console.log(`serverGetUSPSRates -> data: ${JSON.stringify(data)}`);
 
     return data;
@@ -800,7 +802,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
   console.log(`createOrderArgs: ${JSON.stringify(coa)}`);
   const {
     cart,
-    email,
+    purchaseEmail: email,
     shippingCostCents,
     taxPercentageFloat,
     billingSame,
@@ -938,11 +940,33 @@ async function handlePayPalResponse(response) {
     throw new Error(errorMessage);
   }
 }
+async function sendOrderEmail(email, orderId, orderNumber, firstName) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  try {
+    const email64 = Buffer.from(email).toString("base64");
+    const orderLink = `${getURL()}checkout/order-placed/${orderId}/${encodeURIComponent(email64)}`;
+    console.log(
+      `\n\ntop of sendOrderEmail\n\nemail:${email}\norderNumber:${orderNumber}\nfirstName:${firstName}`
+    );
 
-async function serverCaptureOrder(orderId) {
+    const { data, error } = await resend.emails.send({
+      from: "Kick Start Records <info@kickstartrecords.com>",
+      to: [`${email}`],
+      bcc: ["info@kickstartrecords.com"],
+      subject: `Kick Start Records Order #${orderNumber}`,
+      react: OrderEmailTemplate({ orderNumber, firstName, orderLink }),
+    });
+    console.log(
+      `sendOrderEmail:\n\tdata:\t${JSON.stringify(data)}\n\terror:\t${JSON.stringify(error)}`
+    );
+  } catch (error) {
+    console.log(`error sending order email: ${JSON.stringify(error)}`);
+  }
+}
+async function serverCaptureOrder(payPalOrderId) {
   // Make sure the access_token isn't expired
   await oAuthPayPalRequest();
-  const capture_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders/${orderId}/capture`;
+  const capture_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders/${payPalOrderId}/capture`;
   console.log(`capture_order_endpoint: ${capture_order_endpoint}`);
 
   const accessToken = await redis.get(PAYPAL_TOKEN);
@@ -957,6 +981,12 @@ async function serverCaptureOrder(orderId) {
       body: "{}",
     });
     const { data } = await handlePayPalResponse(response);
+    const orderId = data.purchase_units[0].reference_id;
+    const { email_address: email } = data.purchase_units[0].shipping;
+    const { given_name: firstName } = data.payer.name;
+    const { invoice_id: orderNumber } =
+      data.purchase_units[0].payments.captures[0];
+    await sendOrderEmail(email, orderId, orderNumber, firstName);
     return data;
   } catch (err) {
     console.log(`serverCaptureOrder: ${JSON.stringify(err)}`);
@@ -987,6 +1017,18 @@ async function serverUpdateOrder(sCapturedOrderArgs) {
   return { data, error };
 }
 
+async function serverGetOrderDetail(_order_id, _email = null) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_order_detail", {
+    _order_id,
+    _email,
+  });
+  if (error) {
+    console.log(`error: ${JSON.stringify(error)}`);
+  }
+  return { data, error };
+}
+
 export {
   serverDeleteUser,
   serverGetCountries,
@@ -1008,4 +1050,5 @@ export {
   serverCreateOrder,
   serverCaptureOrder,
   serverUpdateOrder,
+  serverGetOrderDetail,
 };
