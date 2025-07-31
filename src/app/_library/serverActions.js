@@ -1017,7 +1017,6 @@ async function serverUpdateOrder(sCapturedOrderArgs) {
   return { data, error };
 }
 
-
 async function serverGetOrderDetail(_order_id, _email = null) {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("get_order_detail", {
@@ -1052,5 +1051,4 @@ export {
   serverCaptureOrder,
   serverUpdateOrder,
   serverGetOrderDetail,
-
 };

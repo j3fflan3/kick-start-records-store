@@ -1,7 +1,6 @@
 "use client";
 
 import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
-import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 
 function OrderItemCard({ item }) {

@@ -1,7 +1,6 @@
 "use client";
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
-import { cartItemCount, cartTotal } from "../../_library/utilities";
 import { useSession } from "../../_contexts/SessionProvider";
+import { cartItemCount, cartTotal } from "../../_library/utilities";
 
 function OrderSummary({ order }) {
   const { session } = useSession();
