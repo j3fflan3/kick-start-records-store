@@ -1,69 +1,34 @@
 import OrderItemCard from "./OrderItemCard";
 import OrderSummary from "./OrderSummary";
 
-const order = [
-  {
-    order_id: "f704b501-d95f-4fd5-979e-e404c2544308",
-    order_number: "KSR-0000000063",
-    tracking_number: null,
-    paypal_payment_status: "COMPLETED",
-    subtotal: 21.98,
-    shipping: 4.82,
-    handling: 0.0,
-    tax: 0.0,
-    title: "The Voyage of Jonas",
-    artist: "Heart of Cygnus",
-    description: "Fourth album from Heart of Cygnus",
-    image: {
-      uom: "px",
-      url: "https://vnshanftypzvajpbbwxr.supabase.co/storage/v1/object/public/images/VOJ.jpg",
-      width: 1500,
-      height: 1500,
-    },
-    catalogId: "ef08fd93-a851-444f-a94b-baedc45f6e2c",
-    recordFormat: "CD",
-    count: 1,
-    price: 1099,
-    weight: 0.125,
-    sku: null,
-    upc: "713757776028",
-  },
-  {
-    order_id: "f704b501-d95f-4fd5-979e-e404c2544308",
-    order_number: "KSR-0000000063",
-    tracking_number: null,
-    paypal_payment_status: "COMPLETED",
-    subtotal: 21.98,
-    shipping: 4.82,
-    handling: 0.0,
-    tax: 0.0,
-    title: "Utopia",
-    artist: "Heart of Cygnus",
-    description: "Freshman debut of Heart of Cygnus",
-    image: {
-      uom: "px",
-      url: "https://vnshanftypzvajpbbwxr.supabase.co/storage/v1/object/public/images/Utopia.jpg",
-      width: 500,
-      height: 500,
-    },
-    catalogId: "74980f9c-ba01-4788-b0ac-84740491ffe3",
-    recordFormat: "CD",
-    count: 1,
-    price: 1099,
-    weight: 0.207,
-    sku: null,
-    upc: "837101354257",
-  },
-];
-
-function OrderDetail() {
+function OrderDetail({ order }) {
   return (
     <div className="bg-white dark:bg-primary-950">
       <div className="mx-auto max-w-2xl px-4 pt-8 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="text-2xl font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-4xl">
           Order #{order[0].order_number}
         </h1>
+        <div className="mt-6">
+          <p className="font-bold">Ship To</p>
+          <p className="mt-2">{order[0].shippingAddress.name.full_name}</p>
+          <p>{order[0].shippingAddress.address.address_line_1}</p>
+          <p>{order[0].shippingAddress.address.address_line_2}</p>
+          <p>
+            {order[0].shippingAddress.address.admin_area_2},{" "}
+            {order[0].shippingAddress.address.admin_area_1}
+          </p>
+          <p>{order[0].shippingAddress.address.postal_code}</p>
+          <p>{order[0].shippingAddress.address.country_code}</p>
+        </div>
         <p className="mt-6">
+          Order Date:{" "}
+          {new Date(order[0].orderedDate).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })}
+        </p>
+        <p className="mt-4">
           Tracking Number: {order[0].tracking_number ?? "[Not yet shipped]"}
         </p>
         <p className="mt-4">
