@@ -13,7 +13,7 @@
     "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
     "@paypal/paypal-server-sdk": "^1.1.0",
-    "@paypal/react-paypal-js": "^8.8.2",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@supabase/auth-js": "^2.69.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.2",

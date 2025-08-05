@@ -1,4 +1,4 @@
-import Link from "next/link";
+import CheckoutGuest from "../../_components/checkout/CheckoutGuest";
 import SignInForm from "../../_components/signin/SignInForm";
 import SignUpShort from "../../_components/signup/SignUpShort";
 import { serverGetCountries } from "../../_library/serverActions";
@@ -45,12 +45,7 @@ async function Page() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4">
-            <Link
-              href="/checkout/payment"
-              className="rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-center text-primary-50 hover:bg-accent-600 active:bg-yellow-500 cursor-pointer"
-            >
-              Continue as Guest
-            </Link>
+            <CheckoutGuest />
           </div>
         </div>
       </div>
