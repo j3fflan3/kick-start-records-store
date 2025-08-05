@@ -797,6 +797,15 @@ function getPayPalItems(cart, taxPercentageFloat) {
   });
 }
 
+function getPayPalPaymentSource(paymentType, experienceContext) {
+  switch (paymentType) {
+    case "paypal":
+      return new PayPalPaymentSource(new PayPal(experienceContext), null);
+    case "card":
+      return new PayPalPaymentSource(null, experienceContext);
+  }
+}
+
 async function serverCreateOrder(sCreateOrderArgs) {
   const coa = JSON.parse(sCreateOrderArgs);
   console.log(`createOrderArgs: ${JSON.stringify(coa)}`);
@@ -812,17 +821,24 @@ async function serverCreateOrder(sCreateOrderArgs) {
     billingFirstName,
     billingLastName,
     billAddress,
+    paymentSource: paymentType,
   } = coa;
   const orderShipAdd = {
     ...shippingAddress,
     firstName,
     lastName,
   };
-  const orderBillAdd = {
-    ...billAddress,
-    firstName: billingFirstName,
-    lastName: billingLastName,
-  };
+  let orderBillAdd = null;
+  if (billingSame) {
+    // If billingSame is true, use the shipping address for billing.
+    orderBillAdd = orderShipAdd;
+  } else {
+    orderBillAdd = {
+      ...billAddress,
+      firstName: billingFirstName,
+      lastName: billingLastName,
+    };
+  }
   console.log(
     `orderShipAdd = ${JSON.stringify(
       orderShipAdd
@@ -869,7 +885,7 @@ async function serverCreateOrder(sCreateOrderArgs) {
   );
   const description = `Kickstart Records order #${invoice_id}`;
   const fullName = new PayPalName(`${firstName} ${lastName}`);
-  const shipping = new PayPalShipping(
+  const payPalShipping = new PayPalShipping(
     "SHIPPING",
     fullName,
     email,
@@ -883,24 +899,35 @@ async function serverCreateOrder(sCreateOrderArgs) {
     payPalAmount,
     payee,
     payPalItems,
-    shipping
+    payPalShipping
   );
   console.log(`PayPalPurchaseUnit = ${JSON.stringify(purchaseUnit)}`);
 
   const baseURL = getURL();
   const return_url = `${baseURL}checkout/order-placed`;
   const cancel_url = `${baseURL}checkout/payment`;
+  let paymentSource = null;
+  if (paymentType === "paypal" || paymentType === "paylater") {
+    // payment source
+    paymentSource = new PayPalPaymentSource(
+      new PayPal(
+        new PayPalExperienceContext(
+          "SET_PROVIDED_ADDRESS",
+          return_url,
+          cancel_url,
+          billAddress
+        )
+      ),
+      null,
+      null
+    );
+  } else if (paymentType === "card") {
+    // throw new Error("not implemented yet");
+    console.log(`paymentType: ${paymentType}`);
+  } else {
+    throw new Error(`Invalid payment type: ${paymentType}`);
+  }
   // payment source
-  const experienceContext = new PayPalExperienceContext(
-    "SET_PROVIDED_ADDRESS",
-    return_url,
-    cancel_url,
-    billAddress
-  );
-  console.log(`experienceContext = ${JSON.stringify(experienceContext)}`);
-
-  const payPal = new PayPal(experienceContext);
-  const paymentSource = new PayPalPaymentSource(payPal, null);
   // purchaseUnit must be an array.
   const payload = new PayPalOrder([purchaseUnit], paymentSource);
   console.log(
@@ -940,13 +967,13 @@ async function handlePayPalResponse(response) {
     throw new Error(errorMessage);
   }
 }
-async function sendOrderEmail(email, orderId, orderNumber, firstName) {
+async function sendOrderEmail(email, orderId, orderNumber, fullName) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     const email64 = Buffer.from(email).toString("base64");
     const orderLink = `${getURL()}checkout/order-placed/${orderId}/${encodeURIComponent(email64)}`;
     console.log(
-      `\n\ntop of sendOrderEmail\n\nemail:${email}\norderNumber:${orderNumber}\nfirstName:${firstName}`
+      `\n\ntop of sendOrderEmail\n\nemail:${email}\norderNumber:${orderNumber}\fullName:${fullName}`
     );
 
     const { data, error } = await resend.emails.send({
@@ -954,7 +981,7 @@ async function sendOrderEmail(email, orderId, orderNumber, firstName) {
       to: [`${email}`],
       bcc: ["info@kickstartrecords.com"],
       subject: `Kick Start Records Order #${orderNumber}`,
-      react: OrderEmailTemplate({ orderNumber, firstName, orderLink }),
+      react: OrderEmailTemplate({ orderNumber, fullName, orderLink }),
     });
     console.log(
       `sendOrderEmail:\n\tdata:\t${JSON.stringify(data)}\n\terror:\t${JSON.stringify(error)}`
@@ -966,12 +993,22 @@ async function sendOrderEmail(email, orderId, orderNumber, firstName) {
 async function serverCaptureOrder(payPalOrderId) {
   // Make sure the access_token isn't expired
   await oAuthPayPalRequest();
-  const capture_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders/${payPalOrderId}/capture`;
-  console.log(`capture_order_endpoint: ${capture_order_endpoint}`);
-
   const accessToken = await redis.get(PAYPAL_TOKEN);
 
   try {
+    // verify someone hasn't attempted to forge a request
+    const matchesPPOrderIdPattern =
+      /^[A-Za-z0-9]+$/.test(payPalOrderId) &&
+      payPalOrderId.length > 0 &&
+      payPalOrderId.length <= 36;
+    if (!matchesPPOrderIdPattern) {
+      throw new Error(`Invalid PayPal Order ID: ${payPalOrderId}`);
+    }
+    console.log(`serverCaptureOrder: payPalOrderId = ${payPalOrderId}`);
+
+    const capture_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders/${payPalOrderId}/capture`;
+    console.log(`capture_order_endpoint: ${capture_order_endpoint}`);
+
     const response = await fetch(capture_order_endpoint, {
       headers: {
         "Content-Type": "application/json",
@@ -981,15 +1018,21 @@ async function serverCaptureOrder(payPalOrderId) {
       body: "{}",
     });
     const { data } = await handlePayPalResponse(response);
+    console.log(`serverCaptureOrder -> data = ${JSON.stringify(data)} `);
     const orderId = data.purchase_units[0].reference_id;
-    const { email_address: email } = data.purchase_units[0].shipping;
-    const { given_name: firstName } = data.payer.name;
     const { invoice_id: orderNumber } =
       data.purchase_units[0].payments.captures[0];
-    await sendOrderEmail(email, orderId, orderNumber, firstName);
+    const { email_address: email } = data.purchase_units[0].shipping;
+    // If the user paid with a card, the card name is in payment_source.card.name
+    // Otherwise, the name is in purchase_units[0].shipping.name.full_name
+    const fullName = data.payment_source.hasOwnProperty("card")
+      ? data.payment_source.card.name
+      : data.purchase_units[0].shipping.name.full_name;
+
+    await sendOrderEmail(email, orderId, orderNumber, fullName);
     return data;
   } catch (err) {
-    console.log(`serverCaptureOrder: ${JSON.stringify(err)}`);
+    console.log(`serverCaptureOrder: ${err}`);
     if (err instanceof ApiError) {
       throw new Error(error.message);
     }
