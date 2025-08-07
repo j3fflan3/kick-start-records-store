@@ -1,11 +1,11 @@
-import Checkout from "@/src/app/_components/checkout/Checkout";
+import PayPalCheckout from "@/src/app/_components/paypal/PayPalCheckout";
 import CartIsEmpty from "@/src/app/_components/shopping-cart/CartIsEmpty";
 import {
   serverGetCountries,
   serverGetShoppingCart,
 } from "@/src/app/_library/serverActions";
-import ComingSoonSmall from "../../_components/utilities/ComingSoonSmall";
-const revalidate = 0;
+import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
+export const revalidate = 0;
 async function Page() {
   const { data: cart } = await serverGetShoppingCart();
   const { data: countries } = await serverGetCountries();
@@ -25,7 +25,8 @@ async function Page() {
 
   return (
     <div>
-      <Checkout cart={cart} countries={countries} />
+      {/* <Checkout cart={cart} countries={countries} /> */}
+      <PayPalCheckout cart={cart} countries={countries} />
     </div>
   );
 }

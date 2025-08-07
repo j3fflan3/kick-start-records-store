@@ -171,7 +171,7 @@ const CheckoutPayPal = ({
           clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
           currency: "USD",
           intent: "capture",
-          components: "card-fields,buttons",
+          components: "buttons",
         }}
       >
         <PayPalButtons
@@ -181,7 +181,7 @@ const CheckoutPayPal = ({
           style={payPalStyle}
           disabled={isPaying}
         />
-        <div className="divider">
+        {/* <div className="divider">
           <span>OR</span>
         </div>
         <PayPalCardFieldsProvider
@@ -223,7 +223,7 @@ const CheckoutPayPal = ({
             }}
           />
           <CheckoutCardSubmit isPaying={isPaying} setIsPaying={setIsPaying} />
-        </PayPalCardFieldsProvider>
+        </PayPalCardFieldsProvider> */}
       </PayPalScriptProvider>
     </>
   );

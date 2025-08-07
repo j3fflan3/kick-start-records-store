@@ -1,7 +1,7 @@
-import CheckoutGuest from "../../_components/checkout/CheckoutGuest";
-import SignInForm from "../../_components/signin/SignInForm";
-import SignUpShort from "../../_components/signup/SignUpShort";
-import { serverGetCountries } from "../../_library/serverActions";
+import PayPalCheckoutGuest from "@/src/app/_components/paypal/PayPalCheckoutGuest";
+import SignInForm from "@/src/app/_components/signin/SignInForm";
+import SignUpShort from "@/src/app/_components/signup/SignUpShort";
+import { serverGetCountries } from "@/src/app/_library/serverActions";
 
 async function Page() {
   const { data: countries } = await serverGetCountries();
@@ -45,7 +45,7 @@ async function Page() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4">
-            <CheckoutGuest />
+            <PayPalCheckoutGuest />
           </div>
         </div>
       </div>
