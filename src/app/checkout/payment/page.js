@@ -1,14 +1,13 @@
 import PayPalCheckout from "@/src/app/_components/paypal/PayPalCheckout";
 import CartIsEmpty from "@/src/app/_components/shopping-cart/CartIsEmpty";
-import {
-  serverGetCountries,
-  serverGetShoppingCart,
-} from "@/src/app/_library/serverActions";
+import { serverGetShoppingCart } from "@/src/app/_library/server/shoppingCart";
+import { getCountries } from "@/src/app/_library/server/countries";
+
 import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
 export const revalidate = 0;
 async function Page() {
   const { data: cart } = await serverGetShoppingCart();
-  const { data: countries } = await serverGetCountries();
+  const { data: countries } = await getCountries();
   // console.log(cart);
   if (!cart) return <CartIsEmpty />;
   if (process.env.HIDE_CHECKOUT === "true")

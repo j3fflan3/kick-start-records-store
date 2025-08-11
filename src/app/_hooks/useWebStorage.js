@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getWebStorage } from "@/src/app/_library/loadWebStorage";
+import { getWebStorage } from "@/src/app/_library/client/loadWebStorage";
 
 // Right now, I'm kinda doing a catch all for the initialState / value
 export function useWebStorage(key, initialState) {
@@ -15,10 +15,10 @@ export function useWebStorage(key, initialState) {
     return storedValue
       ? JSON.parse(storedValue)
       : initialState instanceof Function
-      ? JSON.stringify(initialState())
-      : typeof initialState === "string"
-      ? initialState
-      : JSON.stringify(initialState); // Assuming this is an object
+        ? JSON.stringify(initialState())
+        : typeof initialState === "string"
+          ? initialState
+          : JSON.stringify(initialState); // Assuming this is an object
   });
 
   useEffect(() => {
@@ -28,8 +28,8 @@ export function useWebStorage(key, initialState) {
       value instanceof Function
         ? JSON.stringify(value())
         : typeof value === "string"
-        ? value
-        : JSON.stringify(value);
+          ? value
+          : JSON.stringify(value);
     storage.setItem(key, item);
   }, [key, value]);
 

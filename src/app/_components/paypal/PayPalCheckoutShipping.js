@@ -3,6 +3,7 @@
 function PayPalCheckoutShipping({
   errors,
   countries,
+  orderEmail,
   postalCode,
   handlePostalCode,
   destinationCountryCode,
@@ -16,10 +17,23 @@ function PayPalCheckoutShipping({
       >
         Shipping Information
       </h3>
-      <p className="text-primary-900 text-sm">
+      <p className="text-primary-900 text-sm mt-2">
         Please enter your shipping country and postal code to calculate shipping
         and taxes
       </p>
+      <div className="my-6">
+        <label
+          htmlFor="first_name"
+          className=" text-sm/6 font-medium text-gray-700"
+        >
+          Order Email
+        </label>
+        <div className="mt-2">
+          <span className="py-2 text-base dark:text-primary-950  placeholder:text-gray-500  sm:text-sm/6">
+            {orderEmail}
+          </span>
+        </div>
+      </div>
       <div className="mt-6">
         <div className="mt-6">
           <label
@@ -43,7 +57,7 @@ function PayPalCheckoutShipping({
             </select>
           </div>
         </div>
-        <div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
+        <div className="mt-6 ">
           <div>
             <label
               htmlFor="postal_code"

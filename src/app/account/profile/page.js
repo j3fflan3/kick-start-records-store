@@ -1,6 +1,7 @@
-import ProfileList from "../../_components/profile/ProfileList";
-import NewCustomer from "../../_components/utilities/NewCustomer";
-import { serverGetUser } from "../../_library/serverActions";
+import ProfileList from "@/src/app/_components/profile/ProfileList";
+import NewCustomer from "@/src/app/_components/utilities/NewCustomer";
+import { serverGetUser } from "@/src/app/_library/server/user";
+
 async function Page() {
   const { data, error } = await serverGetUser();
   if (error) {

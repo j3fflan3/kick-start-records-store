@@ -1,10 +1,10 @@
 import PayPalCheckoutGuest from "@/src/app/_components/paypal/PayPalCheckoutGuest";
 import SignInForm from "@/src/app/_components/signin/SignInForm";
 import SignUpShort from "@/src/app/_components/signup/SignUpShort";
-import { serverGetCountries } from "@/src/app/_library/serverActions";
+import { getCountries } from "@/src/app/_library/server/countries";
 
 async function Page() {
-  const { data: countries } = await serverGetCountries();
+  const { data: countries } = await getCountries();
   if (!countries) {
     return (
       <div className="mx-auto w-full max-w-sm lg:w-96">

@@ -2,7 +2,7 @@ import Spinner from "@/src/app/_components/spinners/Spinner";
 import { Suspense } from "react";
 import OrderDetail from "@/src/app/_components/order/OrderDetail";
 import OrderError from "@/src/app/_components/order/OrderError";
-import { serverGetOrderDetail } from "@/src/app/_library/serverActions";
+import { getOrderDetail } from "@/src/app/_library/serverActions";
 
 async function Page({ params }) {
   const { order_id, email: base64Email } = await params;
@@ -12,7 +12,7 @@ async function Page({ params }) {
     "base64"
   ).toString();
 
-  const { data: order, error } = await serverGetOrderDetail(order_id, email);
+  const { data: order, error } = await getOrderDetail(order_id, email);
   if (order?.error || error) {
     console.log(`Error retrieving order: ${error?.message || order?.error} `);
     return <OrderError order_id={order_id} />;

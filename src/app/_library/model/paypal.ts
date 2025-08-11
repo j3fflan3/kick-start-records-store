@@ -13,6 +13,8 @@ const DEFAULT_CURRENCY_CODE = "USD";
 const GET_FROM_FILE = "GET_FROM_FILE";
 const NO_SHIPPING = "NO_SHIPPING";
 
+type Nullable<T> = T | null;
+
 interface IPayPalUPC {
   type: string;
   code: string;
@@ -37,7 +39,7 @@ interface IPayPalItem {
   unit_amout: IPayPalSimpleAmount;
   tax: IPayPalSimpleAmount;
   sku: string;
-  upc: IPayPalUPC;
+  upc: Nullable<IPayPalUPC>;
 }
 
 class PayPalItem {
@@ -50,7 +52,7 @@ class PayPalItem {
   unit_amount: IPayPalSimpleAmount;
   tax: IPayPalSimpleAmount;
   sku: string;
-  upc: IPayPalUPC;
+  upc: Nullable<IPayPalUPC>;
 
   constructor(
     name: string,
@@ -62,7 +64,7 @@ class PayPalItem {
     unit_amount: IPayPalSimpleAmount, // type IPayPalSimpleAmount
     tax: IPayPalSimpleAmount, // type IPayPalSimpleAmount
     sku: string,
-    upc: IPayPalUPC // type IPayPalUPC
+    upc: Nullable<IPayPalUPC> // type IPayPalUPC
   ) {
     this.name = name;
     this.quantity = quantity;
@@ -169,18 +171,18 @@ interface IPayPalPurchaseUnit {
   description: string;
   amount: IPayPalAmount;
   payee: IPayPalPayee;
-  items: IPayPalItem;
-  shipping: IPayPalShipping;
+  items: IPayPalItem[];
+  shipping: Nullable<IPayPalShipping>;
 }
 
-class PayPalPurchaseUnit {
+class PayPalPurchaseUnit implements IPayPalPurchaseUnit {
   reference_id: string;
   invoice_id: string;
   description: string;
   amount: IPayPalAmount;
   payee: IPayPalPayee;
   items: IPayPalItem[];
-  shipping: IPayPalShipping;
+  shipping: Nullable<IPayPalShipping>;
 
   constructor(
     reference_id: string,
@@ -189,7 +191,7 @@ class PayPalPurchaseUnit {
     amount: IPayPalAmount,
     payee: IPayPalPayee,
     items: IPayPalItem[],
-    shipping: IPayPalShipping
+    shipping: Nullable<IPayPalShipping>
   ) {
     this.reference_id = reference_id;
     this.invoice_id = invoice_id;
@@ -309,10 +311,10 @@ interface IPayPalExperienceContext {
   landing_page: string;
   user_action: string;
   payment_method_preference: string;
-  address: IPayPalAddress; // Billing Address
+  address: Nullable<IPayPalAddress>; // Billing Address
 }
 
-class PayPalExperienceContext {
+class PayPalExperienceContext implements IPayPalExperienceContext {
   // shipping_preference should either be "GET_FROM_FILE" (for shipped goods)
   // or "NO_SHIPPING" for digital sales.
   shipping_preference: string;
@@ -323,12 +325,12 @@ class PayPalExperienceContext {
   landing_page: string;
   user_action: string;
   payment_method_preference: string;
-  address: IPayPalAddress;
+  address: Nullable<IPayPalAddress>;
   constructor(
     shipping_preference: string,
     return_url: string,
     cancel_url: string,
-    billingAddress: IPayPalAddress
+    billingAddress: Nullable<IPayPalAddress>
   ) {
     this.brand_name = KICK_START_RECORDS;
     this.shipping_preference = shipping_preference;
@@ -425,16 +427,20 @@ class Card {
   }
 }
 interface IPayPalPaymentSource {
-  paypal: IPayPal;
-  card: ICard;
-  venmo: IVenmo;
+  paypal: Nullable<IPayPal>;
+  card: Nullable<ICard>;
+  venmo: Nullable<IVenmo>;
 }
 
-class PayPalPaymentSource {
-  paypal: IPayPal;
-  card: ICard;
-  venmo: IVenmo;
-  constructor(paypal: IPayPal, card: ICard, venmo: IVenmo) {
+class PayPalPaymentSource implements IPayPalPaymentSource {
+  paypal: Nullable<IPayPal>;
+  card: Nullable<ICard>;
+  venmo: Nullable<IVenmo>;
+  constructor(
+    paypal: Nullable<IPayPal>,
+    card: Nullable<ICard>,
+    venmo: Nullable<IVenmo>
+  ) {
     this.paypal = paypal; // type PayPal
     this.card = card; // Credit Card
     this.venmo = venmo; // type Venmo
@@ -443,16 +449,16 @@ class PayPalPaymentSource {
 
 interface IPayPalOrder {
   purchase_units: IPayPalPurchaseUnit[];
-  payment_source: IPayPalPaymentSource;
+  payment_source: Nullable<IPayPalPaymentSource>;
 }
 
-class PayPalOrder {
+class PayPalOrder implements IPayPalOrder {
   purchase_units: IPayPalPurchaseUnit[];
-  payment_source: IPayPalPaymentSource;
+  payment_source: Nullable<IPayPalPaymentSource>;
   intent: string;
   constructor(
     purchase_units: IPayPalPurchaseUnit[],
-    payment_source: IPayPalPaymentSource
+    payment_source: Nullable<IPayPalPaymentSource>
   ) {
     this.purchase_units = purchase_units;
     this.intent = CAPTURE; // only supporting CAPTURE for now.

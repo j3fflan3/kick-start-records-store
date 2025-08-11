@@ -3,14 +3,13 @@ import { useWebStorage } from "@/src/app/_hooks/useWebStorage";
 import {
   clientAddToShoppingCart,
   clientMergeShoppingCarts,
-} from "@/src/app/_library/clientActions";
-import {
-  serverGetShoppingCart,
-  serverUpdateShoppingCart,
-} from "@/src/app/_library/serverActions";
+  clientGetShoppingCart,
+  clientUpdateShoppingCart,
+} from "@/src/app/_library/client/shoppingCart";
 import { createContext, useContext, useEffect, useState } from "react";
 import { shoppingCartKey } from "../_library/utilities";
 import { useSession } from "./SessionProvider";
+import { revalidatePathForClient } from "../_library/server/utilities";
 
 const ShoppingCartContext = createContext();
 const localCartKey = "ksrShoppingCart";
@@ -93,10 +92,11 @@ function ShoppingCartProvider({ children }) {
     }
     // console.log(`data: ${JSON.stringify(data)}`);
     setCount(data);
+    revalidatePathForClient("/cart");
     return { data, error };
   }
   async function getShoppingCart() {
-    const { data, error } = await serverGetShoppingCart();
+    const { data, error } = await clientGetShoppingCart();
     if (error) {
       console.log(error.message);
       return { data };
@@ -110,7 +110,7 @@ function ShoppingCartProvider({ children }) {
     if (count > 10) {
       cnt = 10;
     }
-    const { data, error } = await serverUpdateShoppingCart(
+    const { data, error } = await clientUpdateShoppingCart(
       catalogId,
       count,
       email
@@ -122,6 +122,7 @@ function ShoppingCartProvider({ children }) {
     // console.log(`data: ${JSON.stringify(data)}`);
     // console.log("CartProvider: finishing updateShoppingCart");
     setCount(data);
+    revalidatePathForClient("/cart");
     return { data, error };
   }
   return (

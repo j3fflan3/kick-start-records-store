@@ -70,21 +70,6 @@ function SessionProvider({ children }) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   async function signInAnonymously() {
-  //     const { data, error } = await clientSignInAnonymously();
-  //     if (error) {
-  //       console.error("Error signing in anonymously:", error);
-  //     } else {
-  //       console.log("Signed in anonymously:", data);
-  //     }
-  //   }
-
-  //   if (!session) {
-  //     signInAnonymously();
-  //   }
-  // }, [session]);
-
   return (
     <SessionContext.Provider value={{ session, setSession, authEvent }}>
       {children}

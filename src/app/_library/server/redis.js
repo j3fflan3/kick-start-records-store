@@ -1,3 +1,4 @@
+"use server";
 import { isDateExpired } from "@/src/app/_library/utilities";
 import { Redis } from "@upstash/redis";
 // Used for key/value storage get/set
@@ -26,5 +27,11 @@ async function isCacheItemExpired({ item, issuedAt, expiresIn }) {
   }
   return true;
 }
+async function getRedis() {
+  return redis;
+}
+async function newCacheObject(item, issuedAt, expiresIn) {
+  return new CacheObject(item, issuedAt, expiresIn);
+}
 
-export { redis, CacheObject, isCacheItemExpired };
+export { getRedis, newCacheObject, isCacheItemExpired };

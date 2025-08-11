@@ -1,13 +1,13 @@
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
+import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
 import {
-  serverCaptureOrder,
-  serverCreateOrder,
-  serverUpdateOrder,
-} from "../../_library/serverActions";
-import { validateEmail } from "../../_library/utilities";
+  payPalCaptureOrder,
+  payPalCreateOrder,
+  payPalUpdateOrder,
+} from "@/src/app/_library/client/paypal";
+import { validateEmail } from "@/src/app/_library/utilities";
 
 const PayPalCheckoutButtons = ({
   orderEmail,
@@ -18,10 +18,6 @@ const PayPalCheckoutButtons = ({
   is_anonymous,
   email,
 }) => {
-  // console.log(
-  //   `orderEmail = ${orderEmail}, billAddress = ${JSON.stringify(billAddress)}, billingFirstName = ${billingFirstName}, billingLastName = ${billingLastName}, billingSame = ${billingSame}, cart = ${JSON.stringify(cart)}, shippingAddress = ${JSON.stringify(shippingAddress)}, shippingCostCents = ${shippingCostCents}, is_anonymous = ${is_anonymous}, email = ${email}, firstName = ${firstName}, lastName = ${lastName}`
-  // );
-
   const [isPaying, setIsPaying] = useState(false);
   const { getShoppingCart } = useShoppingCart();
   const router = useRouter();
@@ -40,22 +36,15 @@ const PayPalCheckoutButtons = ({
 
           throw new Error(message);
         }
-        console.log(
-          `Checkout.js -> shippingAddress: ${JSON.stringify(
-            shippingAddress
-          )},\nbillAddress: ${JSON.stringify(billAddress)}`
-        );
 
         // Call a server function
-        const result = await serverCreateOrder(
-          JSON.stringify({
-            paymentSource,
-            cart,
-            purchaseEmail,
-            shippingCostCents,
-            taxPercentageFloat: 0,
-          })
-        );
+        const result = await payPalCreateOrder({
+          paymentSource,
+          cart,
+          purchaseEmail,
+          shippingCostCents,
+          taxPercentageFloat: 0,
+        });
         console.log(`result: ${JSON.stringify(result)}`);
         // console.log(`result.error.message = ${result.error.message}`);
 
@@ -89,7 +78,7 @@ const PayPalCheckoutButtons = ({
     );
 
     try {
-      const order = await serverCaptureOrder(data.orderID);
+      const order = await payPalCaptureOrder(data.orderID);
       console.log(`order: ${JSON.stringify(order)}`);
       const sCapturedOrderArgs = JSON.stringify({
         _paypal_capture_response: order,
@@ -98,7 +87,7 @@ const PayPalCheckoutButtons = ({
       });
 
       const { data: updateData, error } =
-        await serverUpdateOrder(sCapturedOrderArgs);
+        await payPalUpdateOrder(sCapturedOrderArgs);
 
       if (error) throw error;
       console.log(`updateData: ${updateData}, error: ${error}`);

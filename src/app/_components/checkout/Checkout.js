@@ -15,13 +15,13 @@ import {
 } from "@/src/app/_library/utilities";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useBilling } from "../../_contexts/BillingProvider";
-import { useShipping } from "../../_contexts/ShippingProvider";
-import { Address, UserAddress } from "../../_library/address";
-import { PayPalAddress } from "../../_library/paypal";
-import CheckoutBilling from "./CheckoutBilling";
-import CheckoutShipping from "./CheckoutShipping";
-import CheckoutTotal from "./CheckoutTotal";
+import { useBilling } from "@/src/app/_contexts/BillingProvider";
+import { useShipping } from "@/src/app/_contexts/ShippingProvider";
+import { Address, UserAddress } from "@/src/app/_library/model/address";
+import { PayPalAddress } from "@/src/app/_library/model/paypal";
+import CheckoutBilling from "@/src/app/_components/checkout/CheckoutBilling";
+import CheckoutShipping from "@/src/app/_components/checkout/CheckoutShipping";
+import CheckoutTotal from "@/src/app/_components/checkout/CheckoutTotal";
 
 function Checkout({ cart, countries }) {
   // Checkout will always have a cart of at least one item.  All items will have the same
