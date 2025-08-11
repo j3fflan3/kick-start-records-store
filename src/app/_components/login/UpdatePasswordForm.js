@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { serverUpdatePassword } from "@/src/app/_library/server/user";
 import { validateForm, validatePassword } from "@/src/app/_library/utilities";
-import SubmitButton from "@src/app/_components/buttons/SubmitButton";
+import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
 import PasswordUpdatedMessage from "@/src/app/_components/login/PasswordUpdatedMessage";
 
 const initialState = { message: "" };
