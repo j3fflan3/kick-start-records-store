@@ -2,7 +2,7 @@ import Spinner from "@/src/app/_components/spinners/Spinner";
 import { Suspense } from "react";
 import OrderDetail from "@/src/app/_components/order/OrderDetail";
 import OrderError from "@/src/app/_components/order/OrderError";
-import { getOrderDetail } from "@/src/app/_library/serverActions";
+import { getOrderDetail } from "@/src/app/_library/server/paypal";
 
 async function Page({ params }) {
   const { order_id, email: base64Email } = await params;
