@@ -12,6 +12,9 @@ const PHYSICAL_GOODS = "PHYSICAL_GOODS";
 const DEFAULT_CURRENCY_CODE = "USD";
 const GET_FROM_FILE = "GET_FROM_FILE";
 const NO_SHIPPING = "NO_SHIPPING";
+const PAYPAL_TOKEN = "PAYPAL_TOKEN";
+const PAYPAL_TOKEN_EXPIRES_IN = "PAYPAL_TOKEN_EXPIRES_IN";
+const PAYPAL_TOKEN_ISSUED_AT = "PAYPAL_TOKEN_ISSUED_AT";
 
 type Nullable<T> = T | null;
 
@@ -273,26 +276,26 @@ class PayPalPhoneNumber {
 }
 
 interface IPayPalShipping {
-  type: string;
-  full_name: IPayPalName;
-  email_address: string;
-  phone_number: IPayPalPhoneNumber;
-  address: IPayPalAddress;
+  type: Nullable<string>;
+  full_name: Nullable<IPayPalName>;
+  email_address: Nullable<string>;
+  phone_number: Nullable<IPayPalPhoneNumber>;
+  address: Nullable<IPayPalAddress>;
 }
 
 class PayPalShipping {
-  type: string;
-  full_name: IPayPalName;
-  email_address: string;
-  phone_number: IPayPalPhoneNumber;
-  address: IPayPalAddress;
+  type: Nullable<string>;
+  full_name: Nullable<IPayPalName>;
+  email_address: Nullable<string>;
+  phone_number: Nullable<IPayPalPhoneNumber>;
+  address: Nullable<IPayPalAddress>;
 
   constructor(
-    type: string,
-    full_name: IPayPalName,
-    email_address: string,
-    phone_number: IPayPalPhoneNumber,
-    address: IPayPalAddress
+    type: Nullable<string>,
+    full_name: Nullable<IPayPalName>,
+    email_address: Nullable<string>,
+    phone_number: Nullable<IPayPalPhoneNumber>,
+    address: Nullable<IPayPalAddress>
   ) {
     this.type = type;
     this.full_name = full_name;
@@ -547,4 +550,7 @@ export {
   Card,
   type ICreateOrderArgs,
   CreateOrderArgs,
+  PAYPAL_TOKEN,
+  PAYPAL_TOKEN_EXPIRES_IN,
+  PAYPAL_TOKEN_ISSUED_AT,
 };

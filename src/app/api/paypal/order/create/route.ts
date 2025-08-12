@@ -5,17 +5,18 @@ import {
   getPayPalItems,
   handlePayPalResponse,
   oAuthPayPalRequest,
-  PAYPAL_TOKEN,
 } from "@/src/app/_library/server/paypal";
 import { cartTax } from "@/src/app/_library/utilities";
 import {
   GET_FROM_FILE,
   PayPal,
+  PAYPAL_TOKEN,
   PayPalExperienceContext,
   PayPalOrder,
   PayPalPayee,
   PayPalPaymentSource,
   PayPalPurchaseUnit,
+  PayPalShipping,
 } from "@/src/app/_library/model/paypal";
 import { getURL } from "@/src/app/_library/server/utilities";
 import { getRedis } from "@/src/app/_library/server/redis";
@@ -74,6 +75,8 @@ export async function POST(request: Request) {
     process.env.PAYPAL_MERCHANT_ID!
   );
   const description = `Kickstart Records order #${invoice_id}`;
+  // only supplying email for now.
+  const shippingAddress = new PayPalShipping(null, null, email, null, null);
   const purchaseUnit = new PayPalPurchaseUnit(
     reference_id,
     invoice_id,
@@ -81,7 +84,7 @@ export async function POST(request: Request) {
     payPalAmount,
     payee,
     payPalItems,
-    null
+    shippingAddress
   );
   console.log(`PayPalPurchaseUnit = ${JSON.stringify(purchaseUnit)}`);
 

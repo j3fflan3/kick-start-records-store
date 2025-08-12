@@ -1,3 +1,4 @@
+"use server";
 import { Mutex } from "async-mutex";
 import { Resend } from "resend";
 import {
@@ -12,19 +13,23 @@ import {
   printRecordFormat,
 } from "@/src/app/_library/utilities";
 import {
+  DEFAULT_CURRENCY_CODE,
+  DIGITAL_GOODS,
+  PAYPAL_TOKEN,
+  PAYPAL_TOKEN_EXPIRES_IN,
+  PAYPAL_TOKEN_ISSUED_AT,
   PayPalAmount,
   PayPalBreakdown,
   PayPalItem,
   PayPalPaymentSource,
   PayPalSimpleAmount,
   PayPalUPC,
+  PHYSICAL_GOODS,
 } from "@/src/app/_library/model/paypal";
 import { getURL } from "@/src/app/_library/server/utilities";
 import OrderEmailTemplate from "@/src/app/_components/email/OrderEmailTemplate";
+import { createClient } from "../supabase/server";
 
-const PAYPAL_TOKEN = "PAYPAL_TOKEN";
-const PAYPAL_TOKEN_EXPIRES_IN = "PAYPAL_TOKEN_EXPIRES_IN";
-const PAYPAL_TOKEN_ISSUED_AT = "PAYPAL_TOKEN_ISSUED_AT";
 const redis = await getRedis();
 
 // synchronization for Redis reads/writes
@@ -188,7 +193,7 @@ async function sendOrderEmail(email, orderId, orderNumber, fullName) {
       react: OrderEmailTemplate({ orderNumber, fullName, orderLink }),
     });
     console.log(
-      `sendOrderEmail:\n\tdata:\t${JSON.stringify(data)}\n\terror:\t${JSON.stringify(error)}`
+      `sendOrderEmail:\n\tdata (resend id):\t${JSON.stringify(data)}\n\terror:\t${JSON.stringify(error)}`
     );
   } catch (error) {
     console.log(`error sending order email: ${JSON.stringify(error)}`);
@@ -228,7 +233,4 @@ export {
   sendOrderEmail,
   handlePayPalResponse,
   getOrderDetail,
-  PAYPAL_TOKEN,
-  PAYPAL_TOKEN_EXPIRES_IN,
-  PAYPAL_TOKEN_ISSUED_AT,
 };

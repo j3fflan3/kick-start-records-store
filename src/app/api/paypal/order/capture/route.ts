@@ -1,11 +1,10 @@
+import { PAYPAL_TOKEN } from "@/src/app/_library/model/paypal";
 import {
   handlePayPalResponse,
   oAuthPayPalRequest,
-  PAYPAL_TOKEN,
   sendOrderEmail,
 } from "@/src/app/_library/server/paypal";
 import { getRedis } from "@/src/app/_library/server/redis";
-import { ApiError } from "@paypal/paypal-server-sdk";
 import { NextResponse } from "next/server";
 
 const redis = await getRedis();

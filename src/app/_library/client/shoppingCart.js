@@ -26,6 +26,7 @@ async function clientUpdateShoppingCart(catalogId, count, email = null) {
 // or just replace anonUserId with userId if logged in user
 // doesn't already have a cart.
 async function clientMergeShoppingCarts(anonUserId) {
+  const supabase = await createClient();
   const { data, error } = await supabase.rpc("merge_shopping_carts", {
     _anon_user_id: anonUserId,
   });
@@ -40,6 +41,7 @@ async function clientAddToShoppingCart(
   is_anonymous = false,
   count = 1
 ) {
+  const supabase = await createClient();
   const { data, error } = await supabase.rpc("add_to_shopping_cart", {
     _catalog_id: catalogId,
     _is_anonymous: is_anonymous,

@@ -36,7 +36,9 @@ const PayPalCheckoutButtons = ({
 
           throw new Error(message);
         }
-
+        console.log(
+          "about to call /_library/client/paypal.js -> payPalCreateOrder"
+        );
         // Call a server function
         const result = await payPalCreateOrder({
           paymentSource,
@@ -78,19 +80,26 @@ const PayPalCheckoutButtons = ({
     );
 
     try {
-      const order = await payPalCaptureOrder(data.orderID);
+      const {
+        data: order,
+        error: captureError,
+        status,
+      } = await payPalCaptureOrder(data.orderID);
+      if (captureError) throw captureError;
       console.log(`order: ${JSON.stringify(order)}`);
       const sCapturedOrderArgs = JSON.stringify({
         _paypal_capture_response: order,
         _subtotal: Number(subtotal),
         _shipping: Number(shippingCost),
       });
-
+      console.log(
+        `PayPalCheckoutButtons -> onApprove -> sCapturedOrderArgs = \n\t${sCapturedOrderArgs}`
+      );
       const { data: updateData, error } =
         await payPalUpdateOrder(sCapturedOrderArgs);
 
       if (error) throw error;
-      console.log(`updateData: ${updateData}, error: ${error}`);
+      console.log(`updateData: ${JSON.stringify(updateData)}, error: ${error}`);
       // re-retrieve the shopping cart (which should now be empty)
       await getShoppingCart();
       // Redirect to order placed page
@@ -99,6 +108,7 @@ const PayPalCheckoutButtons = ({
       router.push(`/checkout/order-placed/${orderId}/${encodedEmail}`);
     } catch (err) {
       console.log(`error: ${err.message}`);
+      throw new Error("error capturing order");
     }
   }
   function onError(err) {

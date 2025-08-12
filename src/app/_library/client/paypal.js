@@ -5,7 +5,7 @@ import { createClient } from "@/src/app/_library/supabase/client";
 async function payPalCreateOrder(createOrderArgs) {
   console.log(`createOrderArgs: ${JSON.stringify(createOrderArgs)}`);
   try {
-    const response = await fetch("/api/paypal/order/capture", {
+    const response = await fetch("/api/paypal/order/create", {
       headers: {
         "Content-Type": "application/json",
       },
