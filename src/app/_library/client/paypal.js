@@ -13,7 +13,7 @@ async function payPalCreateOrder(createOrderArgs) {
       body: JSON.stringify(createOrderArgs),
     });
     const result = await response.json();
-    // api response: {data:{...}, error:{...}, httpStatusCode:"n"}
+    // api response: {data:{...}, error:{...}, status:"n"}
     return result;
   } catch (err) {
     console.log(`create PayPal Order error: ${err.message}`);

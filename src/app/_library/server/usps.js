@@ -1,3 +1,4 @@
+"use server";
 import {
   newCacheObject,
   isCacheItemExpired,
@@ -5,6 +6,7 @@ import {
 } from "@/src/app/_library/server/redis";
 import { Mutex } from "async-mutex";
 import { USPSOAuth2Request } from "@/src/app/_library/model/usps";
+import { revalidatePath } from "next/cache";
 
 const USPS_ACCESS_TOKEN = "USPS_ACCESS_TOKEN";
 const USPS_ACCESS_TOKEN_EXPIRES_IN = "USPS_ACCESS_TOKEN_EXPIRES_IN";

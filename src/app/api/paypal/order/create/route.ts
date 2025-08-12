@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { createClient } from "@/src/app/_library/supabase/server";
 import {
   getPayPalAmount,
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
     // throw new Error("not implemented yet");
     console.log(`paymentType: ${paymentType}`);
   } else {
-    throw new Error(`Invalid payment type: ${paymentType}`);
+    return NextResponse.json({ error: "Invalid payment type.", status: 400 });
   }
   // payment source
   // purchaseUnit must be an array.
@@ -127,9 +128,12 @@ export async function POST(request: Request) {
       `api/paypal/order/create -> result = \n\t${JSON.stringify(result)}`
     );
 
-    return result;
+    return NextResponse.json(result);
   } catch (err: any) {
     console.log(`PayPal error: ${err}`);
-    throw err;
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

@@ -6,6 +6,7 @@ import {
 } from "@/src/app/_library/server/paypal";
 import { getRedis } from "@/src/app/_library/server/redis";
 import { ApiError } from "@paypal/paypal-server-sdk";
+import { NextResponse } from "next/server";
 
 const redis = await getRedis();
 
@@ -22,7 +23,10 @@ export async function POST(request: Request) {
       payPalOrderId.length > 0 &&
       payPalOrderId.length <= 36;
     if (!matchesPPOrderIdPattern) {
-      throw new Error(`Invalid PayPal Order ID: ${payPalOrderId}`);
+      return NextResponse.json({
+        error: "Invalid PayPal Order ID.",
+        status: 400,
+      });
     }
     console.log(`api/paypal/order/capture: payPalOrderId = ${payPalOrderId}`);
 
@@ -37,7 +41,8 @@ export async function POST(request: Request) {
       method: "POST",
       body: "{}",
     });
-    const { data } = await handlePayPalResponse(response);
+    const paypalResponse = await handlePayPalResponse(response);
+    const { data } = paypalResponse;
     console.log(`api/paypal/order/capture -> data = ${JSON.stringify(data)} `);
     const orderId = data.purchase_units[0].reference_id;
     const { invoice_id: orderNumber } =
@@ -50,11 +55,12 @@ export async function POST(request: Request) {
       : data.purchase_units[0].shipping.name.full_name;
 
     await sendOrderEmail(email, orderId, orderNumber, fullName);
-    return data;
+    return NextResponse.json(paypalResponse);
   } catch (err) {
     console.log(`api/paypal/order/capture: ${err}`);
-    if (err instanceof ApiError) {
-      throw new Error(err.message);
-    }
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

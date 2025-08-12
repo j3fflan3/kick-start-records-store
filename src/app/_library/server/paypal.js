@@ -201,7 +201,7 @@ async function handlePayPalResponse(response) {
     return {
       data: json,
       error: null,
-      httpStatusCode: response.status,
+      status: response.status,
     };
   } catch (err) {
     const errorMessage = await response.text();
