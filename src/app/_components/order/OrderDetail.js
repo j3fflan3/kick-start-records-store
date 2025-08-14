@@ -2,6 +2,12 @@ import OrderItemCard from "./OrderItemCard";
 import OrderSummary from "./OrderSummary";
 
 function OrderDetail({ order }) {
+  const { shippingAddress } = order[0];
+  const shipToName =
+    shippingAddress?.name?.full_name ??
+    shippingAddress?.email_address ??
+    "Guest";
+  console.log(`OrderDetail -> order:\n\t${JSON.stringify(order)}`);
   return (
     <div className="bg-white dark:bg-primary-950">
       <div className="mx-auto max-w-2xl px-4 pt-8 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -10,7 +16,7 @@ function OrderDetail({ order }) {
         </h1>
         <div className="mt-6">
           <p className="font-bold">Ship To</p>
-          <p className="mt-2">{order[0].shippingAddress.name.full_name}</p>
+          <p className="mt-2">{shipToName}</p>
           <p>{order[0].shippingAddress.address.address_line_1}</p>
           <p>{order[0].shippingAddress.address.address_line_2}</p>
           <p>

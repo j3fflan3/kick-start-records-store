@@ -81,6 +81,9 @@ function ShoppingCartProvider({ children }) {
     };
   }
   async function addToShoppingCart(catalogId, is_anonymous, count = 1) {
+    console.log(
+      `ShoppingCartProvider.js -> addToShoppingCart("${catalogId}", ${is_anonymous}, ${count})`
+    );
     const { data, error } = await clientAddToShoppingCart(
       catalogId,
       is_anonymous,

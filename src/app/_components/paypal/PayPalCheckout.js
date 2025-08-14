@@ -8,14 +8,21 @@ import { useShippingCalculator } from "@/src/app/_hooks/useShippingCalculator";
 import {
   cartItemsWeight,
   cartTotal,
+  validateEmail,
   validateForm,
 } from "@/src/app/_library/utilities";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useCheckout, useGuestEmail } from "../../_contexts/CheckoutProvider";
+import {
+  useCheckout,
+  useGuestEmail,
+} from "@/src/app/_contexts/CheckoutProvider";
 import PayPalCheckoutTotal from "./PayPalCheckoutTotal";
 import PayPalCheckoutShipping from "@/src/app/_components/paypal/PayPalCheckoutShipping";
-import PayPalCheckoutShippingList from "@/src/app/_components/paypal/PayPalCheckoutShippingList";
+import PayPalCheckoutAddressList from "@/src/app/_components/paypal/PayPalCheckoutAddressList";
+import { useShipping } from "@/src/app/_contexts/ShippingProvider";
+import { useBilling } from "@/src/app/_contexts/BillingProvider";
+import { PayPalAddress } from "@/src/app/_library/model/paypal";
 
 function PayPalCheckout({ cart, countries }) {
   // Checkout will always have a cart of at least one item.  All items will have the same
@@ -25,19 +32,115 @@ function PayPalCheckout({ cart, countries }) {
   const { user } = session || { user: null };
   console.log(user);
   const {
-    errors,
-    setErrors,
+    errors: orderEmailErrors,
+    setErrors: setOrderEmailErrors,
     orderEmail,
-    postalCode,
-    destinationCountryCode,
-    handlePostalCode,
-    handleDestinationCountryCode,
+    handleOrderEmail,
   } = useCheckout();
   // State & Hooks
   const [tax, setTax] = useState(0);
   const [subtotal, setSubtotal] = useState("");
   const [total, setTotal] = useState("");
   const [nextClicked, setNextClicked] = useState(false);
+  // Shipping Address Related.  These will be populated if user is signed up and signed in.
+  const shippingContext = useShipping();
+  const {
+    errors: shippingErrors,
+    setErrors: setShippingErrors,
+    firstName,
+    lastName,
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+    billingSame,
+    setBillingSame,
+    handlers,
+  } = shippingContext;
+  // Billing Address Related
+  const billingContext = useBilling();
+  const {
+    errors: billingErrors,
+    setErrors: setBillingErrors,
+    guestEmail,
+    setGuestEmail,
+    firstName: billingFirstName,
+    lastName: billingLastName,
+    address: billingAddress,
+    addressContinued: billingAddressContinued,
+    city: billingCity,
+    stateProvince: billingStateProvince,
+    postalCode: billingPostalCode,
+    destinationCountryCode: billingDestinationCountryCode,
+  } = billingContext;
+
+  const [shippingAddress, setShippingAddress] = useState(
+    new PayPalAddress(
+      address,
+      addressContinued,
+      city,
+      stateProvince,
+      postalCode,
+      destinationCountryCode
+    )
+  );
+
+  useEffect(() => {
+    console.log(`Checkout.js -> shippingAddress useEffect called`);
+
+    setShippingAddress(
+      new PayPalAddress(
+        address,
+        addressContinued,
+        city,
+        stateProvince,
+        postalCode,
+        destinationCountryCode
+      )
+    );
+  }, [
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+  ]);
+
+  const [billAddress, setBillAddress] = useState(
+    new PayPalAddress(
+      billingAddress,
+      billingAddressContinued,
+      billingCity,
+      billingStateProvince,
+      billingPostalCode,
+      billingDestinationCountryCode
+    )
+  );
+
+  useEffect(() => {
+    console.log(`Checkout.js -> billAddress useEffect called`);
+
+    setBillAddress(
+      new PayPalAddress(
+        billingAddress,
+        billingAddressContinued,
+        billingCity,
+        billingStateProvince,
+        billingPostalCode,
+        billingDestinationCountryCode
+      )
+    );
+  }, [
+    billingAddress,
+    billingAddressContinued,
+    billingCity,
+    billingStateProvince,
+    billingPostalCode,
+    billingDestinationCountryCode,
+  ]);
 
   const { cartCount: itemCount, getShoppingCart } = useShoppingCart();
   const weight = cartItemsWeight(cart);
@@ -72,11 +175,11 @@ function PayPalCheckout({ cart, countries }) {
   );
 
   function handleNext() {
-    const validEmail = validateForm(setErrors, {
-      field: "postal_code",
-      value: postalCode,
-      validator: (val) => val !== "",
-      message: "Postal Code is required.",
+    const validEmail = validateForm(setOrderEmailErrors, {
+      field: "order_email",
+      value: orderEmail,
+      validator: validateEmail,
+      message: "Order Email is required/invalid.",
     });
     if (!validEmail) return;
     setNextClicked(true);
@@ -105,20 +208,36 @@ function PayPalCheckout({ cart, countries }) {
             {!nextClicked ? (
               <PayPalCheckoutShipping
                 countries={countries}
-                errors={errors}
+                orderEmailErrors={orderEmailErrors}
+                setOrderEmailErrors={setOrderEmailErrors}
                 orderEmail={orderEmail}
-                postalCode={postalCode}
-                destinationCountryCode={destinationCountryCode}
-                handleDestinationCountryCode={handleDestinationCountryCode}
-                handlePostalCode={handlePostalCode}
+                handleOrderEmail={handleOrderEmail}
+                billingSame={billingSame}
+                setBillingSame={setBillingSame}
+                shippingAddress={{
+                  address,
+                  addressContinued,
+                  city,
+                  stateProvince,
+                  postalCode,
+                  destinationCountryCode,
+                }}
+                shippingErrors={shippingErrors}
+                handlers={handlers}
               />
             ) : (
-              <PayPalCheckoutShippingList
+              <PayPalCheckoutAddressList
                 nextClicked={nextClicked}
                 setNextClicked={setNextClicked}
                 orderEmail={orderEmail}
-                postalCode={postalCode}
-                destinationCountryCode={destinationCountryCode}
+                checkoutAddress={{
+                  address,
+                  addressContinued,
+                  city,
+                  stateProvince,
+                  shippingPostalCode: postalCode,
+                  shippingDestinationCountryCode: destinationCountryCode,
+                }}
               />
             )}
             <div className={`mt-10 flex-row w-full justify-center `}>
@@ -137,6 +256,8 @@ function PayPalCheckout({ cart, countries }) {
                   subtotal={subtotal}
                   shippingCost={shippingCost}
                   shippingCostCents={shippingCostCents}
+                  destinationCountryCode={destinationCountryCode}
+                  postalCode={postalCode}
                   is_anonymous={user.is_anonymous}
                   email={user.email}
                 />

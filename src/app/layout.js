@@ -6,6 +6,8 @@ import { Rubik_Doodle_Shadow } from "next/font/google";
 import localFont from "next/font/local";
 import { DarkModeProvider } from "./_contexts/DarkModeProvider";
 import { ShoppingCartProvider } from "./_contexts/ShoppingCartProvider";
+import { ShippingProvider } from "./_contexts/ShippingProvider";
+import { BillingProvider } from "./_contexts/BillingProvider";
 
 const rubikDoodleShadow = Rubik_Doodle_Shadow({
   weight: "400",
@@ -56,15 +58,21 @@ export default function RootLayout({ children }) {
       >
         <DarkModeProvider>
           <SessionProvider>
-            <ShoppingCartProvider>
-              <CheckoutProvider>
-                <Header>
-                  <div className="flex-1 px-8 py-4 grid">
-                    <main className="max-w-7xl mx-auto w-full">{children}</main>
-                  </div>
-                </Header>
-              </CheckoutProvider>
-            </ShoppingCartProvider>
+            <ShippingProvider>
+              <BillingProvider>
+                <ShoppingCartProvider>
+                  <CheckoutProvider>
+                    <Header>
+                      <div className="flex-1 px-8 py-4 grid">
+                        <main className="max-w-7xl mx-auto w-full">
+                          {children}
+                        </main>
+                      </div>
+                    </Header>
+                  </CheckoutProvider>
+                </ShoppingCartProvider>
+              </BillingProvider>
+            </ShippingProvider>
           </SessionProvider>
         </DarkModeProvider>
       </body>

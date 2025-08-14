@@ -8,9 +8,11 @@ import {
 } from "@/src/app/_library/server/paypal";
 import { cartTax } from "@/src/app/_library/utilities";
 import {
+  Card,
   GET_FROM_FILE,
   PayPal,
   PAYPAL_TOKEN,
+  PayPalAddress,
   PayPalExperienceContext,
   PayPalOrder,
   PayPalPayee,
@@ -49,6 +51,8 @@ export async function POST(request: Request) {
     shippingCostCents,
     taxPercentageFloat,
     paymentSource: paymentType,
+    destinationCountryCode,
+    postalCode,
   } = coa;
   const { shopping_cart_id: shoppingCartId } = cart[0];
   const { data, error } = await createOrderPlaceholder(shoppingCartId, email);
@@ -75,8 +79,22 @@ export async function POST(request: Request) {
     process.env.PAYPAL_MERCHANT_ID!
   );
   const description = `Kickstart Records order #${invoice_id}`;
-  // only supplying email for now.
-  const shippingAddress = new PayPalShipping(null, null, email, null, null);
+  // only supplying email, zip and country for now. Testing with hard coded values for now.
+  const payPalAddress = new PayPalAddress(
+    "123 Main St.",
+    null,
+    "Los Angeles",
+    "California",
+    postalCode,
+    destinationCountryCode
+  );
+  const shippingAddress = new PayPalShipping(
+    null,
+    null,
+    email,
+    null,
+    payPalAddress
+  );
   const purchaseUnit = new PayPalPurchaseUnit(
     reference_id,
     invoice_id,
@@ -104,6 +122,24 @@ export async function POST(request: Request) {
   } else if (paymentType === "card") {
     // throw new Error("not implemented yet");
     console.log(`paymentType: ${paymentType}`);
+    paymentSource = new PayPalPaymentSource(
+      null,
+      new Card(
+        null,
+        null,
+        null,
+        null,
+        new PayPalAddress(
+          "123 Main St.",
+          null,
+          "Los Angeles",
+          "California",
+          "90007",
+          "US"
+        )
+      ),
+      null
+    );
   } else {
     return NextResponse.json({ error: "Invalid payment type.", status: 400 });
   }

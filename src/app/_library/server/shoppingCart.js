@@ -1,4 +1,5 @@
-import { createClient } from "../supabase/server";
+import { createClient } from "@/src/app/_library/supabase/server";
+import { revalidatePath } from "next/cache";
 
 async function serverGetShoppingCart() {
   const supabase = await createClient();
@@ -6,7 +7,9 @@ async function serverGetShoppingCart() {
   if (error) {
     console.log(`serverGetShoppingCart ${error.message}`);
   }
-  // revalidatePath("/cart");
+  console.log(
+    `/src/app/_library/server/shoppingCart.js -> serverGetShoppingCart -> data = ${JSON.stringify(data)}`
+  );
   return { data, error };
 }
 async function serverUpdateShoppingCart(catalogId, count, email = null) {

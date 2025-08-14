@@ -1,4 +1,13 @@
-import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import {
+  PayPalButtons,
+  PayPalCardFieldsProvider,
+  PayPalCVVField,
+  PayPalExpiryField,
+  PayPalNameField,
+  PayPalNumberField,
+  PayPalScriptProvider,
+  usePayPalCardFields,
+} from "@paypal/react-paypal-js";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
@@ -8,6 +17,7 @@ import {
   payPalUpdateOrder,
 } from "@/src/app/_library/client/paypal";
 import { validateEmail } from "@/src/app/_library/utilities";
+import SpinnerMini from "../spinners/SpinnerMini";
 
 const PayPalCheckoutButtons = ({
   orderEmail,
@@ -15,6 +25,8 @@ const PayPalCheckoutButtons = ({
   subtotal,
   shippingCost,
   shippingCostCents,
+  destinationCountryCode,
+  postalCode,
   is_anonymous,
   email,
 }) => {
@@ -46,6 +58,8 @@ const PayPalCheckoutButtons = ({
           purchaseEmail,
           shippingCostCents,
           taxPercentageFloat: 0,
+          destinationCountryCode,
+          postalCode,
         });
         console.log(`result: ${JSON.stringify(result)}`);
         // console.log(`result.error.message = ${result.error.message}`);
@@ -125,7 +139,7 @@ const PayPalCheckoutButtons = ({
           clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
           currency: "USD",
           intent: "capture",
-          components: "buttons",
+          components: "card-fields,buttons",
         }}
       >
         <PayPalButtons
@@ -135,9 +149,103 @@ const PayPalCheckoutButtons = ({
           style={payPalStyle}
           disabled={isPaying}
         />
+        <div className="divider">
+          <span>OR</span>
+        </div>
+        <PayPalCardFieldsProvider
+          createOrder={createOrder}
+          onApprove={onApprove}
+          onError={onError}
+          style={{
+            input: {
+              "font-size": "16px",
+              "font-family": "courier, monospace",
+              "font-weight": "lighter",
+              color: "#ccc",
+            },
+            ".invalid": { color: "purple" },
+          }}
+        >
+          <PayPalNameField
+            inputEvents={{
+              onChange: (data) =>
+                console.log(`PayPalNameField data: ${JSON.stringify(data)}`),
+            }}
+          />
+          <PayPalNumberField
+            inputEvents={{
+              onChange: (data) =>
+                console.log(`PayPalNumberField data: ${JSON.stringify(data)}`),
+            }}
+          />
+          <PayPalExpiryField
+            inputEvents={{
+              onChange: (data) =>
+                console.log(`PayPalExpiryField data: ${JSON.stringify(data)}`),
+            }}
+          />
+          <PayPalCVVField
+            inputEvents={{
+              onChange: (data) =>
+                console.log(`PayPalCVVField data: ${JSON.stringify(data)}`),
+            }}
+          />
+          <CheckoutCardSubmit isPaying={isPaying} setIsPaying={setIsPaying} />
+        </PayPalCardFieldsProvider>
       </PayPalScriptProvider>
     </>
   );
 };
+function CheckoutCardSubmit({ isPaying, setIsPaying }) {
+  const { cardFieldsForm } = usePayPalCardFields();
+
+  // useEffect(() => {
+  //   console.log(
+  //     `Checkout.js -> cardFieldsForm ${JSON.stringify(cardFieldsForm)}`
+  //   );
+  //   if (cardFieldsForm) {
+  //     console.log(
+  //       `Checkout.js -> cardFieldsForm ${JSON.stringify(cardFieldsForm)}`
+  //     );
+  //   }
+  //   if (fields) {
+  //     console.log(`Checkout.js -> fields ${JSON.stringify(fields)}`);
+  //   }
+  // }, [cardFieldsForm, fields]);
+  const handleCardPaymentClick = async () => {
+    if (!cardFieldsForm) {
+      const childErrorMessage =
+        "Unable to find any child components in the <PayPalCardFieldsProvider />";
+
+      throw new Error(childErrorMessage);
+    }
+    if (!cardFieldsForm.isEligible()) {
+      return alert("The card you are using is not eligible for this action");
+    }
+    const formState = await cardFieldsForm.getState();
+
+    if (!formState.isFormValid) {
+      return alert("The payment form is invalid");
+    }
+    setIsPaying(true);
+
+    cardFieldsForm
+      .submit()
+      .catch((err) => {
+        console.log(`cardFieldsForm submit-catch: ${err.message}`);
+      })
+      .finally(setIsPaying(false));
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCardPaymentClick}
+      className="w-full block p-3 mt-6 rounded-sm text-lg cursor-pointer font-bold bg-accent-600 text-primary-50 hover:opacity-80"
+    >
+      {isPaying ? <SpinnerMini /> : "Pay with Card"}
+    </button>
+  );
+}
 
 export default PayPalCheckoutButtons;

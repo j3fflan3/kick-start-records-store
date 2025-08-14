@@ -2,13 +2,20 @@
 
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
-function PayPalCheckoutShippingList({
+function PayPalCheckoutAddressList({
   nextClicked,
   setNextClicked,
   orderEmail,
-  postalCode,
-  destinationCountryCode,
+  checkoutAddress,
 }) {
+  const {
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+  } = checkoutAddress;
   return (
     <div>
       <h3
@@ -47,4 +54,4 @@ function PayPalCheckoutShippingList({
   );
 }
 
-export default PayPalCheckoutShippingList;
+export default PayPalCheckoutAddressList;

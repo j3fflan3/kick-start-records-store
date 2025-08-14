@@ -217,29 +217,29 @@ class PayPalName {
 }
 
 interface IPayPalAddress {
-  address_line_1: string;
-  address_line_2: string;
-  admin_area_2: string;
-  admin_area_1: string;
-  postal_code: string;
-  country_code: string;
+  address_line_1: Nullable<string>;
+  address_line_2: Nullable<string>;
+  admin_area_2: Nullable<string>;
+  admin_area_1: Nullable<string>;
+  postal_code: Nullable<string>;
+  country_code: Nullable<string>;
 }
 
 class PayPalAddress {
-  address_line_1: string;
-  address_line_2: string;
-  admin_area_2: string; // Town, City
-  admin_area_1: string; // State (US), County, Province, Prefecture, Kanton
-  postal_code: string;
-  country_code: string;
+  address_line_1: Nullable<string>;
+  address_line_2: Nullable<string>;
+  admin_area_2: Nullable<string>; // Town, City
+  admin_area_1: Nullable<string>; // State (US), County, Province, Prefecture, Kanton
+  postal_code: Nullable<string>;
+  country_code: Nullable<string>;
 
   constructor(
-    address_line_1: string,
-    address_line_2: string,
-    admin_area_2: string,
-    admin_area_1: string,
-    postal_code: string,
-    country_code: string
+    address_line_1: Nullable<string>,
+    address_line_2: Nullable<string>,
+    admin_area_2: Nullable<string>,
+    admin_area_1: Nullable<string>,
+    postal_code: Nullable<string>,
+    country_code: Nullable<string>
   ) {
     this.address_line_1 = address_line_1;
     this.address_line_2 = address_line_2;
@@ -382,11 +382,11 @@ class Venmo {
 }
 
 interface ICard {
-  name: string; // Max length 300
-  number: string; // 13-19 length
-  security_code: string; // 3-4 length
-  expiry: string; // 7 char, example: 2024-08
-  billing_address: IPayPalAddress;
+  name: Nullable<string>; // Max length 300
+  number: Nullable<string>; // 13-19 length
+  security_code: Nullable<string>; // 3-4 length
+  expiry: Nullable<string>; // 7 char, example: 2024-08
+  billing_address: Nullable<IPayPalAddress>;
   // The following are optional.  Keeping them here for placeholders.
   attributes: any;
   stored_credential: any;
@@ -397,11 +397,11 @@ interface ICard {
 }
 
 class Card {
-  name: string;
-  number: string;
-  security_code: string; // 3-4 length
-  expiry: string; // 7 char, example: 2024-08
-  billing_address: IPayPalAddress;
+  name: Nullable<string>;
+  number: Nullable<string>;
+  security_code: Nullable<string>; // 3-4 length
+  expiry: Nullable<string>; // 7 char, example: 2024-08
+  billing_address: Nullable<IPayPalAddress>;
   // The following are optional.  Keeping them here for placeholders.
   attributes: any;
   stored_credential: any;
@@ -410,11 +410,11 @@ class Card {
   network_token: any;
   experience_context: any;
   constructor(
-    name: string,
-    number: string,
-    security_code: string,
-    expiry: string,
-    billing_address: IPayPalAddress
+    name: Nullable<string>,
+    number: Nullable<string>,
+    security_code: Nullable<string>,
+    expiry: Nullable<string>,
+    billing_address: Nullable<IPayPalAddress>
   ) {
     this.name = name;
     this.number = number;
