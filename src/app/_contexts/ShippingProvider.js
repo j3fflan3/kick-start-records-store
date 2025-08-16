@@ -111,7 +111,7 @@ function ShippingProvider({ children }) {
         setBillingSame,
         setErrors,
         // Handler functions
-        handlers: [
+        handlers: {
           handleFirstName,
           handleLastName,
           handleAddress,
@@ -120,7 +120,7 @@ function ShippingProvider({ children }) {
           handleStateProvince,
           handlePostalCode,
           handleDestinationCountryCode,
-        ],
+        },
         // Optionally, you can expose the refs if needed:
         firstNameRef,
         lastNameRef,

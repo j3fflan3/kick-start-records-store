@@ -41,35 +41,35 @@ function BillingProvider({ children }) {
     setErrors({});
     setGuestEmail(e.target.value);
   };
-  const handleFirstName = (e) => {
+  const handleBillingFirstName = (e) => {
     setErrors({});
     setFirstName(e.target.value);
   };
-  const handleLastName = (e) => {
+  const handleBillingLastName = (e) => {
     setErrors({});
     setLastName(e.target.value);
   };
-  const handleAddress = (e) => {
+  const handleBillingAddress = (e) => {
     setErrors({});
     setAddress(e.target.value);
   };
-  const handleAddressContinued = (e) => {
+  const handleBillingAddressContinued = (e) => {
     setErrors({});
     setAddressContinued(e.target.value);
   };
-  const handleCity = (e) => {
+  const handleBillingCity = (e) => {
     setErrors({});
     setCity(e.target.value);
   };
-  const handleStateProvince = (e) => {
+  const handleBillingStateProvince = (e) => {
     setErrors({});
     setStateProvince(e.target.value);
   };
-  const handlePostalCode = (e) => {
+  const handleBillingPostalCode = (e) => {
     setErrors({});
     setPostalCode(e.target.value);
   };
-  const handleDestinationCountryCode = (e) => {
+  const handleBillingDestinationCountryCode = (e) => {
     setErrors({});
     setDestinationCountryCode(e.target.value);
   };
@@ -129,14 +129,16 @@ function BillingProvider({ children }) {
         postalCode,
         destinationCountryCode,
         // Handler functions
-        handleFirstName,
-        handleLastName,
-        handleAddress,
-        handleAddressContinued,
-        handleCity,
-        handleStateProvince,
-        handlePostalCode,
-        handleDestinationCountryCode,
+        handlers: {
+          handleBillingFirstName,
+          handleBillingLastName,
+          handleBillingAddress,
+          handleBillingAddressContinued,
+          handleBillingCity,
+          handleBillingStateProvince,
+          handleBillingPostalCode,
+          handleBillingDestinationCountryCode,
+        },
         // Expose refs
         firstNameRef,
         lastNameRef,

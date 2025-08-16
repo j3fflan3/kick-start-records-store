@@ -19,10 +19,13 @@ import {
 } from "@/src/app/_contexts/CheckoutProvider";
 import PayPalCheckoutTotal from "./PayPalCheckoutTotal";
 import PayPalCheckoutShipping from "@/src/app/_components/paypal/PayPalCheckoutShipping";
+import PayPalCheckoutBilling from "@/src/app/_components/paypal/PayPalCheckoutBilling";
 import PayPalCheckoutAddressList from "@/src/app/_components/paypal/PayPalCheckoutAddressList";
 import { useShipping } from "@/src/app/_contexts/ShippingProvider";
 import { useBilling } from "@/src/app/_contexts/BillingProvider";
 import { PayPalAddress } from "@/src/app/_library/model/paypal";
+import { serverSaveUserAddress } from "@/src/app/_library/settings/serverSettingsActions";
+import { Address, UserAddress } from "@/src/app/_library/model/address";
 
 function PayPalCheckout({ cart, countries }) {
   // Checkout will always have a cart of at least one item.  All items will have the same
@@ -74,6 +77,7 @@ function PayPalCheckout({ cart, countries }) {
     stateProvince: billingStateProvince,
     postalCode: billingPostalCode,
     destinationCountryCode: billingDestinationCountryCode,
+    handlers: billingHandlers,
   } = billingContext;
 
   const [shippingAddress, setShippingAddress] = useState(
@@ -173,8 +177,8 @@ function PayPalCheckout({ cart, countries }) {
       shippingError && shippingError
     }, cartJson: ${cartJson}`
   );
-
-  function handleNext() {
+  const requiredValidator = (val) => val !== "";
+  async function handleNext(e) {
     const validEmail = validateForm(setOrderEmailErrors, {
       field: "order_email",
       value: orderEmail,
@@ -182,9 +186,139 @@ function PayPalCheckout({ cart, countries }) {
       message: "Order Email is required/invalid.",
     });
     if (!validEmail) return;
-    setNextClicked(true);
-  }
+    let validBilling = true; // Placeholder bool
+    let validShipping = validateForm(
+      setShippingErrors,
+      {
+        field: "first_name",
+        value: firstName,
+        validator: requiredValidator,
+        message: "First Name is required.",
+      },
+      {
+        field: "last_name",
+        value: lastName,
+        validator: requiredValidator,
+        message: "Last Name is required.",
+      },
+      {
+        field: "address",
+        value: address,
+        validator: requiredValidator,
+        message: "Address is required.",
+      },
+      {
+        field: "city",
+        value: city,
+        validator: requiredValidator,
+        message: "City is required.",
+      },
+      {
+        field: "state_province",
+        value: stateProvince,
+        validator: requiredValidator,
+        message: "State/Province is required.",
+      },
+      {
+        field: "postal_code",
+        value: postalCode,
+        validator: requiredValidator,
+        message: "Postal Code is required.",
+      }
+    );
 
+    if (!billingSame) {
+      //validBilling = validateForm()
+      validBilling = validateForm(
+        setBillingErrors,
+        {
+          field: "billing_first_name",
+          value: billingFirstName,
+          validator: requiredValidator,
+          message: "First Name is required.",
+        },
+        {
+          field: "billing_last_name",
+          value: billingLastName,
+          validator: requiredValidator,
+          message: "Last Name is required.",
+        },
+        {
+          field: "billing_address",
+          value: billingAddress,
+          validator: requiredValidator,
+          message: "Address is required.",
+        },
+        {
+          field: "billing_city",
+          value: billingCity,
+          validator: requiredValidator,
+          message: "City is required.",
+        },
+        {
+          field: "billing_state_province",
+          value: billingStateProvince,
+          validator: requiredValidator,
+          message: "State/Province is required.",
+        },
+        {
+          field: "billing_postal_code",
+          value: billingPostalCode,
+          validator: requiredValidator,
+          message: "Postal Code is required.",
+        }
+      );
+    }
+    if (validShipping && validBilling) {
+      const shippingAdd = new Address(
+        address,
+        city,
+        stateProvince,
+        postalCode,
+        destinationCountryCode,
+        addressContinued,
+        firstName,
+        lastName
+      );
+      const billingAdd = billingSame
+        ? new Address(
+            address,
+            city,
+            stateProvince,
+            postalCode,
+            destinationCountryCode,
+            addressContinued,
+            firstName,
+            lastName
+          )
+        : new Address(
+            billingAddress,
+            billingCity,
+            billingStateProvince,
+            billingPostalCode,
+            billingDestinationCountryCode,
+            billingAddressContinued,
+            billingFirstName,
+            billingLastName
+          );
+      const userAddress = new UserAddress(
+        firstName,
+        lastName,
+        billingSame,
+        shippingAdd,
+        billingAdd
+      );
+      if (!user.id_anonymous) await saveShipping(userAddress);
+      setNextClicked(true);
+    }
+  }
+  // This should only be called for signed up users, not anonymous users
+  // See example in handleNext
+  const saveShipping = async (userAddress) => {
+    const { data, error } = await serverSaveUserAddress(
+      JSON.stringify(userAddress)
+    );
+  };
   return (
     <div className="bg-white">
       <h1 className="text-3xl bg-primary-50 pb-4 dark:text-primary-100 text-center dark:bg-primary-950">
@@ -206,45 +340,88 @@ function PayPalCheckout({ cart, countries }) {
           </h2>
           <div className="mx-auto max-w-2xl px-4 lg:max-w-none lg:px-0">
             {!nextClicked ? (
-              <PayPalCheckoutShipping
-                countries={countries}
-                orderEmailErrors={orderEmailErrors}
-                setOrderEmailErrors={setOrderEmailErrors}
-                orderEmail={orderEmail}
-                handleOrderEmail={handleOrderEmail}
-                billingSame={billingSame}
-                setBillingSame={setBillingSame}
-                shippingAddress={{
-                  address,
-                  addressContinued,
-                  city,
-                  stateProvince,
-                  postalCode,
-                  destinationCountryCode,
-                }}
-                shippingErrors={shippingErrors}
-                handlers={handlers}
-              />
+              <>
+                <PayPalCheckoutShipping
+                  countries={countries}
+                  orderEmailErrors={orderEmailErrors}
+                  setOrderEmailErrors={setOrderEmailErrors}
+                  orderEmail={orderEmail}
+                  handleOrderEmail={handleOrderEmail}
+                  billingSame={billingSame}
+                  setBillingSame={setBillingSame}
+                  shippingAddress={{
+                    firstName,
+                    lastName,
+                    address,
+                    addressContinued,
+                    city,
+                    stateProvince,
+                    postalCode,
+                    destinationCountryCode,
+                  }}
+                  shippingErrors={shippingErrors}
+                  handlers={handlers}
+                />
+                <PayPalCheckoutBilling
+                  display={!billingSame}
+                  countries={countries}
+                  billingAddress={{
+                    billingFirstName,
+                    billingLastName,
+                    billingAddress,
+                    billingAddressContinued,
+                    billingCity,
+                    billingStateProvince,
+                    billingPostalCode,
+                    billingDestinationCountryCode,
+                  }}
+                  billingErrors={billingErrors}
+                  billingHandlers={billingHandlers}
+                />
+              </>
             ) : (
-              <PayPalCheckoutAddressList
-                nextClicked={nextClicked}
-                setNextClicked={setNextClicked}
-                orderEmail={orderEmail}
-                checkoutAddress={{
-                  address,
-                  addressContinued,
-                  city,
-                  stateProvince,
-                  shippingPostalCode: postalCode,
-                  shippingDestinationCountryCode: destinationCountryCode,
-                }}
-              />
+              <>
+                <PayPalCheckoutAddressList
+                  display={true}
+                  setNextClicked={setNextClicked}
+                  orderEmail={orderEmail}
+                  checkoutAddress={[
+                    firstName,
+                    lastName,
+                    address,
+                    addressContinued,
+                    city,
+                    stateProvince,
+                    postalCode,
+                    destinationCountryCode,
+                  ]}
+                  title="Shipping"
+                />
+                <PayPalCheckoutAddressList
+                  display={!billingSame}
+                  setNextClicked={setNextClicked}
+                  checkoutAddress={[
+                    billingFirstName,
+                    billingLastName,
+                    billingAddress,
+                    billingAddressContinued,
+                    billingCity,
+                    billingStateProvince,
+                    billingPostalCode,
+                    billingDestinationCountryCode,
+                  ]}
+                  title="Billing"
+                />
+              </>
             )}
             <div className={`mt-10 flex-row w-full justify-center `}>
               {!nextClicked && (
                 <button
                   className="text-primary-50 font-bold border border-primary-400 rounded-md px-3 py-2 bg-accent-600 w-full hover:cursor-pointer"
-                  onClick={handleNext}
+                  onClick={async (e) => {
+                    // e.preventDefault() /* call this here if you need it. */
+                    await handleNext(e);
+                  }}
                 >
                   Next &rarr;
                 </button>
