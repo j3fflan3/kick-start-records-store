@@ -37,6 +37,8 @@ function Checkout({ cart, countries }) {
   const [tax, setTax] = useState(0);
   const [subtotal, setSubtotal] = useState("");
   const [total, setTotal] = useState("");
+  const [anonEmail, setAnonEmail] = useState("");
+  const [anonEmailError, setAnonEmailError] = useState({});
   // Instead of destructuring here, destructure in the child component
   // and take only what you need for checkout.js from here.
   const shippingContext = useShipping();
@@ -175,9 +177,6 @@ function Checkout({ cart, countries }) {
   );
 
   const requiredValidator = (val) => val !== "";
-  const emailBlankOrValid = (val) => {
-    return val === "" || validateEmail(val);
-  };
   async function handleNext(e) {
     let validBilling = true; // Placeholder bool
     let validShipping = validateForm(
@@ -219,7 +218,6 @@ function Checkout({ cart, countries }) {
         message: "Postal Code is required.",
       }
     );
-
     if (!billingSame) {
       //validBilling = validateForm()
       validBilling = validateForm(
