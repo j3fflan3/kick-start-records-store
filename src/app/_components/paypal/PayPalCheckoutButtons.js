@@ -32,6 +32,7 @@ const PayPalCheckoutButtons = ({
   is_anonymous,
   email,
 }) => {
+  const [cardErrors, setCardErrors] = useState({});
   const { getShoppingCart } = useShoppingCart();
   const router = useRouter();
   const createOrder = useCallback(
@@ -63,7 +64,7 @@ const PayPalCheckoutButtons = ({
           shippingAddress,
           billingAddress,
         });
-        console.log(`result: ${JSON.stringify(result)}`);
+        console.log(`result: ${JSON.stringify(result, null, "\t")}`);
         // console.log(`result.error.message = ${result.error.message}`);
 
         if (result.error) {
@@ -103,7 +104,7 @@ const PayPalCheckoutButtons = ({
   );
   async function onApprove(data, actions) {
     console.log(
-      `data: ${JSON.stringify(data)}, actions: ${JSON.stringify(actions)}`
+      `data: ${JSON.stringify(data, null, "\t")}, actions: ${JSON.stringify(actions)}`
     );
 
     try {
@@ -113,7 +114,7 @@ const PayPalCheckoutButtons = ({
         status,
       } = await payPalCaptureOrder(data.orderID);
       if (captureError) throw captureError;
-      console.log(`order: ${JSON.stringify(order)}`);
+      console.log(`order: ${JSON.stringify(order, null, "\t")}`);
       const sCapturedOrderArgs = JSON.stringify({
         _paypal_capture_response: order,
         _subtotal: Number(subtotal),
@@ -126,7 +127,9 @@ const PayPalCheckoutButtons = ({
         await payPalUpdateOrder(sCapturedOrderArgs);
 
       if (error) throw error;
-      console.log(`updateData: ${JSON.stringify(updateData)}, error: ${error}`);
+      console.log(
+        `updateData: ${JSON.stringify(updateData, null, "\t")}, error: ${error}`
+      );
       // re-retrieve the shopping cart (which should now be empty)
       await getShoppingCart();
       // Redirect to order placed page
@@ -185,35 +188,89 @@ const PayPalCheckoutButtons = ({
             inputEvents={{
               onChange: (data) =>
                 console.log(`PayPalNameField data: ${JSON.stringify(data)}`),
+              onFocus: () => setCardErrors({}),
             }}
           />
+          <p className="ml-2 mt-2 text-sm text-red-700">
+            {cardErrors?.name && cardErrors.name}
+          </p>
           <PayPalNumberField
             inputEvents={{
               onChange: (data) =>
                 console.log(`PayPalNumberField data: ${JSON.stringify(data)}`),
+              onFocus: () => setCardErrors({}),
             }}
           />
+          <p className="ml-2 mt-2 text-sm text-red-700">
+            {cardErrors?.number && cardErrors.number}
+          </p>
+          <p className="ml-2 mt-2 text-sm text-red-700">
+            {cardErrors?.ineligible_card_vendor &&
+              cardErrors.ineligible_card_vendor}
+          </p>
           <PayPalExpiryField
+            onFocus={() => setCardErrors({})}
             inputEvents={{
               onChange: (data) =>
                 console.log(`PayPalExpiryField data: ${JSON.stringify(data)}`),
+              onFocus: () => setCardErrors({}),
             }}
           />
+          <p className="ml-2 mt-2 text-sm text-red-700">
+            {cardErrors?.expiry && cardErrors.expiry}
+          </p>{" "}
           <PayPalCVVField
+            onFocus={() => setCardErrors({})}
             inputEvents={{
               onChange: (data) =>
                 console.log(`PayPalCVVField data: ${JSON.stringify(data)}`),
+              onFocus: () => setCardErrors({}),
             }}
           />
-          <CheckoutCardSubmit isPaying={isPaying} setIsPaying={setIsPaying} />
+          <p className="ml-2 mt-2 text-sm text-red-700">
+            {cardErrors?.cvv && cardErrors.cvv}
+          </p>{" "}
+          <CheckoutCardSubmit
+            isPaying={isPaying}
+            setIsPaying={setIsPaying}
+            setCardErrors={setCardErrors}
+          />
         </PayPalCardFieldsProvider>
       </PayPalScriptProvider>
     </>
   );
 };
-function CheckoutCardSubmit({ isPaying, setIsPaying }) {
+function CheckoutCardSubmit({ isPaying, setIsPaying, setCardErrors }) {
   const { cardFieldsForm } = usePayPalCardFields();
-  const handleCardPaymentClick = async () => {
+
+  function parseCardErrors(errors) {
+    const cardErrors = {};
+    for (const error of errors) {
+      switch (error) {
+        case "INELIGIBLE_CARD_VENDOR":
+          cardErrors["ineligible_card_vendor"] =
+            "Ineligible card vendor. Please use a different form of payment.";
+          break;
+        case "INVALID_NAME":
+          cardErrors["name"] = "Invalid name.";
+          break;
+        case "INVALID_NUMBER":
+          cardErrors["number"] = "Invalid card number.";
+          break;
+        case "INVALID_EXPIRY":
+          cardErrors["expiry"] = "Invalid card expiry.";
+          break;
+        case "INVALID_CVV":
+          cardErrors["cvv"] = "Invalid card CVV.";
+          break;
+        default:
+        // do nothing
+      }
+    }
+    setCardErrors(cardErrors);
+  }
+
+  const handleCardPaymentClick = async (e) => {
     if (!cardFieldsForm) {
       const childErrorMessage =
         "Unable to find any child components in the <PayPalCardFieldsProvider />";
@@ -228,8 +285,9 @@ function CheckoutCardSubmit({ isPaying, setIsPaying }) {
     if (!formState.isFormValid) {
       // INVALID_NUMBER,INVALID_EXPIRY,INVALID_CVV
       console.log(`CheckoutCardSubmit -> formState.errors ${formState.errors}`);
+      parseCardErrors(formState.errors);
       setIsPaying(false);
-      return alert("The payment form is invalid");
+      return;
     }
     cardFieldsForm.submit().catch((err) => {
       console.log(`cardFieldsForm submit-catch: ${err.message}`);

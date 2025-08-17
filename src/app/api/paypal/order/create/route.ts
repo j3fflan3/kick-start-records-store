@@ -37,7 +37,9 @@ async function createOrderPlaceholder(shoppingCartId: string, email: string) {
   }
   console.log(
     `createOrderPlaceholder -> {data, error} ${JSON.stringify(
-      data
+      data,
+      null,
+      "\t"
     )}, ${JSON.stringify(error)}}`
   );
   return { data, error };
@@ -45,7 +47,7 @@ async function createOrderPlaceholder(shoppingCartId: string, email: string) {
 
 export async function POST(request: Request) {
   const coa = await request.json();
-  console.log(`createOrderArgs: ${JSON.stringify(coa)}`);
+  console.log(`createOrderArgs: ${JSON.stringify(coa, null, "\t")}`);
   const {
     cart,
     purchaseEmail: email,
@@ -84,7 +86,7 @@ export async function POST(request: Request) {
   // first, items array
   const payPalItems = getPayPalItems(cart, taxPercentageFloat);
   console.log(
-    `api/paypal/order/create\n\t payPalItems = ${JSON.stringify(payPalItems)}`
+    `api/paypal/order/create\n\t payPalItems = ${JSON.stringify(payPalItems, null, "\t")}`
   );
 
   // getPayPalAmount
@@ -171,7 +173,7 @@ export async function POST(request: Request) {
   // purchaseUnit must be an array.
   const payload = new PayPalOrder([purchaseUnit], paymentSource);
   console.log(
-    `api/paypal/order/create \n\t PayPal payload = ${JSON.stringify(payload)}`
+    `api/paypal/order/create \n\t PayPal payload = ${JSON.stringify(payload, null, "\t")}`
   );
   // Make sure the access_token isn't expired
   await oAuthPayPalRequest();
@@ -188,7 +190,7 @@ export async function POST(request: Request) {
   try {
     const result = await handlePayPalResponse(response);
     console.log(
-      `api/paypal/order/create -> result = \n\t${JSON.stringify(result)}`
+      `api/paypal/order/create -> result = \n\t${JSON.stringify(result, null, "\t")}`
     );
 
     return NextResponse.json(result);

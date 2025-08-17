@@ -277,7 +277,7 @@ class PayPalPhoneNumber {
 
 interface IPayPalShipping {
   type: Nullable<string>;
-  full_name: Nullable<IPayPalName>;
+  name: Nullable<IPayPalName>;
   email_address: Nullable<string>;
   phone_number: Nullable<IPayPalPhoneNumber>;
   address: Nullable<IPayPalAddress>;
@@ -285,20 +285,20 @@ interface IPayPalShipping {
 
 class PayPalShipping {
   type: Nullable<string>;
-  full_name: Nullable<IPayPalName>;
+  name: Nullable<IPayPalName>;
   email_address: Nullable<string>;
   phone_number: Nullable<IPayPalPhoneNumber>;
   address: Nullable<IPayPalAddress>;
 
   constructor(
     type: Nullable<string>,
-    full_name: Nullable<IPayPalName>,
+    name: Nullable<IPayPalName>,
     email_address: Nullable<string>,
     phone_number: Nullable<IPayPalPhoneNumber>,
     address: Nullable<IPayPalAddress>
   ) {
     this.type = type;
-    this.full_name = full_name;
+    this.name = name;
     this.email_address = email_address;
     this.phone_number = phone_number;
     this.address = address;

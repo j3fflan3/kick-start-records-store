@@ -42,18 +42,14 @@ export async function POST(request: Request) {
     });
     const paypalResponse = await handlePayPalResponse(response);
     const { data } = paypalResponse;
-    console.log(`api/paypal/order/capture -> data = ${JSON.stringify(data)} `);
+    console.log(
+      `api/paypal/order/capture -> data = ${JSON.stringify(data, null, "\t")} `
+    );
     const orderId = data.purchase_units[0].reference_id;
     const { invoice_id: orderNumber } =
       data.purchase_units[0].payments.captures[0];
     const { email_address: email } = data.purchase_units[0].shipping;
-    // If the user paid with a card, the card name is in payment_source.card.name
-    // Otherwise, the name is in purchase_units[0].shipping.name.full_name
-    let fullName = data.payment_source.hasOwnProperty("card")
-      ? data.payment_source.card.name
-        ? data.payment_source.card.name
-        : email
-      : data.purchase_units[0].shipping.name.full_name;
+    const fullName = data.purchase_units[0].shipping.name.full_name;
 
     console.log(`api/paypal/order/capture -> fullName=${fullName}`);
     await sendOrderEmail(email, orderId, orderNumber, fullName);
