@@ -1,3 +1,4 @@
+// Not currently used.  Leaving for future use.
 "use client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useSession } from "./SessionProvider";
@@ -110,14 +111,16 @@ function ShippingProvider({ children }) {
         setBillingSame,
         setErrors,
         // Handler functions
-        handleFirstName,
-        handleLastName,
-        handleAddress,
-        handleAddressContinued,
-        handleCity,
-        handleStateProvince,
-        handlePostalCode,
-        handleDestinationCountryCode,
+        handlers: {
+          handleFirstName,
+          handleLastName,
+          handleAddress,
+          handleAddressContinued,
+          handleCity,
+          handleStateProvince,
+          handlePostalCode,
+          handleDestinationCountryCode,
+        },
         // Optionally, you can expose the refs if needed:
         firstNameRef,
         lastNameRef,

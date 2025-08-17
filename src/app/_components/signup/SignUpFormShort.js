@@ -1,13 +1,13 @@
 "use client";
 
+import { useActionState, useEffect, useRef, useState } from "react";
 import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
-import { serverSignUp } from "@/src/app/_library/serverActions";
+import { serverSignUp } from "@/src/app/_library/server/user";
 import {
   validateEmail,
   validateForm,
   validatePassword,
 } from "@/src/app/_library/utilities";
-import { useActionState, useEffect, useRef, useState } from "react";
 
 const initialState = {
   data: {},

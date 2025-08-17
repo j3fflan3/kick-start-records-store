@@ -1,23 +1,13 @@
 import {
   PayPalButtons,
-  PayPalCardFieldsProvider,
-  PayPalCVVField,
-  PayPalExpiryField,
-  PayPalNameField,
-  PayPalNumberField,
   PayPalScriptProvider,
-  usePayPalCardFields,
+  usePayPalCardFields
 } from "@paypal/react-paypal-js";
-import { useCallback, useState } from "react";
-import SpinnerMini from "../spinners/SpinnerMini";
-import { validateEmail } from "../../_library/utilities";
-import {
-  serverCaptureOrder,
-  serverCreateOrder,
-  serverUpdateOrder,
-} from "../../_library/serverActions";
-import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
 import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
+import { validateEmail } from "../../_library/utilities";
+import SpinnerMini from "../spinners/SpinnerMini";
 
 const CheckoutPayPal = ({
   guestEmail,
@@ -64,22 +54,22 @@ const CheckoutPayPal = ({
         );
 
         // Call a server function
-        const result = await serverCreateOrder(
-          JSON.stringify({
-            paymentSource,
-            cart,
-            purchaseEmail,
-            shippingCostCents,
-            taxPercentageFloat: 0,
-            billingSame,
-            firstName,
-            lastName,
-            shippingAddress,
-            billingFirstName,
-            billingLastName,
-            billAddress,
-          })
-        );
+        // const result = await serverCreateOrder(
+        //   JSON.stringify({
+        //     paymentSource,
+        //     cart,
+        //     purchaseEmail,
+        //     shippingCostCents,
+        //     taxPercentageFloat: 0,
+        //     billingSame,
+        //     firstName,
+        //     lastName,
+        //     shippingAddress,
+        //     billingFirstName,
+        //     billingLastName,
+        //     billAddress,
+        //   })
+        // );
         console.log(`result: ${JSON.stringify(result)}`);
         // console.log(`result.error.message = ${result.error.message}`);
 
@@ -125,29 +115,29 @@ const CheckoutPayPal = ({
       `data: ${JSON.stringify(data)}, actions: ${JSON.stringify(actions)}`
     );
 
-    try {
-      const order = await serverCaptureOrder(data.orderID);
-      console.log(`order: ${JSON.stringify(order)}`);
-      const sCapturedOrderArgs = JSON.stringify({
-        _paypal_capture_response: order,
-        _subtotal: Number(subtotal),
-        _shipping: Number(shippingCost),
-      });
+    // try {
+    //   const order = await serverCaptureOrder(data.orderID);
+    //   console.log(`order: ${JSON.stringify(order)}`);
+    //   const sCapturedOrderArgs = JSON.stringify({
+    //     _paypal_capture_response: order,
+    //     _subtotal: Number(subtotal),
+    //     _shipping: Number(shippingCost),
+    //   });
 
-      const { data: updateData, error } =
-        await serverUpdateOrder(sCapturedOrderArgs);
+    //   const { data: updateData, error } =
+    //     await serverUpdateOrder(sCapturedOrderArgs);
 
-      if (error) throw error;
-      console.log(`updateData: ${updateData}, error: ${error}`);
-      // re-retrieve the shopping cart (which should now be empty)
-      await getShoppingCart();
-      // Redirect to order placed page
-      const encodedEmail = btoa(order.purchase_units[0].shipping.email_address);
-      const orderId = order.purchase_units[0].reference_id;
-      router.push(`/checkout/order-placed/${orderId}/${encodedEmail}`);
-    } catch (err) {
-      console.log(`error: ${err.message}`);
-    }
+    //   if (error) throw error;
+    //   console.log(`updateData: ${updateData}, error: ${error}`);
+    //   // re-retrieve the shopping cart (which should now be empty)
+    //   await getShoppingCart();
+    //   // Redirect to order placed page
+    //   const encodedEmail = btoa(order.purchase_units[0].shipping.email_address);
+    //   const orderId = order.purchase_units[0].reference_id;
+    //   router.push(`/checkout/order-placed/${orderId}/${encodedEmail}`);
+    // } catch (err) {
+    //   console.log(`error: ${err.message}`);
+    // }
   }
   function onError(err) {
     console.log(`error: ${err}`);
@@ -171,7 +161,7 @@ const CheckoutPayPal = ({
           clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
           currency: "USD",
           intent: "capture",
-          components: "card-fields,buttons",
+          components: "buttons",
         }}
       >
         <PayPalButtons
@@ -181,7 +171,7 @@ const CheckoutPayPal = ({
           style={payPalStyle}
           disabled={isPaying}
         />
-        <div className="divider">
+        {/* <div className="divider">
           <span>OR</span>
         </div>
         <PayPalCardFieldsProvider
@@ -223,7 +213,7 @@ const CheckoutPayPal = ({
             }}
           />
           <CheckoutCardSubmit isPaying={isPaying} setIsPaying={setIsPaying} />
-        </PayPalCardFieldsProvider>
+        </PayPalCardFieldsProvider> */}
       </PayPalScriptProvider>
     </>
   );

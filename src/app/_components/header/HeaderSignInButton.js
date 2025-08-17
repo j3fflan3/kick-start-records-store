@@ -1,10 +1,10 @@
 "use client";
 
-import { NavbarItem } from "@/src/app/_components/tailwind/navbar";
-import { clientSignOut } from "@/src/app/_library/clientActions";
 import { useRouter } from "next/navigation";
-import { useSession } from "../../_contexts/SessionProvider";
-import { useShoppingCart } from "../../_contexts/ShoppingCartProvider";
+import { NavbarItem } from "@/src/app/_components/tailwind/navbar";
+import { clientSignOut } from "@/src/app/_library/client/user";
+import { useSession } from "@/src/app/_contexts/SessionProvider";
+import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
 
 function HeaderSignInButton() {
   const { session } = useSession();

@@ -1,11 +1,11 @@
 "use client";
 
+import { useActionState, useEffect, useState } from "react";
 import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
 import {
   serverResend,
   serverResetPassword,
-} from "@/src/app/_library/serverActions";
-import { useActionState, useEffect, useState } from "react";
+} from "@/src/app/_library/server/user";
 
 function ResendConfirmation({ email, action, children }) {
   const [message, setMessage] = useState("");

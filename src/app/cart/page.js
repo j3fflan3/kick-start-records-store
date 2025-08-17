@@ -1,8 +1,8 @@
 import CartIsEmpty from "@/src/app/_components/shopping-cart/CartIsEmpty";
 import Spinner from "@/src/app/_components/spinners/Spinner";
-import { serverGetShoppingCart } from "@/src/app/_library/serverActions";
+import { serverGetShoppingCart } from "@/src/app/_library/server/shoppingCart";
 import { Suspense } from "react";
-import ShoppingCart from "../_components/shopping-cart/ShoppingCart";
+import ShoppingCart from "@/src/app/_components/shopping-cart/ShoppingCart";
 
 export const revalidate = 0;
 async function Page() {

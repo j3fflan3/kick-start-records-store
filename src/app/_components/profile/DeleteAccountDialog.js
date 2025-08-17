@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "../tailwind/button";
 import {
   Dialog,
@@ -7,12 +8,11 @@ import {
   DialogBody,
   DialogDescription,
   DialogTitle,
-} from "../tailwind/dialog";
-import { Field, Label } from "../tailwind/fieldset";
-import { Input } from "../tailwind/input";
-import { serverDeleteUser } from "../../_library/serverActions";
-import { useRouter } from "next/navigation";
-import { clientSignOut } from "../../_library/clientActions";
+} from "@/src/app/_components/tailwind/dialog";
+import { Field, Label } from "@/src/app/_components/tailwind/fieldset";
+import { Input } from "@/src/app/_components/tailwind/input";
+import { serverDeleteUser } from "@/src/app/_library/server/user";
+import { clientSignOut } from "@/src/app/_library/client/user";
 
 function DeleteAccountDialog({ userId }) {
   const router = useRouter();

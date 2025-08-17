@@ -15,13 +15,13 @@ import {
 } from "@/src/app/_library/utilities";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useBilling } from "../../_contexts/BillingProvider";
-import { useShipping } from "../../_contexts/ShippingProvider";
-import { Address, UserAddress } from "../../_library/address";
-import { PayPalAddress } from "../../_library/paypal";
-import CheckoutBilling from "./CheckoutBilling";
-import CheckoutShipping from "./CheckoutShipping";
-import CheckoutTotal from "./CheckoutTotal";
+import { useBilling } from "@/src/app/_contexts/BillingProvider";
+import { useShipping } from "@/src/app/_contexts/ShippingProvider";
+import { Address, UserAddress } from "@/src/app/_library/model/address";
+import { PayPalAddress } from "@/src/app/_library/model/paypal";
+import CheckoutBilling from "@/src/app/_components/checkout/CheckoutBilling";
+import CheckoutShipping from "@/src/app/_components/checkout/CheckoutShipping";
+import CheckoutTotal from "@/src/app/_components/checkout/CheckoutTotal";
 
 function Checkout({ cart, countries }) {
   // Checkout will always have a cart of at least one item.  All items will have the same
@@ -37,6 +37,8 @@ function Checkout({ cart, countries }) {
   const [tax, setTax] = useState(0);
   const [subtotal, setSubtotal] = useState("");
   const [total, setTotal] = useState("");
+  const [anonEmail, setAnonEmail] = useState("");
+  const [anonEmailError, setAnonEmailError] = useState({});
   // Instead of destructuring here, destructure in the child component
   // and take only what you need for checkout.js from here.
   const shippingContext = useShipping();
@@ -175,9 +177,6 @@ function Checkout({ cart, countries }) {
   );
 
   const requiredValidator = (val) => val !== "";
-  const emailBlankOrValid = (val) => {
-    return val === "" || validateEmail(val);
-  };
   async function handleNext(e) {
     let validBilling = true; // Placeholder bool
     let validShipping = validateForm(
@@ -219,7 +218,6 @@ function Checkout({ cart, countries }) {
         message: "Postal Code is required.",
       }
     );
-
     if (!billingSame) {
       //validBilling = validateForm()
       validBilling = validateForm(

@@ -1,6 +1,6 @@
 "use client";
 
-import { serverGetShoppingCart } from "@/src/app/_library/serverActions";
+import { clientGetShoppingCart } from "@/src/app/_library/client/shoppingCart";
 import Error from "@/src/app/error";
 import { ShoppingCartIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
@@ -19,7 +19,7 @@ function CartIcon() {
   useEffect(
     function () {
       async function getCartCount() {
-        const { data, error } = await serverGetShoppingCart();
+        const { data, error } = await clientGetShoppingCart();
         if (error) {
           console.log(error);
           return <Error error={"There was a problem updating the cart."} />;

@@ -1,7 +1,7 @@
 import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
-import { serverGetRecords } from "@/src/app/_library/serverActions";
-import ProductCard from "../products/ProductCard";
-import AddToCartSlider from "../shopping-cart/AddToCartSlider";
+import { serverGetRecords } from "@/src/app/_library/server/records";
+import ProductCard from "@/src/app/_components/products/ProductCard";
+import AddToCartSlider from "@/src/app/_components/shopping-cart/AddToCartSlider";
 
 export default async function RecordList() {
   const records = await serverGetRecords();
