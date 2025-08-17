@@ -49,10 +49,13 @@ export async function POST(request: Request) {
     const { email_address: email } = data.purchase_units[0].shipping;
     // If the user paid with a card, the card name is in payment_source.card.name
     // Otherwise, the name is in purchase_units[0].shipping.name.full_name
-    const fullName = data.payment_source.hasOwnProperty("card")
+    let fullName = data.payment_source.hasOwnProperty("card")
       ? data.payment_source.card.name
+        ? data.payment_source.card.name
+        : email
       : data.purchase_units[0].shipping.name.full_name;
 
+    console.log(`api/paypal/order/capture -> fullName=${fullName}`);
     await sendOrderEmail(email, orderId, orderNumber, fullName);
     return NextResponse.json(paypalResponse);
   } catch (err) {

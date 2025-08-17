@@ -20,21 +20,23 @@ import { validateEmail } from "@/src/app/_library/utilities";
 import SpinnerMini from "../spinners/SpinnerMini";
 
 const PayPalCheckoutButtons = ({
+  isPaying,
+  setIsPaying,
   orderEmail,
   cart,
   subtotal,
   shippingCost,
   shippingCostCents,
-  destinationCountryCode,
-  postalCode,
+  shippingAddress,
+  billingAddress,
   is_anonymous,
   email,
 }) => {
-  const [isPaying, setIsPaying] = useState(false);
   const { getShoppingCart } = useShoppingCart();
   const router = useRouter();
   const createOrder = useCallback(
     async function (...payPalArgs) {
+      if (!isPaying) setIsPaying(true);
       try {
         const [source, order] = payPalArgs;
         const { paymentSource } = source || { paymentSource: "card" };
@@ -58,8 +60,8 @@ const PayPalCheckoutButtons = ({
           purchaseEmail,
           shippingCostCents,
           taxPercentageFloat: 0,
-          destinationCountryCode,
-          postalCode,
+          shippingAddress,
+          billingAddress,
         });
         console.log(`result: ${JSON.stringify(result)}`);
         // console.log(`result.error.message = ${result.error.message}`);
@@ -81,12 +83,23 @@ const PayPalCheckoutButtons = ({
           throw new Error(errorMessage);
         }
       } catch (error) {
+        setIsPaying(false);
         console.log(error);
 
         console.log(`error: ${JSON.stringify(error)}`);
       }
     },
-    [orderEmail, cart, email, is_anonymous, shippingCostCents]
+    [
+      orderEmail,
+      cart,
+      email,
+      is_anonymous,
+      shippingCostCents,
+      shippingAddress,
+      billingAddress,
+      setIsPaying,
+      isPaying,
+    ]
   );
   async function onApprove(data, actions) {
     console.log(
@@ -126,10 +139,12 @@ const PayPalCheckoutButtons = ({
     }
   }
   function onError(err) {
+    setIsPaying(false);
     console.log(`error: ${err}`);
 
     console.log(`onError called.`);
   }
+
   const payPalStyle = { layout: "vertical", disableMaxWidth: true };
 
   return (
@@ -198,20 +213,6 @@ const PayPalCheckoutButtons = ({
 };
 function CheckoutCardSubmit({ isPaying, setIsPaying }) {
   const { cardFieldsForm } = usePayPalCardFields();
-
-  // useEffect(() => {
-  //   console.log(
-  //     `Checkout.js -> cardFieldsForm ${JSON.stringify(cardFieldsForm)}`
-  //   );
-  //   if (cardFieldsForm) {
-  //     console.log(
-  //       `Checkout.js -> cardFieldsForm ${JSON.stringify(cardFieldsForm)}`
-  //     );
-  //   }
-  //   if (fields) {
-  //     console.log(`Checkout.js -> fields ${JSON.stringify(fields)}`);
-  //   }
-  // }, [cardFieldsForm, fields]);
   const handleCardPaymentClick = async () => {
     if (!cardFieldsForm) {
       const childErrorMessage =
@@ -225,22 +226,23 @@ function CheckoutCardSubmit({ isPaying, setIsPaying }) {
     const formState = await cardFieldsForm.getState();
 
     if (!formState.isFormValid) {
+      // INVALID_NUMBER,INVALID_EXPIRY,INVALID_CVV
+      console.log(`CheckoutCardSubmit -> formState.errors ${formState.errors}`);
+      setIsPaying(false);
       return alert("The payment form is invalid");
     }
-    setIsPaying(true);
-
-    cardFieldsForm
-      .submit()
-      .catch((err) => {
-        console.log(`cardFieldsForm submit-catch: ${err.message}`);
-      })
-      .finally(setIsPaying(false));
+    cardFieldsForm.submit().catch((err) => {
+      console.log(`cardFieldsForm submit-catch: ${err.message}`);
+    });
   };
 
   return (
     <button
       type="button"
-      onClick={handleCardPaymentClick}
+      onClick={() => {
+        setIsPaying(true);
+        handleCardPaymentClick();
+      }}
       className="w-full block p-3 mt-6 rounded-sm text-lg cursor-pointer font-bold bg-accent-600 text-primary-50 hover:opacity-80"
     >
       {isPaying ? <SpinnerMini /> : "Pay with Card"}

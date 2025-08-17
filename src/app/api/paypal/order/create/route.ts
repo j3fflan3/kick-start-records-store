@@ -14,6 +14,7 @@ import {
   PAYPAL_TOKEN,
   PayPalAddress,
   PayPalExperienceContext,
+  PayPalName,
   PayPalOrder,
   PayPalPayee,
   PayPalPaymentSource,
@@ -51,15 +52,35 @@ export async function POST(request: Request) {
     shippingCostCents,
     taxPercentageFloat,
     paymentSource: paymentType,
-    destinationCountryCode,
-    postalCode,
+    shippingAddress,
+    billingAddress,
   } = coa;
   const { shopping_cart_id: shoppingCartId } = cart[0];
   const { data, error } = await createOrderPlaceholder(shoppingCartId, email);
   if (error) throw new Error(error.message);
   const { order_number: invoice_id, order_id: reference_id } = data;
-
   const create_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders`;
+  // extract shipping and billing addressses by position
+  const [
+    shipFirstName,
+    shipLastName,
+    shipAddress,
+    shipAddressContinued,
+    shipCity,
+    shipStateProvince,
+    shipPostalCode,
+    shipDestinationCountryCode,
+  ] = shippingAddress;
+  const [
+    billFirstName,
+    billLastName,
+    billAddress,
+    billAddressContinued,
+    billCity,
+    billStateProvince,
+    billPostalCode,
+    billDestinationCountryCode,
+  ] = billingAddress;
   // first, items array
   const payPalItems = getPayPalItems(cart, taxPercentageFloat);
   console.log(
@@ -80,20 +101,21 @@ export async function POST(request: Request) {
   );
   const description = `Kickstart Records order #${invoice_id}`;
   // only supplying email, zip and country for now. Testing with hard coded values for now.
-  const payPalAddress = new PayPalAddress(
-    "123 Main St.",
-    null,
-    "Los Angeles",
-    "California",
-    postalCode,
-    destinationCountryCode
+  const payPalShippingAddress = new PayPalAddress(
+    shipAddress,
+    shipAddressContinued,
+    shipCity,
+    shipStateProvince,
+    shipPostalCode,
+    shipDestinationCountryCode
   );
-  const shippingAddress = new PayPalShipping(
+  const shippingFullName = new PayPalName(`${shipFirstName} ${shipLastName}`);
+  const shippingAdd = new PayPalShipping(
     null,
-    null,
+    shippingFullName,
     email,
     null,
-    payPalAddress
+    payPalShippingAddress
   );
   const purchaseUnit = new PayPalPurchaseUnit(
     reference_id,
@@ -102,7 +124,7 @@ export async function POST(request: Request) {
     payPalAmount,
     payee,
     payPalItems,
-    shippingAddress
+    shippingAdd
   );
   console.log(`PayPalPurchaseUnit = ${JSON.stringify(purchaseUnit)}`);
 
@@ -110,11 +132,26 @@ export async function POST(request: Request) {
   const return_url = `${baseURL}checkout/order-placed`;
   const cancel_url = `${baseURL}checkout/payment`;
   let paymentSource = null;
+
+  const payPalBillingAddress = new PayPalAddress(
+    billAddress,
+    billAddressContinued,
+    billCity,
+    billStateProvince,
+    billPostalCode,
+    billDestinationCountryCode
+  );
+
   if (paymentType === "paypal" || paymentType === "paylater") {
     // payment source
     paymentSource = new PayPalPaymentSource(
       new PayPal(
-        new PayPalExperienceContext(GET_FROM_FILE, return_url, cancel_url, null)
+        new PayPalExperienceContext(
+          GET_FROM_FILE,
+          return_url,
+          cancel_url,
+          payPalBillingAddress
+        )
       ),
       null,
       null
@@ -124,20 +161,7 @@ export async function POST(request: Request) {
     console.log(`paymentType: ${paymentType}`);
     paymentSource = new PayPalPaymentSource(
       null,
-      new Card(
-        null,
-        null,
-        null,
-        null,
-        new PayPalAddress(
-          "123 Main St.",
-          null,
-          "Los Angeles",
-          "California",
-          "90007",
-          "US"
-        )
-      ),
+      new Card(null, null, null, null, payPalBillingAddress),
       null
     );
   } else {
