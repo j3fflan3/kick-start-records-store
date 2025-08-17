@@ -1,3 +1,4 @@
+// Not currently used.  Leaving for future use.
 "use client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useSession } from "./SessionProvider";
@@ -13,7 +14,6 @@ function ShippingProvider({ children }) {
   const [initialized, setInitialized] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [addressContinued, setAddressContinued] = useState("");
   const [city, setCity] = useState("");
@@ -71,7 +71,6 @@ function ShippingProvider({ children }) {
       //     user.user_metadata
       //   )}`
       // );
-      setEmail(user?.user_metadata.email ?? "");
       setFirstName(user?.user_metadata?.firstName ?? "");
       setLastName(user?.user_metadata?.lastName ?? "");
       setAddress(user?.user_metadata?.shippingAddress?.address ?? "");
@@ -99,7 +98,6 @@ function ShippingProvider({ children }) {
     <ShippingContext.Provider
       value={{
         errors,
-        email,
         firstName,
         lastName,
         address,
@@ -113,14 +111,16 @@ function ShippingProvider({ children }) {
         setBillingSame,
         setErrors,
         // Handler functions
-        handleFirstName,
-        handleLastName,
-        handleAddress,
-        handleAddressContinued,
-        handleCity,
-        handleStateProvince,
-        handlePostalCode,
-        handleDestinationCountryCode,
+        handlers: {
+          handleFirstName,
+          handleLastName,
+          handleAddress,
+          handleAddressContinued,
+          handleCity,
+          handleStateProvince,
+          handlePostalCode,
+          handleDestinationCountryCode,
+        },
         // Optionally, you can expose the refs if needed:
         firstNameRef,
         lastNameRef,

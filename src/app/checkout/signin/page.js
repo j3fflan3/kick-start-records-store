@@ -1,10 +1,10 @@
-import Link from "next/link";
-import SignInForm from "../../_components/signin/SignInForm";
-import SignUpShort from "../../_components/signup/SignUpShort";
-import { serverGetCountries } from "../../_library/serverActions";
+import PayPalCheckoutGuest from "@/src/app/_components/paypal/PayPalCheckoutGuest";
+import SignInForm from "@/src/app/_components/signin/SignInForm";
+import SignUpShort from "@/src/app/_components/signup/SignUpShort";
+import { getCountries } from "@/src/app/_library/server/countries";
 
 async function Page() {
-  const { data: countries } = await serverGetCountries();
+  const { data: countries } = await getCountries();
   if (!countries) {
     return (
       <div className="mx-auto w-full max-w-sm lg:w-96">
@@ -45,12 +45,7 @@ async function Page() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4">
-            <Link
-              href="/checkout/payment"
-              className="rounded-md bg-accent-600 font-bold px-3 py-2 w-full text-2xl text-center text-primary-50 hover:bg-accent-600 active:bg-yellow-500 cursor-pointer"
-            >
-              Continue as Guest
-            </Link>
+            <PayPalCheckoutGuest />
           </div>
         </div>
       </div>

@@ -1,9 +1,8 @@
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import Record from "@/src/app/_components/records/Record";
+import { notFound } from "next/navigation";
 import Spinner from "@/src/app/_components/spinners/Spinner";
-import { serverGetRecords } from "@/src/app/_library/serverActions";
-import Product from "../../_components/products/Product";
+import { serverGetRecords } from "@/src/app/_library/server/records";
+import Product from "@/src/app/_components/products/Product";
 
 export const revalidate = 3600;
 

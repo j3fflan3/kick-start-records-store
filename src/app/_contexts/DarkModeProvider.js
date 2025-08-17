@@ -1,3 +1,4 @@
+// Not currently used.  Leaving for future use.
 "use client";
 import { createContext, useContext, useEffect } from "react";
 import { useWebStorage } from "../_hooks/useWebStorage";

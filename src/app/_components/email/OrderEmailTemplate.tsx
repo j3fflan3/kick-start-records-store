@@ -2,18 +2,18 @@ import * as React from "react";
 
 interface OrderEmailTemplateProps {
   orderNumber: string;
-  firstName: string;
+  fullName: string;
   orderLink: string;
 }
 
 export default function OrderEmailTemplate({
   orderNumber,
-  firstName,
+  fullName,
   orderLink,
 }: OrderEmailTemplateProps) {
   return (
     <div className="ml-6">
-      <h1>Hi, {firstName}!</h1>
+      <h1>Hi, {fullName}!</h1>
       <h2>Thank you for your order!</h2>
       <h2>
         Follow this link to view your order details:&nbsp;

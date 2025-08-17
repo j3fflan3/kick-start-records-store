@@ -1,10 +1,10 @@
 "use client";
 
-import { serverUpdatePassword } from "@/src/app/_library/serverActions";
-import { validateForm, validatePassword } from "@/src/app/_library/utilities";
 import { useActionState, useEffect, useRef, useState } from "react";
-import SubmitButton from "../buttons/SubmitButton";
-import PasswordUpdatedMessage from "./PasswordUpdatedMessage";
+import { serverUpdatePassword } from "@/src/app/_library/server/user";
+import { validateForm, validatePassword } from "@/src/app/_library/utilities";
+import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
+import PasswordUpdatedMessage from "@/src/app/_components/login/PasswordUpdatedMessage";
 
 const initialState = { message: "" };
 

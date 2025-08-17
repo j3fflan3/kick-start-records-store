@@ -1,3 +1,4 @@
+// Not currently used.  Leaving for possible future use
 "use client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useSession } from "./SessionProvider";
@@ -16,6 +17,7 @@ function BillingProvider({ children }) {
 
   // Will these ever be valid when it first loads?
   const [errors, setErrors] = useState({});
+  const [guestEmail, setGuestEmail] = useState("");
   const [initialized, setInitialized] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -35,35 +37,39 @@ function BillingProvider({ children }) {
   const postalCodeRef = useRef(null);
   const destinationCountryCodeRef = useRef(null);
   // Handler functions for each useState variable (excluding errors)
-  const handleFirstName = (e) => {
+  const handleGuestEmail = (e) => {
+    setErrors({});
+    setGuestEmail(e.target.value);
+  };
+  const handleBillingFirstName = (e) => {
     setErrors({});
     setFirstName(e.target.value);
   };
-  const handleLastName = (e) => {
+  const handleBillingLastName = (e) => {
     setErrors({});
     setLastName(e.target.value);
   };
-  const handleAddress = (e) => {
+  const handleBillingAddress = (e) => {
     setErrors({});
     setAddress(e.target.value);
   };
-  const handleAddressContinued = (e) => {
+  const handleBillingAddressContinued = (e) => {
     setErrors({});
     setAddressContinued(e.target.value);
   };
-  const handleCity = (e) => {
+  const handleBillingCity = (e) => {
     setErrors({});
     setCity(e.target.value);
   };
-  const handleStateProvince = (e) => {
+  const handleBillingStateProvince = (e) => {
     setErrors({});
     setStateProvince(e.target.value);
   };
-  const handlePostalCode = (e) => {
+  const handleBillingPostalCode = (e) => {
     setErrors({});
     setPostalCode(e.target.value);
   };
-  const handleDestinationCountryCode = (e) => {
+  const handleBillingDestinationCountryCode = (e) => {
     setErrors({});
     setDestinationCountryCode(e.target.value);
   };
@@ -112,6 +118,8 @@ function BillingProvider({ children }) {
       value={{
         errors,
         setErrors,
+        guestEmail,
+        setGuestEmail,
         firstName,
         lastName,
         address,
@@ -121,14 +129,16 @@ function BillingProvider({ children }) {
         postalCode,
         destinationCountryCode,
         // Handler functions
-        handleFirstName,
-        handleLastName,
-        handleAddress,
-        handleAddressContinued,
-        handleCity,
-        handleStateProvince,
-        handlePostalCode,
-        handleDestinationCountryCode,
+        handlers: {
+          handleBillingFirstName,
+          handleBillingLastName,
+          handleBillingAddress,
+          handleBillingAddressContinued,
+          handleBillingCity,
+          handleBillingStateProvince,
+          handleBillingPostalCode,
+          handleBillingDestinationCountryCode,
+        },
         // Expose refs
         firstNameRef,
         lastNameRef,

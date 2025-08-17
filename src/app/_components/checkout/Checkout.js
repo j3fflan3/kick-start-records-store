@@ -1,6 +1,8 @@
 "use client";
 
+// import CardCheckoutButton from "@/src/app/_components/checkout/CardCheckoutButton";
 import CheckoutAddressList from "@/src/app/_components/checkout/CheckoutAddressList";
+import CheckoutPayPal from "@/src/app/_components/checkout/CheckoutPayPal";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
 import { useShippingCalculator } from "@/src/app/_hooks/useShippingCalculator";
@@ -11,41 +13,25 @@ import {
   validateEmail,
   validateForm,
 } from "@/src/app/_library/utilities";
-import {
-  PayPalButtons,
-  PayPalCardFieldsProvider,
-  PayPalCVVField,
-  PayPalExpiryField,
-  PayPalNameField,
-  PayPalNumberField,
-  PayPalScriptProvider,
-} from "@paypal/react-paypal-js";
-import { useEffect, useRef, useState } from "react";
-import { useBilling } from "../../_contexts/BillingProvider";
-import { useShipping } from "../../_contexts/ShippingProvider";
-import { Address, UserAddress } from "../../_library/address";
-import { PayPalAddress } from "../../_library/paypal";
-import {
-  serverCaptureOrder,
-  serverCreateOrder,
-  serverUpdateOrder,
-} from "../../_library/serverActions";
-import CheckoutBilling from "./CheckoutBilling";
-import CheckoutShipping from "./CheckoutShipping";
-import CheckoutTotal from "./CheckoutTotal";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useBilling } from "@/src/app/_contexts/BillingProvider";
+import { useShipping } from "@/src/app/_contexts/ShippingProvider";
+import { Address, UserAddress } from "@/src/app/_library/model/address";
+import { PayPalAddress } from "@/src/app/_library/model/paypal";
+import CheckoutBilling from "@/src/app/_components/checkout/CheckoutBilling";
+import CheckoutShipping from "@/src/app/_components/checkout/CheckoutShipping";
+import CheckoutTotal from "@/src/app/_components/checkout/CheckoutTotal";
 
 function Checkout({ cart, countries }) {
   // Checkout will always have a cart of at least one item.  All items will have the same
-  // shopping_cart_id
-  const { shopping_cart_id: shoppingCartId } = cart[0];
   const router = useRouter();
   // use hooks and funcs
   const { session } = useSession();
   const { user } = session || { user: null };
   console.log(user);
-  // State
-  const [editAddresses, setEditAddresses] = useState(false);
+  // State & Hooks
+  const [nextClicked, setNextClicked] = useState(false);
   const [editShipping, setEditShipping] = useState(false);
   const [editBilling, setEditBilling] = useState(false);
   const [tax, setTax] = useState(0);
@@ -59,7 +45,6 @@ function Checkout({ cart, countries }) {
   const {
     errors: shippingErrors,
     setErrors: setShippingErrors,
-    email,
     firstName,
     lastName,
     address,
@@ -71,22 +56,14 @@ function Checkout({ cart, countries }) {
     billingSame,
     setBillingSame,
   } = shippingContext;
-  const shippingReadOnly =
-    !editShipping &&
-    firstName &&
-    lastName &&
-    address &&
-    city &&
-    stateProvince &&
-    postalCode &&
-    destinationCountryCode;
-  console.log(`shippingReadOnly: ${shippingReadOnly}`);
 
   // Billing
   const billingContext = useBilling();
   const {
     errors: billingErrors,
     setErrors: setBillingErrors,
+    guestEmail,
+    setGuestEmail,
     firstName: billingFirstName,
     lastName: billingLastName,
     address: billingAddress,
@@ -96,28 +73,8 @@ function Checkout({ cart, countries }) {
     postalCode: billingPostalCode,
     destinationCountryCode: billingDestinationCountryCode,
   } = billingContext;
-  const billingReadOnly =
-    !editBilling &&
-    billingFirstName &&
-    billingLastName &&
-    billingAddress &&
-    billingCity &&
-    billingStateProvince &&
-    billingPostalCode &&
-    billingDestinationCountryCode;
-  // const [showPayPalButtons, setShowPayPalButtons] = useState(false);
-  let showPayPalButtons =
-    shippingReadOnly &&
-    (billingSame || (!billingSame && billingReadOnly)) &&
-    !editBilling &&
-    (!user.is_anonymous || (user.is_anonymous && anonEmail)) &&
-    !editShipping;
-  if (user.is_anonymous) {
-    // If the user is anonymous, we need to show the email field
-    showPayPalButtons = showPayPalButtons && anonEmail;
-  }
 
-  // console.log(`showPayPalButtons: ${showPayPalButtons}`);
+  let showPayPalButtons = !editBilling && !editShipping && nextClicked;
 
   const [shippingAddress, setShippingAddress] = useState(
     new PayPalAddress(
@@ -195,7 +152,14 @@ function Checkout({ cart, countries }) {
       postalCode,
       destinationCountryCode,
     });
-  const anonEmailRef = useRef(null);
+
+  // const anonEmailRef = useRef(guestEmail);
+  useEffect(() => {
+    console.log(
+      `Checkout.js -> guestEmail: ${guestEmail}, nextClicked: ${nextClicked}`
+    );
+  }, [guestEmail, nextClicked]);
+
   useEffect(
     function () {
       setSubtotal(cartTotal(cart));
@@ -203,6 +167,7 @@ function Checkout({ cart, countries }) {
     },
     [shippingCostCents, cart, tax]
   );
+
   // For debugging.  Remove when done with this component
   const cartJson = cart ? JSON.stringify(cart) : "";
   console.log(
@@ -212,7 +177,6 @@ function Checkout({ cart, countries }) {
   );
 
   const requiredValidator = (val) => val !== "";
-
   async function handleNext(e) {
     let validBilling = true; // Placeholder bool
     let validShipping = validateForm(
@@ -254,16 +218,6 @@ function Checkout({ cart, countries }) {
         message: "Postal Code is required.",
       }
     );
-    let validEmail = !user.is_anonymous;
-    if (user.is_anonymous) {
-      // If the user is anonymous, we need to set the email address
-      validEmail = validateForm(setAnonEmailError, {
-        field: "anon_email",
-        value: anonEmail,
-        validator: validateEmail,
-        message: "Email is invalid/required.",
-      });
-    }
     if (!billingSame) {
       //validBilling = validateForm()
       validBilling = validateForm(
@@ -307,7 +261,7 @@ function Checkout({ cart, countries }) {
       );
     }
 
-    if (validShipping && validBilling && validEmail) {
+    if (validShipping && validBilling) {
       const shippingAdd = new Address(
         address,
         city,
@@ -319,7 +273,16 @@ function Checkout({ cart, countries }) {
         lastName
       );
       const billingAdd = billingSame
-        ? new Address("", "", "", "", "US", "", "", "")
+        ? new Address(
+            address,
+            city,
+            stateProvince,
+            postalCode,
+            destinationCountryCode,
+            addressContinued,
+            firstName,
+            lastName
+          )
         : new Address(
             billingAddress,
             billingCity,
@@ -340,6 +303,7 @@ function Checkout({ cart, countries }) {
       if (!user.id_anonymous) await saveShipping(userAddress);
       setEditShipping(false);
       setEditBilling(false);
+      setNextClicked(true);
     }
   }
   // This should only be called for signed up users, not anonymous users
@@ -350,106 +314,6 @@ function Checkout({ cart, countries }) {
     );
   };
 
-  const createOrder = async (...payPalArgs) => {
-    try {
-      const [source, order] = payPalArgs;
-      const { paymentSource } = source;
-      console.log(`payPalArgs = ${JSON.stringify(payPalArgs)}`);
-      console.log(`paymentSource: ${JSON.stringify(paymentSource)}`);
-      let purchaseEmail = user.is_anonymous ? anonEmail : email;
-      if (!validateEmail(purchaseEmail)) {
-        const message = `invaid email address: ${purchaseEmail}`;
-        console.log(message);
-
-        throw new Error(message);
-      }
-      console.log(
-        `Checkout.js -> shippingAddress: ${JSON.stringify(
-          shippingAddress
-        )},\nbillAddress: ${JSON.stringify(billAddress)}`
-      );
-
-      // Call a server function
-      const result = await serverCreateOrder(
-        JSON.stringify({
-          cart,
-          purchaseEmail,
-          shippingCostCents,
-          taxPercentageFloat: 0,
-          billingSame,
-          firstName,
-          lastName,
-          shippingAddress,
-          billingFirstName,
-          billingLastName,
-          billAddress,
-        })
-      );
-      console.log(`result: ${JSON.stringify(result)}`);
-      // console.log(`result.error.message = ${result.error.message}`);
-
-      if (result.error) {
-        console.log(`in result.error.message closure`);
-        const errMessage = result.error.message;
-        throw new Error(errMessage);
-      }
-
-      if (result?.data?.id) {
-        return result.data.id;
-      } else {
-        const errorDetail = result?.data?.details?.[0];
-        const errorMessage = errorDetail
-          ? `${errorDetail.issue} ${errorDetail.description} (${result.data.debug_id})`
-          : JSON.stringify(result);
-
-        throw new Error(errorMessage);
-      }
-    } catch (error) {
-      console.log(error);
-
-      console.log(`error: ${JSON.stringify(error)}`);
-    }
-  };
-  async function onApprove(data, actions) {
-    console.log(
-      `data: ${JSON.stringify(data)}, actions: ${JSON.stringify(actions)}`
-    );
-
-    try {
-      const order = await serverCaptureOrder(data.orderID);
-      console.log(`order: ${JSON.stringify(order)}`);
-      const sCapturedOrderArgs = JSON.stringify({
-        _paypal_capture_response: order,
-        _subtotal: Number(subtotal),
-        _shipping: Number(shippingCost),
-      });
-
-      const { data: updateData, error } =
-        await serverUpdateOrder(sCapturedOrderArgs);
-
-      if (error) throw error;
-      console.log(`updateData: ${updateData}, error: ${error}`);
-      // re-retrieve the shopping cart (which should now be empty)
-      await getShoppingCart();
-      // Redirect to order placed page
-      const encodedEmail = btoa(order.purchase_units[0].shipping.email_address);
-      console.log(
-        `encodedEmail: ${encodedEmail}, email ${order.purchase_units[0].shipping.email_address}`
-      );
-      const orderId = order.purchase_units[0].reference_id;
-      router.push(`/checkout/order-placed/${orderId}/${encodedEmail}`);
-    } catch (err) {
-      console.log(`error: ${err.message}`);
-    }
-  }
-  function onError(err) {
-    console.log(`error: ${err}`);
-
-    console.log(`onError called.`);
-  }
-  const isProcessing = false;
-
-  const payPalStyle = { layout: "vertical", disableMaxWidth: true };
   return (
     <div className="bg-white">
       <h1 className="text-3xl bg-primary-50 pb-4 dark:text-primary-100 text-center dark:bg-primary-950">
@@ -470,7 +334,7 @@ function Checkout({ cart, countries }) {
             Shipping Info
           </h2>
           <div className="mx-auto max-w-2xl px-4 lg:max-w-none lg:px-0">
-            {shippingReadOnly ? (
+            {showPayPalButtons ? (
               <CheckoutAddressList
                 billingSame={billingSame}
                 setEditAddresses={setEditShipping}
@@ -488,7 +352,7 @@ function Checkout({ cart, countries }) {
             )}
             {billingSame ? (
               ""
-            ) : billingReadOnly ? (
+            ) : showPayPalButtons ? (
               <CheckoutAddressList
                 billingSame={null}
                 setEditAddresses={setEditBilling}
@@ -502,8 +366,8 @@ function Checkout({ cart, countries }) {
                 billingContext={billingContext}
               />
             )}
-            {user.is_anonymous && !showPayPalButtons && (
-              <div className="mt-6">
+            {user?.is_anonymous && (
+              <div className={`mt-6`}>
                 <label
                   htmlFor="first_name"
                   className=" text-sm/6 font-medium text-gray-700"
@@ -511,20 +375,22 @@ function Checkout({ cart, countries }) {
                   Email
                 </label>
                 <div className="mt-2">
-                  <input
+                  <span className="py-2 text-base dark:text-primary-950  placeholder:text-gray-500  sm:text-sm/6">
+                    {guestEmail}
+                  </span>
+                  {/* <input
                     type="text"
-                    name="anon_email"
+                    name="guest_email"
                     placeholder=""
                     className="block w-full rounded-md bg-white px-3 py-2 text-base dark:text-primary-950 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
-                    value={anonEmail}
-                    ref={anonEmailRef}
-                    onChange={(e) => setAnonEmail(e.target.value)}
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
                     required
-                  />
+                  /> */}
                 </div>
-                <p className="ml-2 mt-2 text-sm text-red-700">
-                  {anonEmailError?.anon_email && anonEmailError.anon_email}
-                </p>
+                {/* <p className="ml-2 mt-2 text-sm text-red-700">
+                  {billingErrors?.guest_email && billingErrors.guest_email}
+                </p> */}
               </div>
             )}
             {!showPayPalButtons && (
@@ -543,59 +409,22 @@ function Checkout({ cart, countries }) {
                 showPayPalButtons ? "" : "hidden"
               }`}
             >
-              <PayPalScriptProvider
-                options={{
-                  clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
-                  currency: "USD",
-                  intent: "capture",
-                  components: "buttons,card-fields",
-                }}
-              >
-                <PayPalButtons
-                  createOrder={createOrder}
-                  onApprove={onApprove}
-                  onError={onError}
-                  style={payPalStyle}
-                  disabled={isProcessing}
-                />
-                <div className="divider">
-                  <span>OR</span>
-                </div>
-                <PayPalCardFieldsProvider
-                  createOrder={createOrder}
-                  onApprove={onApprove}
-                  style={{
-                    input: {
-                      "font-size": "16px",
-                      "font-family": "courier, monospace",
-                      "font-weight": "lighter",
-                      color: "#ccc",
-                    },
-                    ".invalid": { color: "purple" },
-                  }}
-                >
-                  <PayPalNameField
-                    style={{
-                      input: { color: "blue" },
-                      ".invalid": { color: "purple" },
-                    }}
-                  />
-                  <PayPalNumberField />
-                  <PayPalExpiryField />
-                  <PayPalCVVField />
-                </PayPalCardFieldsProvider>
-                <button
-                  className="w-full block p-3 mt-6 rounded-sm text-lg cursor-pointer font-bold bg-accent-600 text-primary-50 hover:opacity-80"
-                  onClick={() => {
-                    createOrder([
-                      { paymentSource: "card" },
-                      { order: {}, payment: null },
-                    ]);
-                  }}
-                >
-                  Pay now with Card
-                </button>
-              </PayPalScriptProvider>
+              <CheckoutPayPal
+                guestEmail={guestEmail}
+                billAddress={billAddress}
+                billingFirstName={billingFirstName}
+                billingLastName={billingLastName}
+                billingSame={billingSame}
+                cart={cart}
+                subtotal={subtotal}
+                shippingAddress={shippingAddress}
+                shippingCost={shippingCost}
+                shippingCostCents={shippingCostCents}
+                is_anonymous={user.is_anonymous}
+                email={user.email}
+                firstName={firstName}
+                lastName={lastName}
+              />
             </div>
           </div>
         </section>

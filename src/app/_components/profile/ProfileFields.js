@@ -1,18 +1,22 @@
 "use client";
 import Link from "next/link";
-import { serverUpdateUser } from "../../_library/serverActions";
-import SubmitButton from "../buttons/SubmitButton";
-import { Checkbox, CheckboxField, CheckboxGroup } from "../tailwind/checkbox";
+import { useActionState, useEffect, useState } from "react";
+import { serverUpdateUser } from "@/src/app/_library/server/user";
+import SubmitButton from "@/src/app/_components/buttons/SubmitButton";
+import {
+  Checkbox,
+  CheckboxField,
+  CheckboxGroup,
+} from "@/src/app/_components/tailwind/checkbox";
 import {
   Field,
   FieldGroup,
   Fieldset,
   Label,
   Legend,
-} from "../tailwind/fieldset";
-import { Input } from "../tailwind/input";
-import ComingSoonSmall from "../utilities/ComingSoonSmall";
-import { useActionState, useEffect, useState } from "react";
+} from "@/src/app/_components/tailwind/fieldset";
+import { Input } from "@/src/app/_components/tailwind/input";
+import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
 
 const initialState = {
   message: "",
