@@ -177,9 +177,6 @@ function Checkout({ cart, countries }) {
   );
 
   const requiredValidator = (val) => val !== "";
-  const emailBlankOrValid = (val) => {
-    return val === "" || validateEmail(val);
-  };
   async function handleNext(e) {
     let validBilling = true; // Placeholder bool
     let validShipping = validateForm(
@@ -264,7 +261,7 @@ function Checkout({ cart, countries }) {
       );
     }
 
-    if (validShipping && validBilling && validEmail) {
+    if (validShipping && validBilling) {
       const shippingAdd = new Address(
         address,
         city,
