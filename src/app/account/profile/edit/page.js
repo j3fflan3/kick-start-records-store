@@ -1,6 +1,6 @@
 import ProfileFields from "@/src/app/_components/profile/ProfileFields";
 import NewCustomer from "@/src/app/_components/utilities/NewCustomer";
-import { serverGetUser } from "@/src/app/_library/serverActions";
+import { serverGetUser } from "@/src/app/_library/server/user";
 
 async function Page() {
   const { data, error } = await serverGetUser();

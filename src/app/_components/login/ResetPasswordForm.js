@@ -1,6 +1,6 @@
 "use client";
 
-import { serverResetPassword } from "@/src/app/_library/serverActions";
+import { serverResetPassword } from "@/src/app/_library/server/user";
 import { validateEmail, validateForm } from "@/src/app/_library/utilities";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef, useState } from "react";

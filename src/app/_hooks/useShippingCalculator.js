@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { serverGetUSPSRates } from "../_library/serverActions";
+import { getUSPSRates } from "@/src/app/_library/server/usps";
 import {
   InternalationRatesRequest,
   USBaseRatesRequest,
-} from "../_library/usps";
-import { formatDollars } from "../_library/utilities";
+} from "@/src/app/_library/model/usps";
 
 function useShippingCalculator({
   itemCount,
@@ -31,7 +30,7 @@ function useShippingCalculator({
 
   useEffect(() => {
     async function getBaseRates(sBaseRatesRequest, count) {
-      const data = await serverGetUSPSRates(sBaseRatesRequest, count);
+      const data = await getUSPSRates(sBaseRatesRequest, count);
       if (data && data?.message) {
         setShippingError(data.message);
         setShippingCost("0.00");
