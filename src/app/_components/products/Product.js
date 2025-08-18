@@ -96,12 +96,20 @@ export default function Product({ record }) {
                 </div>
                 <div className="mt-4"></div>
                 <div className="mt-5">
-                  <AddToCart
-                    catalogId={catalogId}
-                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-accent-600 px-8 py-3 text-base font-medium text-white hover:bg-accent-700 focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-gray-50 focus:outline-hidden"
-                  >
-                    Add to Cart
-                  </AddToCart>
+                  {recordFormat === "DigitalDownload" ||
+                  recordFormat === "Digital Download" ? (
+                    <button
+                      disabled
+                      className="disabled:text-primary-600 border border-primary-700 py-1 px-2 w-full items-center rounded-md text-lg inline-block  hover:bg-accent-600 disabled:hover:bg-primary-950 transition-all hover:text-primary-50 disabled:hover:cursor-default hover:cursor-pointer"
+                    >
+                      Buy Now
+                    </button>
+                  ) : (
+                    <AddToCart
+                      catalogId={catalogId}
+                      className="border border-primary-700 py-1 px-2 w-full items-center rounded-md text-lg inline-block hover:bg-accent-600 transition-all hover:text-primary-50 hover:cursor-pointer"
+                    />
+                  )}
                 </div>
                 <div className="mt-6 text-center"></div>
               </div>
