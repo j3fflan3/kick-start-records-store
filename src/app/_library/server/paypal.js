@@ -188,7 +188,7 @@ async function sendOrderEmail(email, orderId, orderNumber, fullName) {
     const { data, error } = await resend.emails.send({
       from: "Kick Start Records <info@kickstartrecords.com>",
       to: [`${email}`],
-      bcc: ["info@kickstartrecords.com"],
+      bcc: process.env.ORDER_EMAIL_BCC,
       subject: `Kick Start Records Order #${orderNumber}`,
       react: OrderEmailTemplate({ orderNumber, fullName, orderLink }),
     });
