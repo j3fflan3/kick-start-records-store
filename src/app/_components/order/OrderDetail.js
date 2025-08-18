@@ -7,6 +7,9 @@ function OrderDetail({ order }) {
     shippingAddress?.name?.full_name ??
     shippingAddress?.email_address ??
     "Guest";
+
+  const trackingNumber = order[0].tracking_number;
+  // const trackingNumber = "123456798";
   const {
     address_line_1,
     address_line_2,
@@ -22,10 +25,12 @@ function OrderDetail({ order }) {
         <h1 className="text-xl font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-3xl">
           Thank you for your order!
         </h1>
-        <h2 className="mb-6 text-xl font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-2xl">
-          We&apos;ll notify you as soon as it ships.
-        </h2>
-        <h3 className="text-lg font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-xl">
+        {!trackingNumber && (
+          <h2 className="text-lg mt-2 font-bold tracking-tight text-primary-900 dark:text-primary-400 sm:text-xl">
+            We&apos;ll notify you as soon as it ships.
+          </h2>
+        )}
+        <h3 className="mt-6 text-lg font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-xl">
           Order #{order[0].order_number}
         </h3>
         <p className="mt-1">
@@ -48,7 +53,7 @@ function OrderDetail({ order }) {
         </div>
 
         <p className="mt-4">
-          Tracking Number: {order[0].tracking_number ?? "[Not yet shipped]"}
+          Tracking Number: {trackingNumber ?? "[Not yet shipped]"}
         </p>
         <p className="mt-4">
           Payment Status:{" "}
