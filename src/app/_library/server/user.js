@@ -246,6 +246,15 @@ async function serverResend(prevState, formData) {
   return { message };
 }
 
+async function serverGetUserOrderList() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_order_list");
+  if (error) {
+    console.log(`serverGetOrderList -> error: ${error.message}`);
+  }
+  return { data, error };
+}
+
 export {
   serverDeleteUser,
   serverGetUser,
@@ -254,4 +263,5 @@ export {
   serverSignUp,
   serverUpdatePassword,
   serverUpdateUser,
+  serverGetUserOrderList,
 };
