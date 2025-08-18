@@ -26,10 +26,19 @@ function ProductCard({ product }) {
         </div>
       </Link>
       <div className="mt-2 items-center">
-        <AddToCart
-          catalogId={catalogId}
-          className="border border-primary-700 py-1 px-2 w-full items-center rounded-md text-lg inline-block hover:bg-accent-600 transition-all hover:text-primary-50 hover:cursor-pointer"
-        />
+        {recordFormat === "DigitalDownload" ? (
+          <button
+            disabled
+            className="disabled:text-primary-600 border border-primary-700 py-1 px-2 w-full items-center rounded-md text-lg inline-block  hover:bg-accent-600 disabled:hover:bg-primary-950 transition-all hover:text-primary-50 disabled:hover:cursor-default hover:cursor-pointer"
+          >
+            Buy Now
+          </button>
+        ) : (
+          <AddToCart
+            catalogId={catalogId}
+            className="border border-primary-700 py-1 px-2 w-full items-center rounded-md text-lg inline-block hover:bg-accent-600 transition-all hover:text-primary-50 hover:cursor-pointer"
+          />
+        )}
       </div>
     </div>
   );
