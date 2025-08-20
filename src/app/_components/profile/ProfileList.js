@@ -6,7 +6,7 @@ import {
 import Link from "next/link";
 import DeleteAccountDialog from "./DeleteAccountDialog";
 
-function ProfileList({ user, userId }) {
+function ProfileList({ user, userId, setEditProfile }) {
   const {
     email,
     firstName,
@@ -54,12 +54,14 @@ function ProfileList({ user, userId }) {
         </DescriptionDetails> */}
       </DescriptionList>
       <div className="mt-4">
-        <Link
-          href="/account/profile/edit"
+        <button
+          onClick={() => {
+            setEditProfile((prev) => !prev);
+          }}
           className="border border-primary-700 rounded-md text-base py-1 px-6 hover:cursor-pointer inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
         >
           Edit
-        </Link>
+        </button>
         <DeleteAccountDialog userId={userId} />
       </div>
     </>
