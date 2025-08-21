@@ -17,7 +17,7 @@ const PROFILE = "profile";
 const ORDERS = "orders";
 const PASSWORD = "password";
 
-function Profile({ user }) {
+function Profile({ user, orders }) {
   const [selection, setSelection] = useState(PROFILE);
   const [editProfile, setEditProfile] = useState(false);
 
@@ -75,7 +75,9 @@ function Profile({ user }) {
             setEditProfile={setEditProfile}
           />
         ))}
-      {selection === ORDERS && <Orders />}
+      {selection === ORDERS && (
+        <Orders user={user.user_metadata} orders={orders} />
+      )}
       {selection === PASSWORD && <Password />}
     </SidebarLayout>
   );

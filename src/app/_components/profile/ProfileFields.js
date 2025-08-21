@@ -12,14 +12,15 @@ import {
   Legend,
 } from "@/src/app/_components/tailwind/fieldset";
 import { Input } from "@/src/app/_components/tailwind/input";
-import ComingSoonSmall from "@/src/app/_components/utilities/ComingSoonSmall";
 import { clientUpdateUser } from "@/src/app/_library/client/user";
 import { useEffect, useState } from "react";
 import { validateEmail, validateForm } from "../../_library/utilities";
+import SpinnerMini from "../spinners/SpinnerMini";
 
 function ProfileFields({ user, setEditProfile }) {
   const { firstName, lastName, email, mailingList, notifyList } = user;
   const [errors, setErrors] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
   const [userFirst, setUserFirst] = useState(firstName);
   const [userLast, setUserLast] = useState(lastName);
   const [userEmail, setUserEmail] = useState(email);
@@ -59,9 +60,16 @@ function ProfileFields({ user, setEditProfile }) {
     setErrors({});
     setUserEmail(e.target.value);
   }
+  function handleMailingList() {
+    setUserMailing((prev) => !prev);
+  }
+  function handleNotifyList() {
+    setUserNotify((prev) => !prev);
+  }
   const requiredValidator = (val) => val !== "";
 
   async function handleUpdateProfile(e) {
+    setIsSaving(true);
     const validateProfile = validateForm(
       setErrors,
       {
@@ -87,14 +95,17 @@ function ProfileFields({ user, setEditProfile }) {
     if (validateProfile) {
       const msg = await clientUpdateUser(userData);
       setMessage(msg);
+      setIsSaving(false);
+      if (message === "success") setEditProfile(false);
     }
+    setIsSaving(false);
   }
 
   return (
     <>
       <Fieldset className="mb-4">
-        <Legend className="!text-3xl/6 mb-4 mt-4">
-          Profile / Update Personal Information
+        <Legend className="text-xl/6 lg:!text-2xl/6 mb-4 mt-4">
+          Profile - Update
         </Legend>
         <FieldGroup>
           <Field>
@@ -141,7 +152,7 @@ function ProfileFields({ user, setEditProfile }) {
               name="mailing_list"
               value="true"
               checked={userMailing}
-              onChange={(e) => setUserMailing(e.target.checked)}
+              onChange={handleMailingList}
             />
           </CheckboxField>
           <CheckboxField>
@@ -150,7 +161,7 @@ function ProfileFields({ user, setEditProfile }) {
               name="notify_list"
               value="true"
               checked={userNotify}
-              onChange={(e) => setUserNotify(e.target.checked)}
+              onChange={handleNotifyList}
             />
           </CheckboxField>
         </CheckboxGroup>
@@ -168,7 +179,7 @@ function ProfileFields({ user, setEditProfile }) {
         onClick={async (e) => handleUpdateProfile(e)}
         className="rounded-md ml-4 bg-accent-700 text-primary-50 px-3 py-2 w-[105.333px]  hover:cursor-pointer hover:bg-accent-600 active:bg-accent-500"
       >
-        Save
+        {isSaving ? <SpinnerMini /> : "Save"}
       </button>
     </>
   );
