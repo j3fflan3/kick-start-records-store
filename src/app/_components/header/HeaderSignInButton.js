@@ -5,6 +5,7 @@ import { NavbarItem } from "@/src/app/_components/tailwind/navbar";
 import { clientSignOut } from "@/src/app/_library/client/user";
 import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
+import { UserIcon } from "@heroicons/react/24/solid";
 
 function HeaderSignInButton() {
   const { session } = useSession();
@@ -37,9 +38,14 @@ function HeaderSignInButton() {
   return (
     <>
       <NavbarItem key="login" href={loginHref}>
-        {session && !session.user.is_anonymous
-          ? `Hi, ${session.user.user_metadata.firstName}!`
-          : "Sign In/Join"}
+        {session && !session.user.is_anonymous ? (
+          <>
+            <UserIcon />
+            <span>Hi, {session.user.user_metadata.firstName}!</span>
+          </>
+        ) : (
+          "Sign In/Join"
+        )}
       </NavbarItem>
       {session && !session.user.is_anonymous && (
         <NavbarItem key="logout" onClick={handleSignOut}>
