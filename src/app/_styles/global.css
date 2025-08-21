@@ -154,7 +154,9 @@ label {
   background-color: #ddd;
   margin: 0 0.675rem;
 }
-
+.shipping-header {
+  background-color: rgb(201, 206, 206);
+}
 .divider span {
   font-size: 0.825rem;
   color: #666;

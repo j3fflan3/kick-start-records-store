@@ -32,6 +32,13 @@ const cartItemsWeight = (cart) => {
   return weight;
 };
 
+const calculateTotal = (subtotalCents, ...shippingAndHandlingCents) => {
+  subtotalCents += [...shippingAndHandlingCents].reduce(
+    (sum, item) => sum + item,
+    0
+  );
+  return formatDollars(subtotalCents);
+};
 const cartTotal = (cart, ...shippingAndHandling) => {
   let subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
   console.log(`cartTotal -> ${[...shippingAndHandling]}`);
@@ -88,12 +95,20 @@ function isDateExpired(startUnixEpoch, expirationSeconds) {
   const now = new Date();
   return now > expirationDate;
 }
-
+function formatShortDate(dateString) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(new Date(dateString));
+}
 export {
   printRecordFormat,
   formatDollars,
   calculateTax,
   cartTotal,
+  calculateTotal,
   cartTax,
   cartItemCount,
   cartItemsWeight,
@@ -102,4 +117,5 @@ export {
   validateForm,
   shoppingCartKey,
   isDateExpired,
+  formatShortDate,
 };
