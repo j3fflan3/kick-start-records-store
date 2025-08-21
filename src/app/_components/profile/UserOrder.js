@@ -43,8 +43,15 @@ function UserOrder({ item, user }) {
       </div>
       <div className="bg-white p-2 !rounded-b-md">
         {item.items.length > 0 &&
-          item.items.map((product) => {
-            return <UserOrderItem product={product} key={product.title} />;
+          item.items.map((product, index) => {
+            return (
+              <UserOrderItem
+                product={product}
+                key={index}
+                index={index}
+                trackingDisabled={item.trackingNumber === null}
+              />
+            );
           })}
       </div>
     </div>
