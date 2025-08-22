@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/app/_library/supabase/server";
 import { getURL } from "@/src/app/_library/server/utilities";
+import { getUSPSTracking } from "@/src/app/_library/server/usps";
 
 async function serverSignUp(prevState, formData) {
   let firstName = formData.get("firstName");
@@ -251,6 +252,25 @@ async function serverGetUserOrderList() {
   const { data, error } = await supabase.rpc("get_order_list");
   if (error) {
     console.log(`serverGetOrderList -> error: ${error.message}`);
+  }
+  if (
+    data?.length &&
+    data.length > 0 &&
+    process.env.USPS_ENABLE_TRACKING_API === "true"
+  ) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].trackingNumber !== null) {
+        const { data: trackingData, error: trackingError } =
+          await getUSPSTracking(data[i].trackingNumber);
+        if (trackingError) {
+          console.log(
+            `serverGetUserOrderList -> trackingError: ${trackingError}`
+          );
+        }
+        // append tracking data
+        data[i]["tracking"] = trackingData;
+      }
+    }
   }
   return { data, error };
 }

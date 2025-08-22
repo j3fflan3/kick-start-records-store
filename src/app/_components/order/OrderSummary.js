@@ -6,13 +6,13 @@ function OrderSummary({ order }) {
   const { session } = useSession();
   const isLoggedIn = session && session.user.is_anonymous === false;
 
-  const numItems = cartItemCount(order);
-  const subTotal = cartTotal(order);
+  const numItems = cartItemCount(order.items);
+  const subTotal = cartTotal(order.items);
   const total = cartTotal(
-    order,
-    (order[0].shipping ?? 0) * 100,
-    (order[0].handling ?? 0) * 100,
-    (order[0].tax ?? 0) * 100
+    order.items,
+    (order.shipping ?? 0) * 100,
+    (order.handling ?? 0) * 100,
+    (order.tax ?? 0) * 100
   );
   return (
     <>
@@ -36,7 +36,7 @@ function OrderSummary({ order }) {
             <span>Shipping</span>
           </dt>
           <dd className="text-sm font-medium text-gray-900 dark:text-primary-100">
-            ${order[0].shipping}
+            ${order.shipping}
           </dd>
         </div>
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">
@@ -44,7 +44,7 @@ function OrderSummary({ order }) {
             <span>Tax</span>
           </dt>
           <dd className="text-sm font-medium text-gray-900 dark:text-primary-100">
-            ${order[0].tax ?? 0.0}
+            ${order.tax ?? 0.0}
           </dd>
         </div>
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">

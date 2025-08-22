@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/src/app/_library/supabase/client";
+import { revalidatePathForClient } from "../server/utilities";
 
 const supabase = createClient();
 
@@ -24,6 +25,26 @@ async function clientSignOut(scope = "local") {
   // Other sessions on other devices remain logged in.
   const { error } = await supabase.auth.signOut({ scope });
   if (error) console.log(error);
+}
+
+async function clientUpdateUser(userData) {
+  const { firstName, lastName, email, mailingList, notifyList } = userData;
+  const { error } = await supabase.auth.updateUser({
+    email,
+    data: {
+      firstName,
+      lastName,
+      mailingList,
+      notifyList,
+    },
+  });
+  let message = "success";
+  if (error) {
+    message = "error";
+    console.log(error.message);
+  }
+  revalidatePathForClient("/account/profile");
+  return message;
 }
 
 async function clientSignInAnonymously() {
@@ -60,4 +81,4 @@ async function clientUpdateAnonymousUserWithEmail(email) {
 async function clientGetJWT() {
   return await supabase.rpc("get_jwt");
 }
-export { clientSignIn, clientSignOut };
+export { clientSignIn, clientSignOut, clientUpdateUser };

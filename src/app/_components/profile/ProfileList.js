@@ -6,7 +6,7 @@ import {
 import Link from "next/link";
 import DeleteAccountDialog from "./DeleteAccountDialog";
 
-function ProfileList({ user, userId }) {
+function ProfileList({ user, userId, setEditProfile }) {
   const {
     email,
     firstName,
@@ -19,8 +19,8 @@ function ProfileList({ user, userId }) {
 
   return (
     <>
-      <div className="text-xl/6 lg:text-3xl/6 pb-2 pl-1 mb-4 mt-4 font-bold">
-        Profile - Personal Information
+      <div className="text-xl/6 lg:text-2xl/6 pb-2 pl-1 mb-4 font-bold">
+        Profile
       </div>
       <DescriptionList className="border p-4 rounded-md dark:border-primary-600 dark:bg-primary-900">
         <DescriptionTerm className="text-base">Customer</DescriptionTerm>
@@ -42,24 +42,16 @@ function ProfileList({ user, userId }) {
         <DescriptionDetails className="text-base">
           {notifyList ? "Yes" : "No"}
         </DescriptionDetails>
-
-        {/* <DescriptionTerm></DescriptionTerm>
-        <DescriptionDetails>
-          <Link
-            href="/account/profile/edit"
-            className="border border-primary-700 rounded-md text-base py-1 px-6 hover:cursor-pointer inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
-          >
-            Edit
-          </Link>
-        </DescriptionDetails> */}
       </DescriptionList>
       <div className="mt-4">
-        <Link
-          href="/account/profile/edit"
+        <button
+          onClick={() => {
+            setEditProfile((prev) => !prev);
+          }}
           className="border border-primary-700 rounded-md text-base py-1 px-6 hover:cursor-pointer inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
         >
           Edit
-        </Link>
+        </button>
         <DeleteAccountDialog userId={userId} />
       </div>
     </>

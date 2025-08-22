@@ -35,7 +35,7 @@ function PayPalCheckout({ cart, countries }) {
   // use hooks and funcs
   const { session } = useSession();
   const { user } = session || { user: null };
-  console.log(user);
+  console.log(`PayPalCheckout -> user:\n${JSON.stringify(user)}`, null, "\t");
   const {
     errors: orderEmailErrors,
     setErrors: setOrderEmailErrors,
@@ -332,7 +332,7 @@ function PayPalCheckout({ cart, countries }) {
         <h1 className="text-3xl bg-primary-50 pb-4 dark:text-primary-100 text-center dark:bg-primary-950">
           Checkout
         </h1>
-        <div className="relative mx-auto grid max-w-7xl dark:bg-primary-950 bg-primary-50 rid-cols-1 gap-x-0 lg:grid-cols-2 lg:px-8 lg:pt-4">
+        <div className="relative mx-auto grid max-w-7xl dark:bg-primary-950 bg-primary-50 grid-cols-1 gap-x-0 lg:grid-cols-2 lg:px-8 lg:pt-4">
           <PayPalCheckoutTotal
             cart={cart}
             total={total}
