@@ -83,13 +83,13 @@ function UpdatePasswordForm() {
     <>
       {updateMessage === "success" && <PasswordUpdatedMessage />}
       {(updateMessage === "" || updateMessage !== "success") && (
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="flex min-h-full flex-1 flex-col justify-center px-2 py-2 ">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
+            <h2 className="mt-2 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
               Update Your Password
             </h2>
           </div>
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
             <form action={formAction} ref={formRef} className="space-y-6">
               <div>
                 <label
@@ -102,7 +102,7 @@ function UpdatePasswordForm() {
                   <input
                     name="password"
                     type="password"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-500 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
                     placeholder="Password"
                     ref={passwordRef}
                     value={password}
@@ -125,7 +125,7 @@ function UpdatePasswordForm() {
                     name="confirm"
                     type="password"
                     placeholder="Confirm password"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-white outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base dark:text-primary-500 outline-2 -outline-offset-1 outline-gray-200 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-yellow-400 sm:text-sm/6"
                     ref={confirmRef}
                     value={confirm}
                     onChange={handleConfirm}

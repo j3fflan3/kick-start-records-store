@@ -60,12 +60,12 @@ function ResetPasswordForm() {
   }
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-2">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
-            Reset Password
+          <h2 className="mt-2 text-center text-2xl/9 font-bold tracking-tight dark:text-white">
+            Reset/Change Password
           </h2>
-          <p className="text-left text-primary-700 mb-2 dark:text-primary-200">
+          <p className="text-left text-primary-700 my-2 dark:text-primary-200">
             Enter your email address and we&apos;ll send you a link to reset
             your password.
           </p>

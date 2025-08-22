@@ -3,7 +3,7 @@ import ProfileList from "@/src/app/_components/profile/ProfileList";
 import ProfileFields from "@/src/app/_components/profile/ProfileFields";
 import Orders from "@/src/app/_components/profile/Orders";
 import UserOrderDetails from "@/src/app/_components/profile/UserOrderDetails";
-import Password from "@/src/app/_components/profile/Password";
+import ResetPasswordForm from "@/src/app/_components/login/ResetPasswordForm";
 import {
   Sidebar,
   SidebarBody,
@@ -98,7 +98,7 @@ function Profile({ user, orders }) {
       {selection === ORDER_DETAILS && (
         <UserOrderDetails order={selectedOrder} back={backToOrders} />
       )}
-      {selection === PASSWORD && <Password />}
+      {selection === PASSWORD && <ResetPasswordForm />}
     </SidebarLayout>
   );
 }
