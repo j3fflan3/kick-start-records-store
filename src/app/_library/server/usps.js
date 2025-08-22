@@ -120,11 +120,10 @@ async function getUSPSRates(sBaseRatesRequest, itemCount) {
 async function getUSPSTracking(trackingNumber) {
   await oAuthUSPSRequest("tracking");
   // verify someone hasn't attempted to forge a request
-  const matchesTrackingNumberPattern =
-    /^[0-9]+$/.test(trackingNumber) && trackingNumber.length > 0;
+  const matchesTrackingNumberPattern = /^[0-9]{20,22}$/.test(trackingNumber);
   if (!matchesTrackingNumberPattern) {
     return {
-      error: "Invalid Tracking Number.",
+      error: "Invalid Tracking Number. Must be 20-22 digits.",
       status: 400,
     };
   }
