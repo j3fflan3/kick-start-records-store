@@ -2,7 +2,9 @@
 import Image from "next/image";
 import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
 
-function UserOrderItem({ product, index, trackingDisabled }) {
+function UserOrderItem({ product, index, trackingNumber }) {
+  const trackingQueryString = "?qtc_tLabels1=";
+
   return (
     <div className="flex grid-cols-3 justify-items-normal">
       <div className="shrink-0 my-2 ml-1.5" key={product.title}>
@@ -27,14 +29,15 @@ function UserOrderItem({ product, index, trackingDisabled }) {
           ${formatDollars(product.price * product.count)}
         </p>
       </div>
-      <div className="ml-auto p-2">
-        {index === 0 && (
-          <button
-            disabled={trackingDisabled}
-            className={` text-white p-2 rounded-md ${trackingDisabled ? "bg-gray-500 cursor-not-allowed" : "bg-accent-700 cursor-pointer"}`}
+      <div className="ml-auto p-2 dark:text-primary-900">
+        {/* turn it off for now */}
+        {trackingNumber && (
+          <a
+            target="_blank"
+            href={`https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=${trackingNumber}`}
           >
-            Track Package
-          </button>
+            Tracking # {trackingNumber}
+          </a>
         )}
       </div>
     </div>

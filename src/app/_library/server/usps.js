@@ -117,7 +117,48 @@ async function getUSPSRates(sBaseRatesRequest, itemCount) {
   }
 }
 
-async function oAuthUSPSRequest() {
+async function getUSPSTracking(trackingNumber) {
+  await oAuthUSPSRequest("tracking");
+  // verify someone hasn't attempted to forge a request
+  const matchesTrackingNumberPattern =
+    /^[0-9]+$/.test(trackingNumber) && trackingNumber.length > 0;
+  if (!matchesTrackingNumberPattern) {
+    return {
+      error: "Invalid Tracking Number.",
+      status: 400,
+    };
+  }
+  const endpoint = `${process.env.USPS_API_URL}/tracking/v3/tracking/${trackingNumber}`;
+  try {
+    const access_token = await redis.get(USPS_ACCESS_TOKEN);
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    if (!response.ok) {
+      const { error } = await response.json();
+      console.log(error);
+      throw new Error(`${error.code} - ${error.message}`);
+    }
+    const data = await response.json();
+    console.log(`tracking response: ${JSON.stringify(data, null, "\t")}`);
+    return { data, error: null };
+  } catch (error) {
+    console.log(error);
+    return {
+      data: null,
+      error: {
+        message: "Internal Server Error",
+        code: 500,
+      },
+    };
+  }
+}
+
+async function oAuthUSPSRequest(scope = "") {
   const cacheObj = await newCacheObject(
     USPS_ACCESS_TOKEN,
     USPS_ACCESS_TOKEN_ISSUED_AT,
@@ -141,7 +182,7 @@ async function oAuthUSPSRequest() {
       "client_credentials",
       process.env.USPS_CLIENT_ID,
       process.env.USPS_CLIENT_SECRET,
-      ""
+      scope
     );
     const endpoint = process.env.USPS_API_URL + "/oauth2/v3/token";
     const response = await fetch(endpoint, {
@@ -177,5 +218,13 @@ async function oAuthUSPSRequest() {
     release();
   }
 }
+async function getUSPS_ACCESS_TOKEN() {
+  return USPS_ACCESS_TOKEN;
+}
 
-export { getUSPSRates };
+export {
+  getUSPSRates,
+  getUSPSTracking,
+  oAuthUSPSRequest,
+  getUSPS_ACCESS_TOKEN,
+};

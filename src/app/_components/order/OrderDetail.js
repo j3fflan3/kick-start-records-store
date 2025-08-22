@@ -2,13 +2,13 @@ import OrderItemCard from "./OrderItemCard";
 import OrderSummary from "./OrderSummary";
 
 function OrderDetail({ order }) {
-  const { shippingAddress } = order[0];
+  const { shippingAddress } = order;
   const shipToName =
     shippingAddress?.name?.full_name ??
     shippingAddress?.email_address ??
     "Guest";
 
-  const trackingNumber = order[0].tracking_number;
+  const trackingNumber = order.tracking_number;
   // const trackingNumber = "123456798";
   const {
     address_line_1,
@@ -17,7 +17,7 @@ function OrderDetail({ order }) {
     admin_area_1,
     postal_code,
     country_code,
-  } = order[0].shippingAddress.address;
+  } = order.shippingAddress.address;
   console.log(`OrderDetail -> order:\n\t${JSON.stringify(order, null, "\t")}`);
   return (
     <div className="bg-white dark:bg-primary-950">
@@ -31,10 +31,10 @@ function OrderDetail({ order }) {
           </h2>
         )}
         <h3 className="mt-6 text-lg font-bold tracking-tight text-primary-900 dark:text-primary-200 sm:text-xl">
-          Order #{order[0].order_number}
+          Order #{order.order_number}
         </h3>
         <p className="mt-1">
-          {new Date(order[0].orderedDate).toLocaleDateString("en-US", {
+          {new Date(order.orderedDate).toLocaleDateString("en-US", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -57,7 +57,7 @@ function OrderDetail({ order }) {
         </p>
         <p className="mt-4">
           Payment Status:{" "}
-          {order[0].paypal_payment_status ?? "[Awaiting confirmation]"}
+          {order.paypal_payment_status ?? "[Awaiting confirmation]"}
         </p>
         <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
           <section aria-labelledby="cart-heading" className="lg:col-span-7">
@@ -69,7 +69,7 @@ function OrderDetail({ order }) {
               role="list"
               className="divide-y divide-gray-200 dark:divide-primary-600 border-t border-b border-gray-200 dark:border-primary-600"
             >
-              {order.map((item, itemIdx) => (
+              {order.items.map((item, itemIdx) => (
                 <OrderItemCard key={itemIdx} item={item} />
               ))}
             </ul>

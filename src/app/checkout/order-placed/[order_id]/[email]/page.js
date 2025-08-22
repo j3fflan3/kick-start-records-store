@@ -13,6 +13,7 @@ async function Page({ params }) {
   ).toString();
 
   const { data: order, error } = await getOrderDetail(order_id, email);
+  console.log(`order:\t${JSON.stringify(order, null, "\t")}`);
   if (order?.error || error) {
     console.log(`Error retrieving order: ${error?.message || order?.error} `);
     return <OrderError order_id={order_id} />;

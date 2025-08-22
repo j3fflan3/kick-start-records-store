@@ -19,7 +19,7 @@ function ProfileList({ user, userId, setEditProfile }) {
 
   return (
     <>
-      <div className="text-xl/6 lg:text-2xl/6 pb-2 pl-1 mb-4 mt-4 font-bold">
+      <div className="text-xl/6 lg:text-2xl/6 pb-2 pl-1 mb-4 font-bold">
         Profile
       </div>
       <DescriptionList className="border p-4 rounded-md dark:border-primary-600 dark:bg-primary-900">

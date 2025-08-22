@@ -3,8 +3,8 @@
 import UserOrderItem from "@/src/app/_components/profile/UserOrderItem";
 import { calculateTotal, formatShortDate } from "@/src/app/_library/utilities";
 
-function UserOrder({ item, user }) {
-  const { shippingAddress, created: orderDate } = item;
+function UserOrder({ item, viewDetails }) {
+  const { shippingAddress, created: orderDate, trackingNumber } = item;
   const { full_name: fullName } = shippingAddress.name;
   // convert decimals to cents, aggregate the total, then back to decimal
   const total = calculateTotal(
@@ -13,8 +13,9 @@ function UserOrder({ item, user }) {
     item.handling * 100,
     item.tax * 100
   );
+
   return (
-    <div>
+    <div className="mt-4">
       <div className="flex grid-cols-4 text-lg text-primary-700 w-full shipping-header p-2 rounded-t-md mt-2">
         <div className="grid-row mr-8">
           <ul>
@@ -37,7 +38,14 @@ function UserOrder({ item, user }) {
         <div className="ml-auto">
           <ul>
             <li className="text-sm">Order # {item.orderNumber} </li>
-            <li>View Order Details</li>
+            <li>
+              <button
+                className="outline-1 py-1 px-2 cursor-pointer rounded-md outline-primary-500 active:bg-primary-200 hover:bg-primary-300"
+                onClick={() => viewDetails(item)}
+              >
+                View Order Details
+              </button>
+            </li>
           </ul>
         </div>
       </div>
@@ -49,7 +57,7 @@ function UserOrder({ item, user }) {
                 product={product}
                 key={index}
                 index={index}
-                trackingDisabled={item.trackingNumber === null}
+                trackingNumber={trackingNumber}
               />
             );
           })}
