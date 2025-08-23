@@ -1,11 +1,11 @@
 "use client";
 
+import TrackList from "@/src/app/_components/records/TrackList";
+import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
+import AddToCartSlider from "@/src/app/_components/shopping-cart/AddToCartSlider";
+import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
-import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
-import TrackList from "@/src/app/_components/records/TrackList";
-import AddToCartSlider from "@/src/app/_components/shopping-cart/AddToCartSlider";
 
 export default function Product({ record }) {
   const {
@@ -19,6 +19,8 @@ export default function Product({ record }) {
     recordFormat,
   } = record;
   const format = printRecordFormat(recordFormat);
+  if (format === "Download")
+    console.log(`Product -> record:\n${JSON.stringify(record, null, "\t")}`);
   return (
     <>
       <AddToCartSlider />

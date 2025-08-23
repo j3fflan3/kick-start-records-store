@@ -27,8 +27,8 @@ function calculateTax(taxPercentFloat, intCents) {
   return Number(taxPercentFloat * intCents);
 }
 
-const cartItemsWeight = (cart) => {
-  const weight = cart.reduce((sum, item) => sum + item.count * item.weight, 0);
+const itemsWeight = (items) => {
+  const weight = items.reduce((sum, item) => sum + item.count * item.weight, 0);
   return weight;
 };
 
@@ -39,20 +39,22 @@ const calculateTotal = (subtotalCents, ...shippingAndHandlingCents) => {
   );
   return formatDollars(subtotalCents);
 };
-const cartTotal = (cart, ...shippingAndHandling) => {
-  let subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
-  console.log(`cartTotal -> ${[...shippingAndHandling]}`);
+const itemsTotal = (items, ...shippingAndHandling) => {
+  let subtotal = items.reduce((sum, item) => sum + item.count * item.price, 0);
+  console.log(
+    `itemsTotal -> ${JSON.stringify([...shippingAndHandling], null, "\t")}`
+  );
   subtotal += [...shippingAndHandling].reduce((sum, item) => sum + item, 0);
   return formatDollars(subtotal);
 };
 
-const cartTax = (cart, taxPercentageFloat) => {
-  let subtotal = cart.reduce((sum, item) => sum + item.count * item.price, 0);
+const itemsTax = (items, taxPercentageFloat) => {
+  let subtotal = items.reduce((sum, item) => sum + item.count * item.price, 0);
   return calculateTax(taxPercentageFloat, subtotal);
 };
 
-const cartItemCount = (cart) => {
-  return cart.reduce((sum, item) => {
+const itemsCount = (items) => {
+  return items.reduce((sum, item) => {
     return sum + item.count;
   }, 0);
 };
@@ -107,11 +109,11 @@ export {
   printRecordFormat,
   formatDollars,
   calculateTax,
-  cartTotal,
+  itemsTotal,
   calculateTotal,
-  cartTax,
-  cartItemCount,
-  cartItemsWeight,
+  itemsTax,
+  itemsCount,
+  itemsWeight,
   validateEmail,
   validatePassword,
   validateForm,

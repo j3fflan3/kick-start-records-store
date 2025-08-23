@@ -1,7 +1,7 @@
 "use client";
 
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
-import { cartItemCount, cartTotal } from "@/src/app/_library/utilities";
+import { itemsCount, itemsTotal } from "@/src/app/_library/utilities";
 import Link from "next/link";
 import { useSession } from "../../_contexts/SessionProvider";
 
@@ -11,8 +11,8 @@ function ShoppingCartSummary({ cart }) {
 
   const checkoutURL = isLoggedIn ? "/checkout/payment" : "/checkout/signin";
   if (!cart) return null;
-  const numItems = cartItemCount(cart);
-  const subTotal = cartTotal(cart);
+  const numItems = itemsCount(cart);
+  const subTotal = itemsTotal(cart);
   return (
     <>
       <h2

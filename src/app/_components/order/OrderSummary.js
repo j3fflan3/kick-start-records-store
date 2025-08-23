@@ -1,14 +1,14 @@
 "use client";
 import { useSession } from "../../_contexts/SessionProvider";
-import { cartItemCount, cartTotal } from "../../_library/utilities";
+import { itemsCount, itemsTotal } from "../../_library/utilities";
 
 function OrderSummary({ order }) {
   const { session } = useSession();
   const isLoggedIn = session && session.user.is_anonymous === false;
 
-  const numItems = cartItemCount(order.items);
-  const subTotal = cartTotal(order.items);
-  const total = cartTotal(
+  const numItems = itemsCount(order.items);
+  const subTotal = itemsTotal(order.items);
+  const total = itemsTotal(
     order.items,
     (order.shipping ?? 0) * 100,
     (order.handling ?? 0) * 100,

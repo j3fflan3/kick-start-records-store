@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { cartTotal, formatDollars } from "../../_library/utilities";
+import { itemsTotal, formatDollars } from "../../_library/utilities";
 
 function PayPalCheckoutTotal({ cart, tax, total, shippingCost }) {
   return (
@@ -49,7 +49,7 @@ function PayPalCheckoutTotal({ cart, tax, total, shippingCost }) {
         <dl className="space-y-6 border-t border-white/10 pt-6 text-sm font-medium dark:text-primary-900">
           <div className="flex items-center justify-between">
             <dt>Subtotal</dt>
-            <dd>${cartTotal(cart)}</dd>
+            <dd>${itemsTotal(cart)}</dd>
           </div>
 
           <div className="flex items-center justify-between">

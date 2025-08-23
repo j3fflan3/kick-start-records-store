@@ -6,8 +6,8 @@ import { useSession } from "@/src/app/_contexts/SessionProvider";
 import { useShoppingCart } from "@/src/app/_contexts/ShoppingCartProvider";
 import { useShippingCalculator } from "@/src/app/_hooks/useShippingCalculator";
 import {
-  cartItemsWeight,
-  cartTotal,
+  itemsWeight,
+  itemsTotal,
   validateEmail,
   validateForm,
 } from "@/src/app/_library/utilities";
@@ -149,7 +149,7 @@ function PayPalCheckout({ cart, countries }) {
   ]);
 
   const { cartCount: itemCount, getShoppingCart } = useShoppingCart();
-  const weight = cartItemsWeight(cart);
+  const weight = itemsWeight(cart);
 
   const { shippingCost, shippingCostCents, shippingError } =
     useShippingCalculator({
@@ -166,8 +166,8 @@ function PayPalCheckout({ cart, countries }) {
 
   useEffect(
     function () {
-      setSubtotal(cartTotal(cart));
-      setTotal(cartTotal(cart, shippingCostCents, tax));
+      setSubtotal(itemsTotal(cart));
+      setTotal(itemsTotal(cart, shippingCostCents, tax));
     },
     [shippingCostCents, cart, tax]
   );

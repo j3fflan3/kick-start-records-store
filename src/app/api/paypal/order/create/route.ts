@@ -6,7 +6,7 @@ import {
   handlePayPalResponse,
   oAuthPayPalRequest,
 } from "@/src/app/_library/server/paypal";
-import { cartTax } from "@/src/app/_library/utilities";
+import { itemsTax, printRecordFormat } from "@/src/app/_library/utilities";
 import {
   Card,
   GET_FROM_FILE,
@@ -45,6 +45,27 @@ async function createOrderPlaceholder(shoppingCartId: string, email: string) {
   return { data, error };
 }
 
+async function createBuyNowOrderPlaceholder(catalogId: string, email: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "create_buy_now_order_placeholder",
+    {
+      _catalog_id: catalogId,
+      _email: email,
+    }
+  );
+  if (error) {
+    console.error(error.message);
+  }
+  console.log(
+    `createBuyNowOrderPlaceholder -> {data, error} ${JSON.stringify(
+      data,
+      null,
+      "\t"
+    )}, ${JSON.stringify(error)}}`
+  );
+  return { data, error };
+}
 export async function POST(request: Request) {
   const coa = await request.json();
   console.log(`createOrderArgs: ${JSON.stringify(coa, null, "\t")}`);
@@ -57,8 +78,12 @@ export async function POST(request: Request) {
     shippingAddress,
     billingAddress,
   } = coa;
-  const { shopping_cart_id: shoppingCartId } = cart[0];
-  const { data, error } = await createOrderPlaceholder(shoppingCartId, email);
+  const { shopping_cart_id: shoppingCartId, catalogId, recordFormat } = cart[0];
+  const fnPlaceholder =
+    printRecordFormat(recordFormat) === "Digital"
+      ? async () => createBuyNowOrderPlaceholder(catalogId, email)
+      : async () => createOrderPlaceholder(shoppingCartId, email);
+  const { data, error } = await fnPlaceholder();
   if (error) throw new Error(error.message);
   const { order_number: invoice_id, order_id: reference_id } = data;
   const create_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders`;
@@ -92,7 +117,7 @@ export async function POST(request: Request) {
   // getPayPalAmount
   let tax = 0;
   if (taxPercentageFloat > 0) {
-    tax = cartTax(cart, taxPercentageFloat);
+    tax = itemsTax(cart, taxPercentageFloat);
     console.log(`tax: ${tax}\n`);
   }
   const payPalAmount = getPayPalAmount(cart, shippingCostCents, tax);
