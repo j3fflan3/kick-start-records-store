@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import { printRecordFormat } from "@/src/app/_library/utilities";
 
 function AddToCartToast({ item, cssClasses, handleCartClick, handleClose }) {
   return (
@@ -24,7 +23,7 @@ function AddToCartToast({ item, cssClasses, handleCartClick, handleClose }) {
               </span>
             </p>
             <p className="mt-1 text-xs text-primary-300">
-              {printRecordFormat(item.recordFormat)}
+              {item.recordFormat}
               {/* by {item.artist}  */}
               &nbsp;was added to your cart
             </p>

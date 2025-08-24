@@ -1,17 +1,5 @@
 "use server";
-import { Mutex } from "async-mutex";
-import { Resend } from "resend";
-import {
-  newCacheObject,
-  isCacheItemExpired,
-  getRedis,
-} from "@/src/app/_library/server/redis";
-import {
-  calculateTax,
-  cartTotal,
-  formatDollars,
-  printRecordFormat,
-} from "@/src/app/_library/utilities";
+import OrderEmailTemplate from "@/src/app/_components/email/OrderEmailTemplate";
 import {
   DEFAULT_CURRENCY_CODE,
   DIGITAL_GOODS,
@@ -26,8 +14,19 @@ import {
   PayPalUPC,
   PHYSICAL_GOODS,
 } from "@/src/app/_library/model/paypal";
+import {
+  getRedis,
+  isCacheItemExpired,
+  newCacheObject,
+} from "@/src/app/_library/server/redis";
 import { getURL } from "@/src/app/_library/server/utilities";
-import OrderEmailTemplate from "@/src/app/_components/email/OrderEmailTemplate";
+import {
+  calculateTax,
+  cartTotal,
+  formatDollars,
+} from "@/src/app/_library/utilities";
+import { Mutex } from "async-mutex";
+import { Resend } from "resend";
 import { createClient } from "../supabase/server";
 
 const redis = await getRedis();
@@ -131,9 +130,7 @@ function getPayPalAmount(cart, shippingCents, taxCents) {
 function getPayPalItems(cart, taxPercentageFloat) {
   return cart.map((item) => {
     const category =
-      printRecordFormat(cart.recordFormat) === "Download"
-        ? DIGITAL_GOODS
-        : PHYSICAL_GOODS;
+      cart.recordFormat === "Download" ? DIGITAL_GOODS : PHYSICAL_GOODS;
 
     const unit_amount = new PayPalSimpleAmount(
       DEFAULT_CURRENCY_CODE,
@@ -226,11 +223,11 @@ async function getOrderDetail(_order_id, _email = null) {
   return { data, error };
 }
 export {
-  oAuthPayPalRequest,
+  getOrderDetail,
   getPayPalAmount,
   getPayPalItems,
   getPayPalPaymentSource,
-  sendOrderEmail,
   handlePayPalResponse,
-  getOrderDetail,
+  oAuthPayPalRequest,
+  sendOrderEmail,
 };

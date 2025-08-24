@@ -1,10 +1,8 @@
 "use client";
+import { formatDollars } from "@/src/app/_library/utilities";
 import Image from "next/image";
-import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
 
 function UserOrderItem({ product, index, trackingNumber }) {
-  const trackingQueryString = "?qtc_tLabels1=";
-
   return (
     <div className="flex grid-cols-3 justify-items-normal">
       <div className="shrink-0 my-2 ml-1.5" key={product.title}>
@@ -19,8 +17,8 @@ function UserOrderItem({ product, index, trackingNumber }) {
       <div className="p-2 w-1/2">
         <p className="text-primary-900 font-bold ml-2">{product.title}</p>
         <p className="text-primary-800 text-sm ml-2">
-          {printRecordFormat(product.recordFormat)}{" "}
-          {product.count > 1 && `(x${product.count})`} by {product.artist}
+          {product.recordFormat} {product.count > 1 && `(x${product.count})`} by{" "}
+          {product.artist}
         </p>
         <p className="text-primary-800 text-sm ml-2 mt-1">
           {product.description}

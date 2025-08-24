@@ -1,12 +1,3 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@/src/app/_library/supabase/server";
-import {
-  getPayPalAmount,
-  getPayPalItems,
-  handlePayPalResponse,
-  oAuthPayPalRequest,
-} from "@/src/app/_library/server/paypal";
-import { itemsTax, printRecordFormat } from "@/src/app/_library/utilities";
 import {
   Card,
   GET_FROM_FILE,
@@ -21,8 +12,17 @@ import {
   PayPalPurchaseUnit,
   PayPalShipping,
 } from "@/src/app/_library/model/paypal";
-import { getURL } from "@/src/app/_library/server/utilities";
+import {
+  getPayPalAmount,
+  getPayPalItems,
+  handlePayPalResponse,
+  oAuthPayPalRequest,
+} from "@/src/app/_library/server/paypal";
 import { getRedis } from "@/src/app/_library/server/redis";
+import { getURL } from "@/src/app/_library/server/utilities";
+import { createClient } from "@/src/app/_library/supabase/server";
+import { itemsTax } from "@/src/app/_library/utilities";
+import { NextResponse } from "next/server";
 
 const redis = await getRedis();
 
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
   } = coa;
   const { shopping_cart_id: shoppingCartId, catalogId, recordFormat } = cart[0];
   const fnPlaceholder =
-    printRecordFormat(recordFormat) === "Digital"
+    recordFormat === "Download"
       ? async () => createBuyNowOrderPlaceholder(catalogId, email)
       : async () => createOrderPlaceholder(shoppingCartId, email);
   const { data, error } = await fnPlaceholder();

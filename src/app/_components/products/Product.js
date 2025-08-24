@@ -3,7 +3,7 @@
 import TrackList from "@/src/app/_components/records/TrackList";
 import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
 import AddToCartSlider from "@/src/app/_components/shopping-cart/AddToCartSlider";
-import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
+import { formatDollars } from "@/src/app/_library/utilities";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 
@@ -18,9 +18,7 @@ export default function Product({ record }) {
     attributes,
     recordFormat,
   } = record;
-  const format = printRecordFormat(recordFormat);
-  if (format === "Download")
-    console.log(`Product -> record:\n${JSON.stringify(record, null, "\t")}`);
+
   return (
     <>
       <AddToCartSlider />
@@ -48,7 +46,7 @@ export default function Product({ record }) {
                   <h2 className="sr-only">Format</h2>
                   <div className="flex items-center">
                     <div>
-                      {format} by {artist}
+                      {recordFormat} by {artist}
                     </div>
                   </div>
                 </div>
@@ -60,7 +58,7 @@ export default function Product({ record }) {
                 </p>
               </div>
 
-              {format !== "Download" && (
+              {recordFormat !== "Download" && (
                 <div className="mt-2 flex items-center">
                   <CheckIcon
                     aria-hidden="true"

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
+import { formatDollars } from "@/src/app/_library/utilities";
 import Image from "next/image";
 
 function OrderItemCard({ item }) {
@@ -21,7 +21,7 @@ function OrderItemCard({ item }) {
           <div>
             <div className="flex justify-between">
               <h3 className="text-sm dark:text-primary-100">
-                {item.title} {printRecordFormat(item.recordFormat)}
+                {item.title} {item.recordFormat}
               </h3>
             </div>
             <div className="mt-1 flex text-sm">

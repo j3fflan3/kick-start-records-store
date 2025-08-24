@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDollars, printRecordFormat } from "@/src/app/_library/utilities";
+import { formatDollars } from "@/src/app/_library/utilities";
 import {
   Dialog,
   DialogBackdrop,
@@ -106,7 +106,7 @@ function AddToCartSlider() {
                               <p className="mt-1 text-sm text-gray-500 dark:text-primary-300">
                                 {cartItem &&
                                   cartItem?.recordFormat &&
-                                  printRecordFormat(cartItem.recordFormat)}{" "}
+                                  cartItem.recordFormat}{" "}
                                 {cartItem &&
                                   cartItem?.artist &&
                                   ` by ${cartItem.artist}`}

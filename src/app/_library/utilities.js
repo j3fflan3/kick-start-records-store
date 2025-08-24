@@ -1,22 +1,3 @@
-function printRecordFormat(recordFormat) {
-  // This should be remedied in PostgreSQL. Enums can have spaces.
-  switch (recordFormat) {
-    case "DigitalDownload":
-    case "Digital Download":
-      return "Download";
-    case "VinylLP":
-      return "Vinyl LP";
-    case "VinylEP":
-      return "Vinyl EP";
-    case "VinylSingle":
-      return "Vinyle Single";
-    case "CD":
-    case "Cassette":
-    default:
-      return recordFormat;
-  }
-}
-
 function formatDollars(intCents) {
   if (intCents <= 0) return "0.00";
   const dollarFloat = intCents / 100;
@@ -106,7 +87,6 @@ function formatShortDate(dateString) {
   return formatter.format(new Date(dateString));
 }
 export {
-  printRecordFormat,
   formatDollars,
   calculateTax,
   itemsTotal,

@@ -1,7 +1,6 @@
+import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
 import Image from "next/image";
 import Link from "next/link";
-import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
-import { printRecordFormat } from "@/src/app/_library/utilities";
 
 function RecordCard({ record }) {
   const { artist, catalogId, title, image, description, price, recordFormat } =
@@ -31,7 +30,7 @@ function RecordCard({ record }) {
           </div>
 
           <p className="flex gap-3 items-baseline">
-            {printRecordFormat(recordFormat)}&nbsp;<b>${usd}</b>
+            {recordFormat}&nbsp;<b>${usd}</b>
           </p>
         </div>
 
