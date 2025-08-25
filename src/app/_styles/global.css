@@ -180,3 +180,7 @@ input[type="text"] {
   z-index: 9999; /* Ensures the overlay appears on top of other content */
   display: none; /* Initially hide the overlay */
 }
+
+.font-courier {
+  font-family: "Courier New", Courier, monospace;
+}

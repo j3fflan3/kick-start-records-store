@@ -12,6 +12,8 @@ import {
 } from "@paypal/react-paypal-js";
 import SpinnerMini from "../spinners/SpinnerMini";
 import { useState } from "react";
+import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/solid";
+import { useBilling } from "../../_contexts/BillingProvider";
 
 function BuyNowPayment({
   setPayWith,
@@ -23,11 +25,52 @@ function BuyNowPayment({
   setIsPaying,
 }) {
   const [cardErrors, setCardErrors] = useState({});
+  const {
+    firstName,
+    lastName,
+    guestEmail,
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+    handlers,
+  } = useBilling();
+  const {
+    handleBillingFirstName,
+    handleBillingLastName,
+    handleGuestEmail,
+    handleBillingAddress,
+    handleBillingAddressContinued,
+    handleBillingCity,
+    handleBillingStateProvince,
+    handleBillingPostalCode,
+    handleBillingDestinationCountryCode,
+  } = handlers;
   const payPalStyle = { layout: "vertical", disableMaxWidth: true };
   return (
     <div>
-      <div>
-        <button onClick={() => setPayWith("")}>Back</button>
+      <div className="grid grid-cols-2 mb-2">
+        <h1 className="ml-2 mt-1 text-2xl align-baseline text-primary-900">
+          {payWith === "card" ? "Card Payment" : "PayPal Payment"}
+        </h1>
+        <button
+          onClick={() => setPayWith("")}
+          className="cursor-pointer ml-auto mr-2 outline-1 px-2 py-1 rounded-md outline-primary-400 align-baseline text-primary-900"
+        >
+          Change payment type&nbsp;
+          <ArrowLeftStartOnRectangleIcon className=" size-8 inline-block" />
+        </button>
+        <div className="col-span-2 my-2 mr-3.25">
+          <input
+            type="email"
+            value={guestEmail}
+            onChange={handleGuestEmail}
+            placeholder="Email"
+            className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+          />
+        </div>
       </div>
       <PayPalScriptProvider
         options={{

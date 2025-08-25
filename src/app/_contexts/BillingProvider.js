@@ -132,6 +132,7 @@ function BillingProvider({ children }) {
         handlers: {
           handleBillingFirstName,
           handleBillingLastName,
+          handleGuestEmail,
           handleBillingAddress,
           handleBillingAddressContinued,
           handleBillingCity,
