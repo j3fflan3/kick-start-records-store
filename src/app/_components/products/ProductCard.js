@@ -1,6 +1,7 @@
 import AddToCart from "@/src/app/_components/shopping-cart/AddToCart";
 import Image from "next/image";
 import Link from "next/link";
+import BuyNowButton from "@/src/app/_components/buttons/BuyNowButton";
 
 function ProductCard({ product }) {
   const { image, title, price, catalogId, recordFormat, releaseDate } = product;
@@ -10,15 +11,15 @@ function ProductCard({ product }) {
       <Link href={`/records/${catalogId}`} key={catalogId}>
         <div className="flex w-full justify-center">
           <Image
-            width="222"
-            height="222"
+            width="300"
+            height="300"
             alt={title}
             src={image.url}
             className="aspect-square rounded-lg bg-gray-200 group-hover:opacity-75"
           />
         </div>
         <h3 className="mt-4 text-sm dark:text-gray-200">
-          {title} - {recordFormat} ({new Date(releaseDate).getFullYear()})
+          {title} - ({new Date(releaseDate).getFullYear()})
         </h3>
         <div className="mt-1 text-lg w-full font-medium dark:text-gray-300">
           ${usd}&nbsp;
@@ -26,12 +27,12 @@ function ProductCard({ product }) {
       </Link>
       <div className="mt-2 items-center">
         {recordFormat === "Download" ? (
-          <Link
-            href={`/buy-now/${catalogId}`}
+          <BuyNowButton
+            catalogId={catalogId}
             className="disabled:text-primary-600 border border-primary-700 py-1 px-2 w-full text-center rounded-md text-lg inline-block  hover:bg-accent-600 disabled:hover:bg-primary-950 transition-all hover:text-primary-50 disabled:hover:cursor-default hover:cursor-pointer"
           >
             Buy Now
-          </Link>
+          </BuyNowButton>
         ) : (
           <AddToCart
             catalogId={catalogId}

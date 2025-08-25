@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { formatDollars } from "@/src/app/_library/utilities";
 import BuyNowCheckoutTotal from "@/src/app/_components/buy-now/BuyNowCheckoutTotal";
+import BuyNowPaymentChoice from "@/src/app/_components/buy-now/BuyNowPaymentChoice";
+import BuyNowCard from "@/src/app/_components/buy-now/BuyNowCard";
+import BuyNowPayPal from "@/src/app/_components/buy-now/BuyNowPayPal";
 
 const temp = {
   artist: "Heart of Cygnus",
@@ -35,11 +38,14 @@ const temp = {
 };
 
 function BuyNowCheckout({ product }) {
+  const [isPaying, setIsPaying] = useState(false);
   const [payWith, setPayWith] = useState("");
   const [tax, setTax] = useState(0);
   const [subtotal, setSubtotal] = useState("");
   const total = formatDollars(product.price + tax);
-
+  const createOrder = async () => {};
+  const onApprove = async () => {};
+  const onError = async () => {};
   console.log(
     `BuyNowCheckout -> product:\n:${(JSON.stringify(product), null, "\t")}`
   );
@@ -47,7 +53,7 @@ function BuyNowCheckout({ product }) {
     <>
       <div className="bg-white">
         <h1 className="text-3xl bg-primary-50 pb-4 dark:text-primary-100 text-center dark:bg-primary-950">
-          Checkout
+          Buy Now
         </h1>
         <div className="relative mx-auto grid max-w-7xl dark:bg-primary-950 bg-primary-50 grid-cols-1 gap-x-0 lg:grid-cols-2 lg:px-8 lg:pt-4">
           <BuyNowCheckoutTotal product={product} total={total} tax={tax} />
@@ -55,6 +61,25 @@ function BuyNowCheckout({ product }) {
             aria-labelledby="payment-and-shipping-heading"
             className="dark:bg-primary-100 bg-primary-100 py-4 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:w-full lg:max-w-lg lg:px-4 lg:py-4 lg:pb-24 lg:rounded-l-md"
           >
+            {payWith === "" && <BuyNowPaymentChoice setPayWith={setPayWith} />}
+            {payWith === "card" && (
+              <BuyNowCard
+                isPaying={isPaying}
+                setIsPaying={setIsPaying}
+                createOrder={createOrder}
+                onApprove={onApprove}
+                onError={onError}
+              />
+            )}
+            {payWith === "paypal" && (
+              <BuyNowPayPal
+                isPaying={isPaying}
+                setIsPaying={setIsPaying}
+                createOrder={createOrder}
+                onApprove={onApprove}
+                onError={onError}
+              />
+            )}
             {/* <h2 id="payment-and-shipping-heading" className="sr-only">
               Shipping Info
             </h2>

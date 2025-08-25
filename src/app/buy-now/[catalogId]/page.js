@@ -1,17 +1,22 @@
 import BuyNowCheckout from "@/src/app/_components/buy-now/BuyNowCheckout";
-import { serverGetProduct } from "@/src/app/_library/server/product";
+import { serverGetBuyNowProduct } from "@/src/app/_library/server/product";
 import Error from "@/src/app/error";
+import { Suspense } from "react";
+import Spinner from "../../_components/spinners/Spinner";
+export const revalidate = 0;
 
 async function Page({ params }) {
   const { catalogId } = await params;
-  const data = await serverGetProduct(catalogId);
+  const { data } = await serverGetBuyNowProduct(catalogId);
   console.log(
     `buy-now/${catalogId} -> data:\n${JSON.stringify(data, null, "\t")}`
   );
   if (!data) return <Error message="Catalog item not found." />;
   return (
     <div>
-      <BuyNowCheckout product={data} />
+      <Suspense fallback={<Spinner />} key={"abc"}>
+        <BuyNowCheckout product={data} />
+      </Suspense>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import Spinner from "@/src/app/_components/spinners/Spinner";
 import { Suspense } from "react";
 import RecordList from "../_components/records/RecordList";
-export const revalidate = 3600;
+export const revalidate = 0;
 async function Page() {
   return (
     <div>

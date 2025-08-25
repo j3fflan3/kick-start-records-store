@@ -1,15 +1,17 @@
 "use server";
 import { createClient } from "@/src/app/_library/supabase/server";
 
-async function serverGetProduct(catalogId) {
+async function serverGetBuyNowProduct(catalogId) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("get_product", {
+  console.log(`serverGetProduct -> catalogId:\n\t${catalogId}`);
+  const { data, error } = await supabase.rpc("get_buy_now_product", {
     _catalog_id: catalogId,
   });
   if (error) {
     console.error(error.message);
   }
-  return data;
+
+  return { data, error };
 }
 
-export { serverGetProduct };
+export { serverGetBuyNowProduct };
