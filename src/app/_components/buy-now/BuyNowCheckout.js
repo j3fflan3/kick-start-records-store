@@ -3,8 +3,7 @@ import { useState } from "react";
 import { formatDollars } from "@/src/app/_library/utilities";
 import BuyNowCheckoutTotal from "@/src/app/_components/buy-now/BuyNowCheckoutTotal";
 import BuyNowPaymentChoice from "@/src/app/_components/buy-now/BuyNowPaymentChoice";
-import BuyNowCard from "@/src/app/_components/buy-now/BuyNowCard";
-import BuyNowPayPal from "@/src/app/_components/buy-now/BuyNowPayPal";
+import BuyNowPayment from "@/src/app/_components/buy-now/BuyNowPayment";
 
 const temp = {
   artist: "Heart of Cygnus",
@@ -36,7 +35,6 @@ const temp = {
     ],
   },
 };
-
 function BuyNowCheckout({ product }) {
   const [isPaying, setIsPaying] = useState(false);
   const [payWith, setPayWith] = useState("");
@@ -49,6 +47,8 @@ function BuyNowCheckout({ product }) {
   console.log(
     `BuyNowCheckout -> product:\n:${(JSON.stringify(product), null, "\t")}`
   );
+  // Note that we are hiding BuyNowPayment below rather than writing it based on a variable.
+  // This ensures the script loads with the page even though it's hidden.
   return (
     <>
       <div className="bg-white">
@@ -62,24 +62,17 @@ function BuyNowCheckout({ product }) {
             className="dark:bg-primary-100 bg-primary-100 py-4 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:w-full lg:max-w-lg lg:px-4 lg:py-4 lg:pb-24 lg:rounded-l-md"
           >
             {payWith === "" && <BuyNowPaymentChoice setPayWith={setPayWith} />}
-            {payWith === "card" && (
-              <BuyNowCard
+            <div className={`${payWith !== "" ? "" : "hidden"}`}>
+              <BuyNowPayment
+                setPayWith={setPayWith}
+                payWith={payWith}
                 isPaying={isPaying}
                 setIsPaying={setIsPaying}
                 createOrder={createOrder}
                 onApprove={onApprove}
                 onError={onError}
               />
-            )}
-            {payWith === "paypal" && (
-              <BuyNowPayPal
-                isPaying={isPaying}
-                setIsPaying={setIsPaying}
-                createOrder={createOrder}
-                onApprove={onApprove}
-                onError={onError}
-              />
-            )}
+            </div>
             {/* <h2 id="payment-and-shipping-heading" className="sr-only">
               Shipping Info
             </h2>
