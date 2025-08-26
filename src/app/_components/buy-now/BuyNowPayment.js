@@ -13,8 +13,8 @@ import {
 import SpinnerMini from "../spinners/SpinnerMini";
 import { useEffect, useState } from "react";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/solid";
-import { useBilling } from "../../_contexts/BillingProvider";
-import { validateEmail } from "../../_library/utilities";
+import { useBilling } from "@/src/app/_contexts/BillingProvider";
+import { validateEmail } from "@/src/app/_library/utilities";
 
 function BuyNowPayment({
   setPayWith,
@@ -51,14 +51,13 @@ function BuyNowPayment({
     handleBillingDestinationCountryCode,
   } = handlers;
   // useEffect(() => {
-  //   console.log(`BuyNowPayment -> guestEmail ${guestEmail}`);
-  // }, [guestEmail]);
+  //   console.log(`BuyNowPayment -> orderEmail ${orderEmail}`);
+  // }, [orderEmail]);
   function handleOrderEmail(e) {
     setPayPalErrors({});
     setOrderEmail(e.target.value);
   }
-  const { guestEmail, setGuestEmail, errors, setErrors } = useBilling();
-  const payPalDisabled = !validateEmail(guestEmail);
+  const payPalDisabled = !validateEmail(orderEmail);
   function handlePayPalButtonsClick(e) {
     console.log(`handlePayPalButtonsClick fired.`);
 
