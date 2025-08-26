@@ -11,9 +11,10 @@ import {
   usePayPalCardFields,
 } from "@paypal/react-paypal-js";
 import SpinnerMini from "../spinners/SpinnerMini";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import { useBilling } from "../../_contexts/BillingProvider";
+import { validateEmail } from "../../_library/utilities";
 
 function BuyNowPayment({
   setPayWith,
@@ -25,10 +26,12 @@ function BuyNowPayment({
   setIsPaying,
 }) {
   const [cardErrors, setCardErrors] = useState({});
+  const [payPalErrors, setPayPalErrors] = useState({});
+  const [orderEmail, setOrderEmail] = useState("");
+
   const {
     firstName,
     lastName,
-    guestEmail,
     address,
     addressContinued,
     city,
@@ -40,7 +43,6 @@ function BuyNowPayment({
   const {
     handleBillingFirstName,
     handleBillingLastName,
-    handleGuestEmail,
     handleBillingAddress,
     handleBillingAddressContinued,
     handleBillingCity,
@@ -48,6 +50,24 @@ function BuyNowPayment({
     handleBillingPostalCode,
     handleBillingDestinationCountryCode,
   } = handlers;
+  // useEffect(() => {
+  //   console.log(`BuyNowPayment -> guestEmail ${guestEmail}`);
+  // }, [guestEmail]);
+  function handleOrderEmail(e) {
+    setPayPalErrors({});
+    setOrderEmail(e.target.value);
+  }
+  const { guestEmail, setGuestEmail, errors, setErrors } = useBilling();
+  const payPalDisabled = !validateEmail(guestEmail);
+  function handlePayPalButtonsClick(e) {
+    console.log(`handlePayPalButtonsClick fired.`);
+
+    if (!validateEmail(guestEmail)) {
+      e.preventDefault();
+      setPayPalErrors({ email: "Please enter a valid email address." });
+      return false;
+    }
+  }
   const payPalStyle = { layout: "vertical", disableMaxWidth: true };
   return (
     <div>
@@ -65,8 +85,8 @@ function BuyNowPayment({
         <div className="col-span-2 my-2 mr-3.25">
           <input
             type="email"
-            value={guestEmail}
-            onChange={handleGuestEmail}
+            value={orderEmail}
+            onChange={handleOrderEmail}
             placeholder="Email"
             className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
           />
@@ -82,12 +102,16 @@ function BuyNowPayment({
       >
         <div className={`${payWith === "paypal" ? "" : "hidden"}`}>
           <PayPalButtons
+            onClick={handlePayPalButtonsClick}
             createOrder={createOrder}
             onApprove={onApprove}
             onError={onError}
             style={payPalStyle}
-            disabled={isPaying}
+            disabled={payPalDisabled || isPaying}
           />
+          <p className="ml-2 mt-2 text-sm text-red-700">
+            {payPalErrors?.email && payPalErrors.email}
+          </p>
         </div>
         <div className={`${payWith === "card" ? "" : "hidden"}`}>
           <PayPalCardFieldsProvider
