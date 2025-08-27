@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatDollars } from "@/src/app/_library/utilities";
 import BuyNowCheckoutTotal from "@/src/app/_components/buy-now/BuyNowCheckoutTotal";
 import BuyNowPaymentChoice from "@/src/app/_components/buy-now/BuyNowPaymentChoice";
@@ -35,13 +35,24 @@ const temp = {
     ],
   },
 };
-function BuyNowCheckout({ product }) {
+function BuyNowCheckout({ product, countries }) {
   const [isPaying, setIsPaying] = useState(false);
   const [payWith, setPayWith] = useState("");
   const [tax, setTax] = useState(0);
   const [subtotal, setSubtotal] = useState("");
+  const [billingInfo, setBillingInfo] = useState({});
+  useEffect(() => {
+    console.log(`billingInfo changed: ${JSON.stringify(billingInfo, null, 2)}`);
+  }, [billingInfo]);
   const total = formatDollars(product.price + tax);
-  const createOrder = async () => {};
+  const createOrder = useCallback(
+    async (data, actions) => {
+      console.log(
+        `BuyNowCheckout -> createOrder -> data: ${JSON.stringify({ data, actions, billingInfo }, null, 2)} `
+      );
+    },
+    [billingInfo]
+  );
   const onApprove = async () => {};
   const onError = async () => {};
   console.log(
@@ -64,6 +75,8 @@ function BuyNowCheckout({ product }) {
             {payWith === "" && <BuyNowPaymentChoice setPayWith={setPayWith} />}
             <div className={`${payWith !== "" ? "" : "hidden"}`}>
               <BuyNowPayment
+                countries={countries}
+                setBillingInfo={setBillingInfo}
                 setPayWith={setPayWith}
                 payWith={payWith}
                 isPaying={isPaying}

@@ -1,5 +1,8 @@
 "use client";
 
+import { useBilling } from "@/src/app/_contexts/BillingProvider";
+import { validateEmail } from "@/src/app/_library/utilities";
+import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import {
   PayPalButtons,
   PayPalCardFieldsProvider,
@@ -10,13 +13,12 @@ import {
   PayPalScriptProvider,
   usePayPalCardFields,
 } from "@paypal/react-paypal-js";
+import { useCallback, useEffect, useState } from "react";
 import SpinnerMini from "../spinners/SpinnerMini";
-import { useEffect, useState } from "react";
-import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/solid";
-import { useBilling } from "@/src/app/_contexts/BillingProvider";
-import { validateEmail } from "@/src/app/_library/utilities";
 
 function BuyNowPayment({
+  countries,
+  setBillingInfo,
   setPayWith,
   payWith,
   createOrder,
@@ -30,8 +32,6 @@ function BuyNowPayment({
   const [orderEmail, setOrderEmail] = useState("");
 
   const {
-    firstName,
-    lastName,
     address,
     addressContinued,
     city,
@@ -41,8 +41,6 @@ function BuyNowPayment({
     handlers,
   } = useBilling();
   const {
-    handleBillingFirstName,
-    handleBillingLastName,
     handleBillingAddress,
     handleBillingAddressContinued,
     handleBillingCity,
@@ -50,13 +48,33 @@ function BuyNowPayment({
     handleBillingPostalCode,
     handleBillingDestinationCountryCode,
   } = handlers;
-  // useEffect(() => {
-  //   console.log(`BuyNowPayment -> orderEmail ${orderEmail}`);
-  // }, [orderEmail]);
+
+  useEffect(() => {
+    setBillingInfo({
+      orderEmail,
+      address,
+      addressContinued,
+      city,
+      stateProvince,
+      postalCode,
+      destinationCountryCode,
+    });
+  }, [
+    orderEmail,
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+    setBillingInfo,
+  ]);
+
   function handleOrderEmail(e) {
     setPayPalErrors({});
     setOrderEmail(e.target.value);
   }
+
   const payPalDisabled = !validateEmail(orderEmail);
   function handlePayPalButtonsClick(e) {
     console.log(`handlePayPalButtonsClick fired.`);
@@ -86,10 +104,82 @@ function BuyNowPayment({
             type="email"
             value={orderEmail}
             onChange={handleOrderEmail}
+            required
             placeholder="Email"
             className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
           />
         </div>
+        {payWith === "card" && (
+          <>
+            <div className="col-span-2 my-2 mr-3.25">
+              <input
+                type="text"
+                value={address}
+                onChange={handleBillingAddress}
+                required
+                placeholder="Address"
+                className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+              />
+            </div>
+            <div className="col-span-2 my-2 mr-3.25">
+              <input
+                type="text"
+                value={addressContinued}
+                onChange={handleBillingAddressContinued}
+                placeholder="Address Continued (optional)"
+                className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+              />
+            </div>
+            <div className="grid grid-cols-2 col-span-2 w-full my-2 mr-3.25">
+              <div className="col-span-1 mr-2">
+                <input
+                  type="text"
+                  value={city}
+                  onChange={handleBillingCity}
+                  placeholder="City"
+                  required
+                  className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                />
+              </div>
+              <div className="ml-2 col-span-1 mr-3.25">
+                <select
+                  name="country"
+                  className="w-full ml-1.5  mt-4 px-3 py-5.5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                  onChange={handleBillingDestinationCountryCode}
+                  value={destinationCountryCode}
+                >
+                  {countries.map((country) => (
+                    <option value={country.alpha2} key={country.alpha2}>
+                      {country.alpha2}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 col-span-2 w-full my-2 mr-3.25">
+              <div className="mr-2">
+                <input
+                  type="text"
+                  value={stateProvince}
+                  onChange={handleBillingStateProvince}
+                  placeholder="State / Province"
+                  required
+                  className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                />
+              </div>
+              <div className="ml-2 mr-3.25">
+                <input
+                  type="text"
+                  value={postalCode}
+                  onChange={handleBillingPostalCode}
+                  placeholder="Postal Code"
+                  required
+                  className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                />
+              </div>
+            </div>
+          </>
+        )}
       </div>
       <PayPalScriptProvider
         options={{
