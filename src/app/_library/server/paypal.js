@@ -22,7 +22,7 @@ import {
 import { getURL } from "@/src/app/_library/server/utilities";
 import {
   calculateTax,
-  cartTotal,
+  itemsTotal,
   formatDollars,
 } from "@/src/app/_library/utilities";
 import { Mutex } from "async-mutex";
@@ -85,17 +85,17 @@ async function oAuthPayPalRequest() {
   }
 }
 
-function getPayPalAmount(cart, shippingCents, taxCents) {
+function getPayPalAmount(items, shippingCents, taxCents) {
   console.log(
     `getPayPalAmount\n\t${JSON.stringify(
-      cart
+      items
     )}\n\tshippingCents: ${shippingCents}\n\ttaxCents: ${taxCents}`
   );
 
   // Shipping and tax must be numbers
-  const total = cartTotal(cart);
-  const combinedTotal = cartTotal(
-    cart,
+  const total = itemsTotal(items);
+  const combinedTotal = itemsTotal(
+    items,
     Number(shippingCents),
     Number(taxCents)
   );
@@ -127,10 +127,10 @@ function getPayPalAmount(cart, shippingCents, taxCents) {
 
 // taxPercentFloat should be either 0, or a float representing a percentage
 // e.g, 10.25% would be .1025
-function getPayPalItems(cart, taxPercentageFloat) {
-  return cart.map((item) => {
+function getPayPalItems(items, taxPercentageFloat) {
+  return items.map((item) => {
     const category =
-      cart.recordFormat === "Download" ? DIGITAL_GOODS : PHYSICAL_GOODS;
+      item.recordFormat === "Download" ? DIGITAL_GOODS : PHYSICAL_GOODS;
 
     const unit_amount = new PayPalSimpleAmount(
       DEFAULT_CURRENCY_CODE,
@@ -151,15 +151,15 @@ function getPayPalItems(cart, taxPercentageFloat) {
     const itemURL = `${getURL()}records/${item.catalogId}`;
     return new PayPalItem(
       item.title,
-      item.count,
+      item?.count ?? 1,
       item.description,
       category,
       itemURL,
       item.image.url,
       unit_amount,
       tax_amount,
-      item.sku ?? "",
-      item.upc ? new PayPalUPC("UPC-A", item.upc) : null
+      item?.sku ?? "",
+      item?.upc ? new PayPalUPC("UPC-A", item.upc) : null
     );
   });
 }
@@ -179,7 +179,7 @@ async function sendOrderEmail(email, orderId, orderNumber, fullName) {
     const email64 = Buffer.from(email).toString("base64");
     const orderLink = `${getURL()}checkout/order-placed/${orderId}/${encodeURIComponent(email64)}`;
     console.log(
-      `\n\ntop of sendOrderEmail\n\nemail:${email}\norderNumber:${orderNumber}\fullName:${fullName}`
+      `\n\ntop of sendOrderEmail\n\nemail:${email}\norderNumber:${orderNumber}\nfullName:${fullName}`
     );
 
     const { data, error } = await resend.emails.send({
@@ -190,10 +190,35 @@ async function sendOrderEmail(email, orderId, orderNumber, fullName) {
       react: OrderEmailTemplate({ orderNumber, fullName, orderLink }),
     });
     console.log(
-      `sendOrderEmail:\n\tdata (resend id):\t${JSON.stringify(data)}\n\terror:\t${JSON.stringify(error)}`
+      `sendOrderEmail:\n\tdata (resend id):\t${JSON.stringify(data, null, 2)}\n\terror:\t${JSON.stringify(error, null, 2)}`
     );
   } catch (error) {
-    console.log(`error sending order email: ${JSON.stringify(error)}`);
+    console.log(`error sending order email: ${JSON.stringify(error, null, 2)}`);
+  }
+}
+async function sendBuyNowOrderEmail(email, orderId, orderNumber, fullName) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  try {
+    const email64 = Buffer.from(email).toString("base64");
+    const orderLink = `${getURL()}buy-now/order/${orderId}/${encodeURIComponent(email64)}`;
+    console.log(
+      `\n\ntop of sendBuyNowOrderEmail\n\nemail:${email}\norderNumber:${orderNumber}\nfullName:${fullName}`
+    );
+
+    const { data, error } = await resend.emails.send({
+      from: "Kick Start Records <info@kickstartrecords.com>",
+      to: [`${email}`],
+      bcc: process.env.ORDER_EMAIL_BCC,
+      subject: `Kick Start Records Order #${orderNumber}`,
+      react: OrderEmailTemplate({ orderNumber, fullName, orderLink }),
+    });
+    console.log(
+      `sendBuyNowOrderEmail:\n\tdata (resend id):\t${JSON.stringify(data, null, 2)}\n\terror:\t${JSON.stringify(error, null, 2)}`
+    );
+  } catch (error) {
+    console.log(
+      `error sending buy-now order email: ${JSON.stringify(error, null, 2)}`
+    );
   }
 }
 
@@ -218,10 +243,11 @@ async function getOrderDetail(_order_id, _email = null) {
     _email,
   });
   if (error) {
-    console.log(`error: ${JSON.stringify(error)}`);
+    console.log(`error: ${JSON.stringify(error, null, 2)}`);
   }
   return { data, error };
 }
+
 export {
   getOrderDetail,
   getPayPalAmount,
@@ -230,4 +256,5 @@ export {
   handlePayPalResponse,
   oAuthPayPalRequest,
   sendOrderEmail,
+  sendBuyNowOrderEmail,
 };

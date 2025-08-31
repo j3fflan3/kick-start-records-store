@@ -1,11 +1,11 @@
 function BuyNowPaymentChoice({ setPayWith }) {
   return (
-    <div className="text-center">
-      <h1 className="dark:text-gray-900 text-primary-900 mb-4 text-xl">
+    <div className="text-center mr-3.5">
+      <h1 className="dark:text-gray-900 text-primary-900 mb-4 text-xl !text-left ml-2">
         Pay With
       </h1>
       <button
-        className="w-full p-2 outline text-lg outline-primary-400 bg-accent-700 rounded-md text-white font-bold cursor-pointer"
+        className="w-full ml-2 p-2 outline text-lg outline-primary-400 bg-accent-700 rounded-md text-white font-bold cursor-pointer"
         onClick={() => setPayWith("card")}
       >
         Credit or Debit Card
@@ -14,7 +14,7 @@ function BuyNowPaymentChoice({ setPayWith }) {
         <span>OR</span>
       </div>
       <button
-        className="w-full p-2 outline text-lg outline-primary-400 rounded-md text-white bg-[#181818] font-bold cursor-pointer"
+        className="w-full ml-2 p-2 outline text-lg outline-primary-400 rounded-md text-white bg-[#181818] font-bold cursor-pointer"
         onClick={() => setPayWith("paypal")}
       >
         PayPal

@@ -91,7 +91,7 @@ function ProfileFields({ user, setEditProfile }) {
         message: "Email is invalid/required.",
       }
     );
-    console.log(`values: ${JSON.stringify(userData, null, "\t")}`);
+    console.log(`values: ${JSON.stringify(userData, null, 2)}`);
     if (validateProfile) {
       const msg = await clientUpdateUser(userData);
       setMessage(msg);

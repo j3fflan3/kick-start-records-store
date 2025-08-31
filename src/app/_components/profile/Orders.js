@@ -1,7 +1,7 @@
 "use client";
 import UserOrder from "@/src/app/_components/profile/UserOrder";
 function Orders({ orders, viewDetails }) {
-  console.log(`orders:\n\t${JSON.stringify(orders, null, "\t")}`);
+  console.log(`orders:\n\t${JSON.stringify(orders, null, 2)}`);
   return (
     <div>
       <h1 className="text-xl/6 lg:text-2xl/6">Your Orders</h1>

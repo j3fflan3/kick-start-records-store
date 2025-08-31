@@ -8,7 +8,7 @@ async function serverGetShoppingCart() {
     console.log(`serverGetShoppingCart ${error.message}`);
   }
   console.log(
-    `/src/app/_library/server/shoppingCart.js -> serverGetShoppingCart -> data = ${(JSON.stringify(data), null, "\t")}`
+    `/src/app/_library/server/shoppingCart.js -> serverGetShoppingCart -> data = ${(JSON.stringify(data), null, 2)}`
   );
   return { data, error };
 }

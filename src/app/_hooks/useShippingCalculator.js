@@ -54,7 +54,13 @@ function useShippingCalculator({
       `useShippingCalculator -> sBaseRatesRequest: ${sBaseRatesRequest}`
     );
     getBaseRates(sBaseRatesRequest, itemCount);
-  }, [request, itemCount, destinationCountryCode, postalCode]);
+  }, [
+    request,
+    itemCount,
+    destinationCountryCode,
+    postalCode,
+    shippingCostCents,
+  ]);
 
   return { shippingCost, shippingCostCents, shippingError };
 }

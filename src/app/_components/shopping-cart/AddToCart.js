@@ -28,7 +28,7 @@ function AddToCart({ catalogId, className }) {
       const addedItem = data.filter((item) => item.catalogId === catalogId);
       setCartItem(addedItem[0]);
       setCartLink("/cart");
-      console.log(`AddToCart item: ${JSON.stringify(cartItem)}`);
+      console.log(`AddToCart item: ${JSON.stringify(cartItem, null, 2)}`);
       setOpenCart(true);
     });
   }

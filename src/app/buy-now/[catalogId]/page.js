@@ -11,7 +11,7 @@ async function Page({ params }) {
   const { data } = await serverGetBuyNowProduct(catalogId);
   const { data: countries } = await getCountries();
   console.log(
-    `buy-now/${catalogId} -> data:\n${JSON.stringify(data, null, "\t")}`
+    `buy-now/${catalogId} -> data:\n${JSON.stringify(data, null, 2)}`
   );
   if (!data) return <Error message="Catalog item not found." />;
   return (

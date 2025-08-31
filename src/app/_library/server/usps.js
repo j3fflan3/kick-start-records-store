@@ -73,7 +73,7 @@ function getBaseRatesRequestObject(sBaseRatesRequest, itemCount) {
 async function getUSPSRates(sBaseRatesRequest, itemCount) {
   const request = getBaseRatesRequestObject(sBaseRatesRequest, itemCount);
   const intl = request?.foreignPostalCode ?? false;
-  const sRequest = JSON.stringify(request);
+  const sRequest = JSON.stringify(request, null, 2);
   console.log(`getUSPSRates -> sRequest:\n ${sRequest}`);
   // call oAuth to refresh the access token, if needed
   await oAuthUSPSRequest();
@@ -105,7 +105,7 @@ async function getUSPSRates(sBaseRatesRequest, itemCount) {
         : itemCount < Number(process.env.HANDLING_MD_LT)
           ? process.env.HANDLING_MD
           : process.env.HANDLING_LG;
-    console.log(`getUSPSRates -> data: ${JSON.stringify(data)}`);
+    console.log(`getUSPSRates -> data: ${JSON.stringify(data, null, 2)}`);
 
     return data;
   } catch (error) {
@@ -143,7 +143,7 @@ async function getUSPSTracking(trackingNumber) {
       throw new Error(`${error.code} - ${error.message}`);
     }
     const data = await response.json();
-    console.log(`tracking response: ${JSON.stringify(data, null, "\t")}`);
+    console.log(`tracking response: ${JSON.stringify(data, null, 2)}`);
     return { data, error: null };
   } catch (error) {
     console.log(error);

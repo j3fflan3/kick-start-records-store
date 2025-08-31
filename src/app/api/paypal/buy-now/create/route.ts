@@ -26,25 +26,6 @@ import { NextResponse } from "next/server";
 
 const redis = await getRedis();
 
-async function createOrderPlaceholder(shoppingCartId: string, email: string) {
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("create_order_placeholder", {
-    _shopping_cart_id: shoppingCartId,
-    _email: email,
-  });
-  if (error) {
-    console.error(error.message);
-  }
-  console.log(
-    `createOrderPlaceholder -> {data, error} ${JSON.stringify(
-      data,
-      null,
-      2
-    )}, ${JSON.stringify(error, null, 2)}}`
-  );
-  return { data, error };
-}
-
 async function createBuyNowOrderPlaceholder(catalogId: string, email: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc(
@@ -70,33 +51,24 @@ export async function POST(request: Request) {
   const coa = await request.json();
   console.log(`createOrderArgs: ${JSON.stringify(coa, null, 2)}`);
   const {
-    cart,
+    product,
     purchaseEmail: email,
-    shippingCostCents,
     taxPercentageFloat,
     paymentSource: paymentType,
-    shippingAddress,
     billingAddress,
   } = coa;
-  const { shopping_cart_id: shoppingCartId } = cart[0];
-  const { data, error } = await createOrderPlaceholder(shoppingCartId, email);
-  if (error) throw new Error(error.message);
+  const { catalogId } = product;
+  const { data, error } = await createBuyNowOrderPlaceholder(catalogId, email);
+  if (error) {
+    console.log(
+      `api/paypal/buy-now/create\n\t${JSON.stringify(error, null, 2)}`
+    );
+    return NextResponse.json({ error: "Error creating order.", status: 500 });
+  }
   const { order_number: invoice_id, order_id: reference_id } = data;
   const create_order_endpoint = `${process.env.PAYPAL_API_URL}/v2/checkout/orders`;
   // extract shipping and billing addressses by position
   const [
-    shipFirstName,
-    shipLastName,
-    shipAddress,
-    shipAddressContinued,
-    shipCity,
-    shipStateProvince,
-    shipPostalCode,
-    shipDestinationCountryCode,
-  ] = shippingAddress;
-  const [
-    billFirstName,
-    billLastName,
     billAddress,
     billAddressContinued,
     billCity,
@@ -105,40 +77,31 @@ export async function POST(request: Request) {
     billDestinationCountryCode,
   ] = billingAddress;
   // first, items array
-  const payPalItems = getPayPalItems(cart, taxPercentageFloat);
+  const payPalItems = getPayPalItems([product], taxPercentageFloat);
   console.log(
-    `api/paypal/order/create\n\t payPalItems = ${JSON.stringify(payPalItems, null, 2)}`
+    `api/paypal/buy-now/create\n\t payPalItems = ${JSON.stringify(payPalItems, null, 2)}`
   );
 
   // getPayPalAmount
   let tax = 0;
   if (taxPercentageFloat > 0) {
-    tax = itemsTax(cart, taxPercentageFloat);
+    tax = itemsTax([product], taxPercentageFloat);
     console.log(`tax: ${tax}\n`);
   }
-  const payPalAmount = getPayPalAmount(cart, shippingCostCents, tax);
+  const payPalAmount = getPayPalAmount([product], 0, tax);
   // Payee
   const payee = new PayPalPayee(
     process.env.PAYPAL_MERCHANT_EMAIL!,
     process.env.PAYPAL_MERCHANT_ID!
   );
   const description = `Kickstart Records order #${invoice_id}`;
-  // only supplying email, zip and country for now. Testing with hard coded values for now.
-  const payPalShippingAddress = new PayPalAddress(
-    shipAddress,
-    shipAddressContinued,
-    shipCity,
-    shipStateProvince,
-    shipPostalCode,
-    shipDestinationCountryCode
-  );
-  const shippingFullName = new PayPalName(`${shipFirstName} ${shipLastName}`);
+
   const shippingAdd = new PayPalShipping(
+    "PICKUP_FROM_PERSON",
     null,
-    shippingFullName,
     email,
     null,
-    payPalShippingAddress
+    null
   );
   const purchaseUnit = new PayPalPurchaseUnit(
     reference_id,
@@ -195,7 +158,7 @@ export async function POST(request: Request) {
   // purchaseUnit must be an array.
   const payload = new PayPalOrder([purchaseUnit], paymentSource);
   console.log(
-    `api/paypal/order/create \n\t PayPal payload = ${JSON.stringify(payload, null, 2)}`
+    `api/paypal/buy-now/create \n\t PayPal payload = ${JSON.stringify(payload, null, 2)}`
   );
   // Make sure the access_token isn't expired
   await oAuthPayPalRequest();
@@ -212,7 +175,7 @@ export async function POST(request: Request) {
   try {
     const result = await handlePayPalResponse(response);
     console.log(
-      `api/paypal/order/create -> result = \n\t${JSON.stringify(result, null, 2)}`
+      `api/paypal/buy-now/create -> result = \n\t${JSON.stringify(result, null, 2)}`
     );
 
     return NextResponse.json(result);

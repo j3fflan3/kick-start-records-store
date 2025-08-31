@@ -54,7 +54,7 @@ function SessionProvider({ children }) {
       setAuthEvent(event);
       console.log(
         `inside supabase.auth.onAuthStateChange -> event:${event}, session:${
-          session ? JSON.stringify(session) : null
+          session ? JSON.stringify(session, null, 2) : null
         }`
       );
       setAuthEvent(event);

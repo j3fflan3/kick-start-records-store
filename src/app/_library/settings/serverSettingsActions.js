@@ -11,7 +11,9 @@ async function serverSaveUserAddress(sUserShippingData) {
   const supabase = await createClient();
   const { data, error } = supabase.auth.updateUser({ data: userMetada });
   if (error) {
-    console.log(`error updating user address(es): ${JSON.stringify(error)}`);
+    console.log(
+      `error updating user address(es): ${JSON.stringify(error, null, 2)}`
+    );
   }
   return { data, error };
 }

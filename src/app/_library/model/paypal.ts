@@ -176,6 +176,7 @@ interface IPayPalPurchaseUnit {
   payee: IPayPalPayee;
   items: IPayPalItem[];
   shipping: Nullable<IPayPalShipping>;
+  custom_id: Nullable<string>;
 }
 
 class PayPalPurchaseUnit implements IPayPalPurchaseUnit {
@@ -186,6 +187,7 @@ class PayPalPurchaseUnit implements IPayPalPurchaseUnit {
   payee: IPayPalPayee;
   items: IPayPalItem[];
   shipping: Nullable<IPayPalShipping>;
+  custom_id: Nullable<string>;
 
   constructor(
     reference_id: string,
@@ -194,7 +196,8 @@ class PayPalPurchaseUnit implements IPayPalPurchaseUnit {
     amount: IPayPalAmount,
     payee: IPayPalPayee,
     items: IPayPalItem[],
-    shipping: Nullable<IPayPalShipping>
+    shipping: Nullable<IPayPalShipping>,
+    custom_id: Nullable<string>
   ) {
     this.reference_id = reference_id;
     this.invoice_id = invoice_id;
@@ -203,6 +206,7 @@ class PayPalPurchaseUnit implements IPayPalPurchaseUnit {
     this.payee = payee; // type PayPalPayee
     this.items = items; // array of type PayPalItem
     this.shipping = shipping;
+    this.custom_id = custom_id;
   }
 }
 
@@ -429,6 +433,7 @@ class Card {
     this.experience_context = null;
   }
 }
+
 interface IPayPalPaymentSource {
   paypal: Nullable<IPayPal>;
   card: Nullable<ICard>;

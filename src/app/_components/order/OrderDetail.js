@@ -18,7 +18,7 @@ function OrderDetail({ order }) {
     postal_code,
     country_code,
   } = order.shippingAddress.address;
-  console.log(`OrderDetail -> order:\n\t${JSON.stringify(order, null, "\t")}`);
+  console.log(`OrderDetail -> order:\n\t${JSON.stringify(order, null, 2)}`);
   return (
     <div className="bg-white dark:bg-primary-950">
       <div className="mx-auto max-w-2xl px-4 pt-8 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">

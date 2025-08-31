@@ -48,12 +48,8 @@ export async function POST(request: Request) {
     const orderId = data.purchase_units[0].reference_id;
     const { invoice_id: orderNumber } =
       data.purchase_units[0].payments.captures[0];
-    const email =
-      data.purchase_units[0]?.shipping?.email_address ??
-      data.purchase_units[0]?.payments?.captures[0].custom_id;
-    const fullName =
-      data.purchase_units[0]?.shipping?.name?.full_name ??
-      data?.payment_source?.card?.name;
+    const email = data.purchase_units[0].payments.captures[0].custom_id;
+    const fullName = data.payment_source.card.name;
 
     console.log(`api/paypal/order/capture -> fullName=${fullName}`);
     await sendOrderEmail(email, orderId, orderNumber, fullName);

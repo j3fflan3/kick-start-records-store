@@ -110,6 +110,7 @@ function ShippingProvider({ children }) {
         // Setters
         setBillingSame,
         setErrors,
+        setDestinationCountryCode,
         // Handler functions
         handlers: {
           handleFirstName,

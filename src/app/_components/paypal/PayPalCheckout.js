@@ -35,7 +35,7 @@ function PayPalCheckout({ cart, countries }) {
   // use hooks and funcs
   const { session } = useSession();
   const { user } = session || { user: null };
-  console.log(`PayPalCheckout -> user:\n${JSON.stringify(user)}`, null, "\t");
+  console.log(`PayPalCheckout -> user:\n${JSON.stringify(user)}`, null, 2);
   const {
     errors: orderEmailErrors,
     setErrors: setOrderEmailErrors,

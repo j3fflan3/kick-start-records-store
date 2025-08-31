@@ -5,59 +5,99 @@ import BuyNowCheckoutTotal from "@/src/app/_components/buy-now/BuyNowCheckoutTot
 import BuyNowPaymentChoice from "@/src/app/_components/buy-now/BuyNowPaymentChoice";
 import BuyNowPayment from "@/src/app/_components/buy-now/BuyNowPayment";
 
-const temp = {
-  artist: "Heart of Cygnus",
-  catalogId: "8e29957c-dffb-4ad4-86ca-7931b8de61e5",
-  title: "Hydra vs. Leviathan",
-  image: {
-    url: "https://vnshanftypzvajpbbwxr.supabase.co/storage/v1/object/public/images/hydraleviathancover.png",
-    height: 2160,
-    width: 2160,
-    uom: "px",
-  },
-  description: "Fifth release by Heart of Cygnus",
-  upc: null,
-  productType: "Record",
-  recordFormat: "DigitalDownload",
-  recordGenre: "Metal",
-  releaseDate: "2016-03-31T07:00:00+00:00",
-  price: 99,
-  weight: 0,
-  attributes: {
-    tracks: [
-      {
-        title: "Hydra vs. Leviathan",
-        length: "00:05:22",
-        number: 1,
-        publishers: ["Magnificent Three Music"],
-        songwriters: ["Jeffrey Robert Lane"],
-      },
-    ],
-  },
-};
+import BuyNowAddressList from "@/src/app/_components/buy-now/BuyNowAddressList";
+import Select from "react-select";
+import classNames from "classnames";
+import { useBilling } from "../../_contexts/BillingProvider";
+
 function BuyNowCheckout({ product, countries }) {
   const [isPaying, setIsPaying] = useState(false);
   const [payWith, setPayWith] = useState("");
   const [tax, setTax] = useState(0);
-  const [subtotal, setSubtotal] = useState("");
+  const [cardErrors, setCardErrors] = useState({});
+  const [payPalErrors, setPayPalErrors] = useState({});
   const [billingInfo, setBillingInfo] = useState({});
+  const [countryOption, setCountryOption] = useState({
+    value: "US",
+    label: "United States of America (the)",
+  });
   useEffect(() => {
     console.log(`billingInfo changed: ${JSON.stringify(billingInfo, null, 2)}`);
   }, [billingInfo]);
-  const total = formatDollars(product.price + tax);
-  const createOrder = useCallback(
-    async (data, actions) => {
+
+  const countriesOptions = countries.map((country) => {
+    return {
+      value: country.alpha2,
+      label: country.name,
+    };
+  });
+  const {
+    billingEmail: orderEmail,
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+    setDestinationCountryCode,
+    setBillingEmail,
+    handlers,
+  } = useBilling();
+  const {
+    handleBillingAddress,
+    handleBillingAddressContinued,
+    handleBillingCity,
+    handleBillingStateProvince,
+    handleBillingPostalCode,
+  } = handlers;
+
+  useEffect(() => {
+    console.log(`BuyNowCheckout -> 
+    orderEmail = ${orderEmail}
+    address = ${address}
+    addressContinued = ${addressContinued}
+    city = ${city}
+    stateProvince = ${stateProvince}
+    postalCode = ${postalCode}
+    destinationCountryCode = ${destinationCountryCode}`);
+    setBillingInfo({
+      orderEmail,
+      address,
+      addressContinued,
+      city,
+      stateProvince,
+      postalCode,
+      destinationCountryCode,
+    });
+  }, [
+    orderEmail,
+    address,
+    addressContinued,
+    city,
+    stateProvince,
+    postalCode,
+    destinationCountryCode,
+    setBillingInfo,
+  ]);
+  useEffect(() => {
+    setDestinationCountryCode(countryOption.value);
+  }, [countryOption, setDestinationCountryCode]);
+
+  useEffect(
+    function () {
       console.log(
-        `BuyNowCheckout -> createOrder -> data: ${JSON.stringify({ data, actions, billingInfo }, null, 2)} `
+        `BuyNowCheckout -> product: ${JSON.stringify(product, null, 2)}`
       );
     },
-    [billingInfo]
+    [product]
   );
-  const onApprove = async () => {};
-  const onError = async () => {};
-  console.log(
-    `BuyNowCheckout -> product:\n:${(JSON.stringify(product), null, "\t")}`
-  );
+  const total = formatDollars(product.price + tax);
+
+  function handleOrderEmail(e) {
+    setPayPalErrors({});
+    setCardErrors({});
+    setBillingEmail(e.target.value);
+  }
   // Note that we are hiding BuyNowPayment below rather than writing it based on a variable.
   // This ensures the script loads with the page even though it's hidden.
   return (
@@ -72,146 +112,133 @@ function BuyNowCheckout({ product, countries }) {
             aria-labelledby="payment-and-shipping-heading"
             className="dark:bg-primary-100 bg-primary-100 py-4 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:w-full lg:max-w-lg lg:px-4 lg:py-4 lg:pb-24 lg:rounded-l-md"
           >
+            {payWith === "" && (
+              <>
+                <h3 className="ml-2 mb-2 text-xl text-primary-900">
+                  Enter Billing Details
+                </h3>
+                <div className="grid grid-cols-2 mb-2">
+                  <div className="col-span-2 my-2 mr-3.25">
+                    <input
+                      type="email"
+                      value={orderEmail}
+                      onChange={handleOrderEmail}
+                      required
+                      placeholder="Email"
+                      className="w-full ml-1.5 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                    />
+                  </div>
+                  <p className="ml-2 mt-2 text-sm text-red-700">
+                    {cardErrors?.email && cardErrors.email}
+                    {payPalErrors?.email && payPalErrors.email}
+                  </p>
+
+                  <div className="col-span-2 my-2 mr-3.25">
+                    <input
+                      type="text"
+                      value={address}
+                      onChange={handleBillingAddress}
+                      required
+                      placeholder="Billing Address"
+                      className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                    />
+                  </div>
+                  <div className="col-span-2 my-2 mr-3.25">
+                    <input
+                      type="text"
+                      value={addressContinued}
+                      onChange={handleBillingAddressContinued}
+                      placeholder="Billing Address Continued (optional)"
+                      className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 col-span-2 w-full my-2 mr-3.25">
+                    <div className="col-span-1 mr-2">
+                      <input
+                        type="text"
+                        value={city}
+                        onChange={handleBillingCity}
+                        placeholder="City"
+                        required
+                        className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                      />
+                    </div>
+                    <div className="ml-2 col-span-1 mr-3.25">
+                      <Select
+                        options={countriesOptions}
+                        name="country"
+                        classNames={{
+                          control: () =>
+                            classNames(
+                              "w-full h-fit ml-1.5 mt-4 px-3 py-3.5 border !border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                            ),
+                          option: (provided) => (
+                            {
+                              ...provided,
+                            },
+                            classNames("!text-[#687173]")
+                          ),
+                        }}
+                        onChange={(option) => setCountryOption(option)}
+                        value={countryOption}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 col-span-2 w-full my-2 mr-3.25">
+                    <div className="mr-2">
+                      <input
+                        type="text"
+                        value={stateProvince}
+                        onChange={handleBillingStateProvince}
+                        placeholder="State / Province"
+                        required
+                        className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                      />
+                    </div>
+                    <div className="ml-2 mr-3.25">
+                      <input
+                        type="text"
+                        value={postalCode}
+                        onChange={handleBillingPostalCode}
+                        placeholder="Postal Code"
+                        required
+                        className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
             {payWith === "" && <BuyNowPaymentChoice setPayWith={setPayWith} />}
-            <div className={`${payWith !== "" ? "" : "hidden"}`}>
+            <div className={`${payWith !== "" ? "" : "hidden"} col-span-1`}>
+              <BuyNowAddressList
+                setPayWith={setPayWith}
+                checkoutAddress={[
+                  orderEmail,
+                  address,
+                  addressContinued,
+                  city,
+                  stateProvince,
+                  postalCode,
+                  destinationCountryCode,
+                ]}
+                title="Billing"
+              />
               <BuyNowPayment
-                countries={countries}
+                cardErrors={cardErrors}
+                setCardErrors={setCardErrors}
+                payPalErrors={payPalErrors}
+                setPayPalErrors={setPayPalErrors}
                 setBillingInfo={setBillingInfo}
                 setPayWith={setPayWith}
                 payWith={payWith}
                 isPaying={isPaying}
                 setIsPaying={setIsPaying}
-                createOrder={createOrder}
-                onApprove={onApprove}
-                onError={onError}
+                billingInfo={billingInfo}
+                product={product}
               />
             </div>
-            {/* <h2 id="payment-and-shipping-heading" className="sr-only">
-              Shipping Info
-            </h2>
-            <div className="mx-auto max-w-2xl px-4 lg:max-w-none lg:px-0">
-              {!nextClicked ? (
-                <>
-                  <PayPalCheckoutShipping
-                    countries={countries}
-                    orderEmailErrors={orderEmailErrors}
-                    setOrderEmailErrors={setOrderEmailErrors}
-                    orderEmail={orderEmail}
-                    handleOrderEmail={handleOrderEmail}
-                    billingSame={billingSame}
-                    setBillingSame={setBillingSame}
-                    shippingAddress={{
-                      firstName,
-                      lastName,
-                      address,
-                      addressContinued,
-                      city,
-                      stateProvince,
-                      postalCode,
-                      destinationCountryCode,
-                    }}
-                    shippingErrors={shippingErrors}
-                    handlers={handlers}
-                  />
-                  <PayPalCheckoutBilling
-                    display={!billingSame}
-                    countries={countries}
-                    billingAddress={{
-                      billingFirstName,
-                      billingLastName,
-                      billingAddress,
-                      billingAddressContinued,
-                      billingCity,
-                      billingStateProvince,
-                      billingPostalCode,
-                      billingDestinationCountryCode,
-                    }}
-                    billingErrors={billingErrors}
-                    billingHandlers={billingHandlers}
-                  />
-                </>
-              ) : (
-                <>
-                  <PayPalCheckoutAddressList
-                    display={true}
-                    setNextClicked={setNextClicked}
-                    orderEmail={orderEmail}
-                    checkoutAddress={[
-                      firstName,
-                      lastName,
-                      address,
-                      addressContinued,
-                      city,
-                      stateProvince,
-                      postalCode,
-                      destinationCountryCode,
-                    ]}
-                    title="Shipping"
-                  />
-                  <PayPalCheckoutAddressList
-                    display={!billingSame}
-                    setNextClicked={setNextClicked}
-                    checkoutAddress={[
-                      billingFirstName,
-                      billingLastName,
-                      billingAddress,
-                      billingAddressContinued,
-                      billingCity,
-                      billingStateProvince,
-                      billingPostalCode,
-                      billingDestinationCountryCode,
-                    ]}
-                    title="Billing"
-                  />
-                </>
-              )} */}
-            {/* <div className={`mt-10 flex-row w-full justify-center `}>
-                {!nextClicked && (
-                  <button
-                    className="text-primary-50 font-bold border border-primary-400 rounded-md px-3 py-2 bg-accent-600 w-full hover:cursor-pointer"
-                    onClick={async (e) => {
-                      // e.preventDefault() 
-                      await handleNext(e);
-                    }}
-                  >
-                    Next &rarr;
-                  </button>
-                )}
-                {nextClicked && (
-                  <PayPalCheckoutButtons
-                    isPaying={isPaying}
-                    setIsPaying={setIsPaying}
-                    orderEmail={orderEmail}
-                    cart={cart}
-                    subtotal={subtotal}
-                    shippingCost={shippingCost}
-                    shippingCostCents={shippingCostCents}
-                    shippingAddress={[
-                      firstName,
-                      lastName,
-                      address,
-                      addressContinued,
-                      city,
-                      stateProvince,
-                      postalCode,
-                      destinationCountryCode,
-                    ]}
-                    billingAddress={[
-                      billingFirstName,
-                      billingLastName,
-                      billingAddress,
-                      billingAddressContinued,
-                      billingCity,
-                      billingStateProvince,
-                      billingPostalCode,
-                      billingDestinationCountryCode,
-                    ]}
-                    is_anonymous={user.is_anonymous}
-                    email={user.email}
-                  />
-                )}
-              </div> */}
-            {/* </div> */}
           </section>
         </div>
       </div>

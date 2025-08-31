@@ -60,7 +60,7 @@ export async function updateSession(request) {
     // const url = request.nextUrl.clone();
     // return NextResponse.redirect(url);
   } else {
-    // console.log(`updateSession returned user ${JSON.stringify(user)}`);
+    // console.log(`updateSession returned user ${(user)}`);
   }
   const myNewResponse = NextResponse.next({
     request,

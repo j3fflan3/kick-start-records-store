@@ -9,7 +9,7 @@ import { useShippingCalculator } from "@/src/app/_hooks/useShippingCalculator";
 import { serverSaveUserAddress } from "@/src/app/_library/settings/serverSettingsActions";
 import {
   cartItemsWeight,
-  cartTotal,
+  itemsTotal,
   validateEmail,
   validateForm,
 } from "@/src/app/_library/utilities";
@@ -162,8 +162,8 @@ function Checkout({ cart, countries }) {
 
   useEffect(
     function () {
-      setSubtotal(cartTotal(cart));
-      setTotal(cartTotal(cart, shippingCostCents, tax));
+      setSubtotal(itemsTotal(cart));
+      setTotal(itemsTotal(cart, shippingCostCents, tax));
     },
     [shippingCostCents, cart, tax]
   );

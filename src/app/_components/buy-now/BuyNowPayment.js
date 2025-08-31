@@ -1,6 +1,10 @@
 "use client";
 
-import { useBilling } from "@/src/app/_contexts/BillingProvider";
+import {
+  payPalCaptureOrder,
+  payPalCreateBuyNowOrder,
+  payPalUpdateBuyNowOrder,
+} from "@/src/app/_library/client/paypal";
 import { validateEmail } from "@/src/app/_library/utilities";
 import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/24/solid";
 import {
@@ -13,272 +17,239 @@ import {
   PayPalScriptProvider,
   usePayPalCardFields,
 } from "@paypal/react-paypal-js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import SpinnerMini from "../spinners/SpinnerMini";
 
 function BuyNowPayment({
-  countries,
-  setBillingInfo,
+  cardErrors,
+  setCardErrors,
+  payPalErrors,
+  setPayPalErrors,
   setPayWith,
   payWith,
-  createOrder,
-  onApprove,
-  onError,
   isPaying,
   setIsPaying,
+  billingInfo,
+  product,
 }) {
-  const [cardErrors, setCardErrors] = useState({});
-  const [payPalErrors, setPayPalErrors] = useState({});
-  const [orderEmail, setOrderEmail] = useState("");
+  const createOrder = useCallback(
+    async (data, actions) => {
+      if (!isPaying) setIsPaying(true);
+      try {
+        const { paymentSource } = data || { paymentSource: "card" };
+        if (!validateEmail(billingInfo.orderEmail)) {
+          console.log(`invalid email address: ${billingInfo.orderEmail}`);
+        }
+        console.log(
+          `BuyNowCheckout -> createOrder -> data: ${JSON.stringify({ data, actions, billingInfo }, null, 2)} `
+        );
+        const buyNowOrderArgs = {
+          product,
+          purchaseEmail: billingInfo.orderEmail,
+          taxPercentageFloat: 0,
+          paymentSource,
+          billingAddress: [
+            billingInfo.address,
+            billingInfo.addressContinued,
+            billingInfo.city,
+            billingInfo.stateProvince,
+            billingInfo.postalCode,
+            billingInfo.destinationCountryCode,
+          ],
+        };
+        console.log(
+          `calling payPalCreateBuyNowOrder -> buyNowOrderArgs:\n${JSON.stringify(buyNowOrderArgs, null, 2)}`
+        );
+        const result = await payPalCreateBuyNowOrder(buyNowOrderArgs);
+        console.log(`result: ${JSON.stringify(result, null, 2)}`);
 
-  const {
-    address,
-    addressContinued,
-    city,
-    stateProvince,
-    postalCode,
-    destinationCountryCode,
-    handlers,
-  } = useBilling();
-  const {
-    handleBillingAddress,
-    handleBillingAddressContinued,
-    handleBillingCity,
-    handleBillingStateProvince,
-    handleBillingPostalCode,
-    handleBillingDestinationCountryCode,
-  } = handlers;
+        if (result.error) {
+          console.log(`in result.error.message closure`);
+          const errMessage = result.error.message;
+          throw new Error(errMessage);
+        }
 
-  useEffect(() => {
-    setBillingInfo({
-      orderEmail,
-      address,
-      addressContinued,
-      city,
-      stateProvince,
-      postalCode,
-      destinationCountryCode,
-    });
-  }, [
-    orderEmail,
-    address,
-    addressContinued,
-    city,
-    stateProvince,
-    postalCode,
-    destinationCountryCode,
-    setBillingInfo,
-  ]);
+        if (result?.data?.id) {
+          return result.data.id;
+        } else {
+          const errorDetail = result?.data?.details?.[0];
+          const errorMessage = errorDetail
+            ? `${errorDetail.issue} ${errorDetail.description} (${result.data.debug_id})`
+            : JSON.stringify(result, null, 2);
 
-  function handleOrderEmail(e) {
-    setPayPalErrors({});
-    setOrderEmail(e.target.value);
-  }
+          throw new Error(errorMessage);
+        }
+      } catch (error) {
+        setIsPaying(false);
+        console.log(`error: ${error}`);
+      }
+    },
+    [billingInfo, isPaying, setIsPaying, product]
+  );
+  const onApprove = async (data, actions) => {
+    console.log(
+      `data: ${JSON.stringify(data, null, 2)}, actions: ${JSON.stringify(actions, null, 2)}`
+    );
 
-  const payPalDisabled = !validateEmail(orderEmail);
-  function handlePayPalButtonsClick(e) {
-    console.log(`handlePayPalButtonsClick fired.`);
+    try {
+      const {
+        data: order,
+        error: captureError,
+        status,
+      } = await payPalCaptureOrder(data.orderID);
+      if (captureError) throw captureError;
+      console.log(`order: ${JSON.stringify(order, null, 2)}`);
+      const captureOrderArgs = {
+        _paypal_capture_response: order,
+        _subtotal: Number(subtotal),
+        _shipping: Number(shippingCost),
+      };
+      console.log(
+        `BuyNowPayment -> onApprove -> capturedOrderArgs = \n\t${JSON.stringify(capturedOrderArgs, null, 2)}`
+      );
+      const { data: updateData, error } =
+        await payPalUpdateBuyNowOrder(captureOrderArgs);
 
-    if (!validateEmail(guestEmail)) {
-      e.preventDefault();
-      setPayPalErrors({ email: "Please enter a valid email address." });
-      return false;
+      if (error) throw error;
+      console.log(
+        `updateData: ${JSON.stringify(updateData, null, 2)}, error: ${error}`
+      );
+      // Redirect to order placed page
+      const encodedEmail = btoa(order.purchase_units[0].shipping.email_address);
+      const orderId = order.purchase_units[0].reference_id;
+      router.push(`/checkout/order-placed/${orderId}/${encodedEmail}`);
+    } catch (err) {
+      console.log(`error: ${err.message}`);
+      throw new Error("error capturing order");
     }
-  }
+  };
+  const onError = async (error) => {
+    setIsPaying(false);
+    console.log(`error: ${error}`);
+  };
+
   const payPalStyle = { layout: "vertical", disableMaxWidth: true };
   return (
-    <div>
-      <div className="grid grid-cols-2 mb-2">
+    <div className="grid grid-cols-2 mb-2 mt-4">
+      <div className="col-span-1">
         <h1 className="ml-2 mt-1 text-2xl align-baseline text-primary-900">
           {payWith === "card" ? "Card Payment" : "PayPal Payment"}
         </h1>
+      </div>
+      <div className="col-span-1 ml-auto">
         <button
           onClick={() => setPayWith("")}
-          className="cursor-pointer ml-auto mr-2 outline-1 px-2 py-1 rounded-md outline-primary-400 align-baseline text-primary-900"
+          className="cursor-pointer mr-2 outline-1 px-2 py-1 rounded-md outline-primary-400 align-baseline text-primary-900"
         >
           Change payment type&nbsp;
           <ArrowLeftStartOnRectangleIcon className=" size-8 inline-block" />
         </button>
-        <div className="col-span-2 my-2 mr-3.25">
-          <input
-            type="email"
-            value={orderEmail}
-            onChange={handleOrderEmail}
-            required
-            placeholder="Email"
-            className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
-          />
-        </div>
-        {payWith === "card" && (
-          <>
-            <div className="col-span-2 my-2 mr-3.25">
-              <input
-                type="text"
-                value={address}
-                onChange={handleBillingAddress}
-                required
-                placeholder="Address"
-                className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
-              />
-            </div>
-            <div className="col-span-2 my-2 mr-3.25">
-              <input
-                type="text"
-                value={addressContinued}
-                onChange={handleBillingAddressContinued}
-                placeholder="Address Continued (optional)"
-                className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
-              />
-            </div>
-            <div className="grid grid-cols-2 col-span-2 w-full my-2 mr-3.25">
-              <div className="col-span-1 mr-2">
-                <input
-                  type="text"
-                  value={city}
-                  onChange={handleBillingCity}
-                  placeholder="City"
-                  required
-                  className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
-                />
-              </div>
-              <div className="ml-2 col-span-1 mr-3.25">
-                <select
-                  name="country"
-                  className="w-full ml-1.5  mt-4 px-3 py-5.5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
-                  onChange={handleBillingDestinationCountryCode}
-                  value={destinationCountryCode}
-                >
-                  {countries.map((country) => (
-                    <option value={country.alpha2} key={country.alpha2}>
-                      {country.alpha2}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 col-span-2 w-full my-2 mr-3.25">
-              <div className="mr-2">
-                <input
-                  type="text"
-                  value={stateProvince}
-                  onChange={handleBillingStateProvince}
-                  placeholder="State / Province"
-                  required
-                  className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
-                />
-              </div>
-              <div className="ml-2 mr-3.25">
-                <input
-                  type="text"
-                  value={postalCode}
-                  onChange={handleBillingPostalCode}
-                  placeholder="Postal Code"
-                  required
-                  className="w-full ml-1.5  mt-4 px-3 py-5 border border-[#909697] rounded-sm text-[#687173] font-courier placeholder:text-[#000] placeholder:opacity-100 font-light bg-white"
-                />
-              </div>
-            </div>
-          </>
-        )}
       </div>
-      <PayPalScriptProvider
-        options={{
-          clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
-          currency: "USD",
-          intent: "capture",
-          components: "card-fields,buttons",
-        }}
-      >
-        <div className={`${payWith === "paypal" ? "" : "hidden"}`}>
-          <PayPalButtons
-            onClick={handlePayPalButtonsClick}
-            createOrder={createOrder}
-            onApprove={onApprove}
-            onError={onError}
-            style={payPalStyle}
-            disabled={payPalDisabled || isPaying}
-          />
-          <p className="ml-2 mt-2 text-sm text-red-700">
-            {payPalErrors?.email && payPalErrors.email}
-          </p>
-        </div>
-        <div className={`${payWith === "card" ? "" : "hidden"}`}>
-          <PayPalCardFieldsProvider
-            createOrder={createOrder}
-            onApprove={onApprove}
-            onError={onError}
-            style={{
-              input: {
-                "font-size": "16px",
-                "font-family": "courier, monospace",
-                "font-weight": "lighter",
-                color: "#ccc",
-              },
-              ".invalid": { color: "purple" },
-            }}
-          >
-            <PayPalNameField
-              inputEvents={{
-                onChange: (data) =>
-                  console.log(`PayPalNameField data: ${JSON.stringify(data)}`),
-                onFocus: () => setCardErrors({}),
-              }}
+      <div className="col-span-2 mt-4">
+        <PayPalScriptProvider
+          options={{
+            clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
+            currency: "USD",
+            intent: "capture",
+            components: "card-fields,buttons",
+          }}
+        >
+          <div className={`${payWith === "paypal" ? "" : "hidden"}`}>
+            <PayPalButtons
+              createOrder={createOrder}
+              onApprove={onApprove}
+              onError={onError}
+              style={payPalStyle}
+              disabled={isPaying}
             />
             <p className="ml-2 mt-2 text-sm text-red-700">
-              {cardErrors?.name && cardErrors.name}
+              {payPalErrors?.email && payPalErrors.email}
             </p>
-            <PayPalNumberField
-              inputEvents={{
-                onChange: (data) =>
-                  console.log(
-                    `PayPalNumberField data: ${JSON.stringify(data)}`
-                  ),
-                onFocus: () => setCardErrors({}),
+          </div>
+          <div className={`${payWith === "card" ? "" : "hidden"}`}>
+            <PayPalCardFieldsProvider
+              createOrder={createOrder}
+              onApprove={onApprove}
+              onError={onError}
+              style={{
+                input: {
+                  "font-size": "16px",
+                  "font-family": "courier, monospace",
+                  "font-weight": "lighter",
+                  color: "#ccc",
+                },
+                ".invalid": { color: "purple" },
               }}
-            />
-            <p className="ml-2 mt-2 text-sm text-red-700">
-              {cardErrors?.number && cardErrors.number}
-            </p>
-            <p className="ml-2 mt-2 text-sm text-red-700">
-              {cardErrors?.ineligible_card_vendor &&
-                cardErrors.ineligible_card_vendor}
-            </p>
-            <PayPalExpiryField
-              onFocus={() => setCardErrors({})}
-              inputEvents={{
-                onChange: (data) =>
-                  console.log(
-                    `PayPalExpiryField data: ${JSON.stringify(data)}`
-                  ),
-                onFocus: () => setCardErrors({}),
-              }}
-            />
-            <p className="ml-2 mt-2 text-sm text-red-700">
-              {cardErrors?.expiry && cardErrors.expiry}
-            </p>{" "}
-            <PayPalCVVField
-              onFocus={() => setCardErrors({})}
-              inputEvents={{
-                onChange: (data) =>
-                  console.log(`PayPalCVVField data: ${JSON.stringify(data)}`),
-                onFocus: () => setCardErrors({}),
-              }}
-            />
-            <p className="ml-2 mt-2 text-sm text-red-700">
-              {cardErrors?.cvv && cardErrors.cvv}
-            </p>{" "}
-            <CheckoutCardSubmit
-              isPaying={isPaying}
-              setIsPaying={setIsPaying}
-              setCardErrors={setCardErrors}
-            />
-          </PayPalCardFieldsProvider>
-        </div>
-      </PayPalScriptProvider>
+            >
+              <PayPalNameField
+                inputEvents={{
+                  onChange: (data) =>
+                    console.log(
+                      `PayPalNameField data: ${JSON.stringify(data, null, 2)}`
+                    ),
+                  onFocus: () => setCardErrors({}),
+                }}
+              />
+              <p className="ml-2 mt-2 text-sm text-red-700">
+                {cardErrors?.name && cardErrors.name}
+              </p>
+              <PayPalNumberField
+                inputEvents={{
+                  onChange: (data) =>
+                    console.log(
+                      `PayPalNumberField data: ${JSON.stringify(data, null, 2)}`
+                    ),
+                  onFocus: () => setCardErrors({}),
+                }}
+              />
+              <p className="ml-2 mt-2 text-sm text-red-700">
+                {cardErrors?.number && cardErrors.number}
+              </p>
+              <p className="ml-2 mt-2 text-sm text-red-700">
+                {cardErrors?.ineligible_card_vendor &&
+                  cardErrors.ineligible_card_vendor}
+              </p>
+              <PayPalExpiryField
+                onFocus={() => setCardErrors({})}
+                inputEvents={{
+                  onChange: (data) =>
+                    console.log(
+                      `PayPalExpiryField data: ${JSON.stringify(data, null, 2)}`
+                    ),
+                  onFocus: () => setCardErrors({}),
+                }}
+              />
+              <p className="ml-2 mt-2 text-sm text-red-700">
+                {cardErrors?.expiry && cardErrors.expiry}
+              </p>{" "}
+              <PayPalCVVField
+                onFocus={() => setCardErrors({})}
+                inputEvents={{
+                  onChange: (data) =>
+                    console.log(
+                      `PayPalCVVField data: ${JSON.stringify(data, null, 2)}`
+                    ),
+                  onFocus: () => setCardErrors({}),
+                }}
+              />
+              <p className="ml-2 mt-2 text-sm text-red-700">
+                {cardErrors?.cvv && cardErrors.cvv}
+              </p>{" "}
+              <div className="ml-1.5 mr-1.5">
+                <CheckoutCardSubmit
+                  isPaying={isPaying}
+                  setIsPaying={setIsPaying}
+                  setCardErrors={setCardErrors}
+                />
+              </div>
+            </PayPalCardFieldsProvider>{" "}
+          </div>
+        </PayPalScriptProvider>
+      </div>
     </div>
   );
 }
-function CheckoutCardSubmit({ isPaying, setIsPaying, setCardErrors }) {
+function CheckoutCardSubmit({ isPaying, setIsPaying, setCardErrors, classes }) {
   const { cardFieldsForm } = usePayPalCardFields();
 
   function parseCardErrors(errors) {
@@ -316,7 +287,7 @@ function CheckoutCardSubmit({ isPaying, setIsPaying, setCardErrors }) {
       throw new Error(childErrorMessage);
     }
     if (!cardFieldsForm.isEligible()) {
-      return alert("The card you are using is not eligible for this action");
+      return alert("The card you are using is not eligible for this payment");
     }
     const formState = await cardFieldsForm.getState();
 
@@ -339,11 +310,10 @@ function CheckoutCardSubmit({ isPaying, setIsPaying, setCardErrors }) {
         setIsPaying(true);
         handleCardPaymentClick();
       }}
-      className="w-full block p-3 mt-6 rounded-sm text-lg cursor-pointer font-bold bg-accent-600 text-primary-50 hover:opacity-80"
+      className={`w-full block p-3 mt-6 rounded-sm text-lg cursor-pointer font-bold bg-accent-600 text-primary-50 hover:opacity-80 ${classes && classes}`}
     >
       {isPaying ? <SpinnerMini /> : "Pay with Card"}
     </button>
   );
 }
-
 export default BuyNowPayment;

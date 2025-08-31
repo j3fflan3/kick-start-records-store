@@ -3,7 +3,7 @@ import { createClient } from "@/src/app/_library/supabase/client";
 
 // Order Related API Calls
 async function payPalCreateOrder(createOrderArgs) {
-  console.log(`createOrderArgs: ${JSON.stringify(createOrderArgs)}`);
+  console.log(`createOrderArgs: ${JSON.stringify(createOrderArgs, null, 2)}`);
   try {
     const response = await fetch("/api/paypal/order/create", {
       headers: {
@@ -17,6 +17,27 @@ async function payPalCreateOrder(createOrderArgs) {
     return result;
   } catch (err) {
     console.log(`create PayPal Order error: ${err.message}`);
+    throw err;
+  }
+}
+
+async function payPalCreateBuyNowOrder(createOrderArgs) {
+  console.log(
+    `createBuyNowOrderArgs: ${JSON.stringify(createOrderArgs, null, 2)}`
+  );
+  try {
+    const response = await fetch("/api/paypal/buy-now/create", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(createOrderArgs),
+    });
+    const result = await response.json();
+    // api response: {data:{...}, error:{...}, status:"n"}
+    return result;
+  } catch (err) {
+    console.log(`create PayPal Buy Now Order error: ${err.message}`);
     throw err;
   }
 }
@@ -38,10 +59,12 @@ async function payPalCaptureOrder(payPalOrderId) {
   }
 }
 
-async function payPalUpdateOrder(sCapturedOrderArgs) {
-  console.log(`sCapturedOrderArgs = ${sCapturedOrderArgs}`);
-  const coa = JSON.parse(sCapturedOrderArgs);
-  const { _paypal_capture_response, _subtotal, _shipping } = coa;
+async function payPalUpdateOrder(captureOrderArgs) {
+  console.log(
+    `captureOrderArgs = ${JSON.stringify(captureOrderArgs, null, 2)}`
+  );
+
+  const { _paypal_capture_response, _subtotal, _shipping } = captureOrderArgs;
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("update_order", {
     _paypal_capture_response,
@@ -53,11 +76,42 @@ async function payPalUpdateOrder(sCapturedOrderArgs) {
   }
   console.log(
     `payPalUpdateOrder -> {data, error} ${JSON.stringify(
-      data
-    )}, ${JSON.stringify(error)}}`
+      data,
+      null,
+      2
+    )}, ${JSON.stringify(error, null, 2)}}`
+  );
+  return { data, error };
+}
+
+async function payPalUpdateBuyNowOrder(captureOrderArgs) {
+  console.log(
+    `sCapturedOrderArgs = ${JSON.stringify(captureOrderArgs, null, 2)}`
+  );
+  const { _paypal_capture_response, _subtotal } = captureOrderArgs;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("update_buy_now_order", {
+    _paypal_capture_response,
+    _subtotal,
+  });
+  if (error) {
+    console.error(error.message);
+  }
+  console.log(
+    `payPalUpdateBuyNowOrder -> {data, error} ${JSON.stringify(
+      data,
+      null,
+      2
+    )}, ${JSON.stringify(error, null, 2)}}`
   );
   return { data, error };
 }
 
 // Exports
-export { payPalCaptureOrder, payPalCreateOrder, payPalUpdateOrder };
+export {
+  payPalCaptureOrder,
+  payPalCreateOrder,
+  payPalCreateBuyNowOrder,
+  payPalUpdateOrder,
+  payPalUpdateBuyNowOrder,
+};

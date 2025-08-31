@@ -9,7 +9,10 @@ function calculateTax(taxPercentFloat, intCents) {
 }
 
 const itemsWeight = (items) => {
-  const weight = items.reduce((sum, item) => sum + item.count * item.weight, 0);
+  const weight = items.reduce(
+    (sum, item) => sum + (item?.count ?? 1) * item.weight,
+    0
+  );
   return weight;
 };
 
@@ -21,22 +24,28 @@ const calculateTotal = (subtotalCents, ...shippingAndHandlingCents) => {
   return formatDollars(subtotalCents);
 };
 const itemsTotal = (items, ...shippingAndHandling) => {
-  let subtotal = items.reduce((sum, item) => sum + item.count * item.price, 0);
+  let subtotal = items.reduce(
+    (sum, item) => sum + (item?.count ?? 1) * item.price,
+    0
+  );
   console.log(
-    `itemsTotal -> ${JSON.stringify([...shippingAndHandling], null, "\t")}`
+    `itemsTotal -> ${JSON.stringify([...shippingAndHandling], null, 2)}`
   );
   subtotal += [...shippingAndHandling].reduce((sum, item) => sum + item, 0);
   return formatDollars(subtotal);
 };
 
 const itemsTax = (items, taxPercentageFloat) => {
-  let subtotal = items.reduce((sum, item) => sum + item.count * item.price, 0);
+  let subtotal = items.reduce(
+    (sum, item) => sum + (item?.count ?? 1) * item.price,
+    0
+  );
   return calculateTax(taxPercentageFloat, subtotal);
 };
 
 const itemsCount = (items) => {
   return items.reduce((sum, item) => {
-    return sum + item.count;
+    return sum + (item?.count ?? 1);
   }, 0);
 };
 

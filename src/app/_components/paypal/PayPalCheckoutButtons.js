@@ -51,9 +51,7 @@ const PayPalCheckoutButtons = ({
 
           throw new Error(message);
         }
-        console.log(
-          "about to call /_library/client/paypal.js -> payPalCreateOrder"
-        );
+        console.log("calling payPalCreateOrder");
         // Call a server function
         const result = await payPalCreateOrder({
           paymentSource,
@@ -64,7 +62,7 @@ const PayPalCheckoutButtons = ({
           shippingAddress,
           billingAddress,
         });
-        console.log(`result: ${JSON.stringify(result, null, "\t")}`);
+        console.log(`result: ${JSON.stringify(result, null, 2)}`);
         // console.log(`result.error.message = ${result.error.message}`);
 
         if (result.error) {
@@ -79,15 +77,13 @@ const PayPalCheckoutButtons = ({
           const errorDetail = result?.data?.details?.[0];
           const errorMessage = errorDetail
             ? `${errorDetail.issue} ${errorDetail.description} (${result.data.debug_id})`
-            : JSON.stringify(result);
+            : JSON.stringify(result, null, 2);
 
           throw new Error(errorMessage);
         }
       } catch (error) {
         setIsPaying(false);
-        console.log(error);
-
-        console.log(`error: ${JSON.stringify(error)}`);
+        console.log(`error: ${JSON.stringify(error, null, 2)}`);
       }
     },
     [
@@ -104,7 +100,7 @@ const PayPalCheckoutButtons = ({
   );
   async function onApprove(data, actions) {
     console.log(
-      `data: ${JSON.stringify(data, null, "\t")}, actions: ${JSON.stringify(actions)}`
+      `data: ${JSON.stringify(data, null, 2)}, actions: ${JSON.stringify(actions, null, 2)}`
     );
 
     try {
@@ -114,21 +110,21 @@ const PayPalCheckoutButtons = ({
         status,
       } = await payPalCaptureOrder(data.orderID);
       if (captureError) throw captureError;
-      console.log(`order: ${JSON.stringify(order, null, "\t")}`);
-      const sCapturedOrderArgs = JSON.stringify({
+      console.log(`order: ${JSON.stringify(order, null, 2)}`);
+      const captureOrderArgs = {
         _paypal_capture_response: order,
         _subtotal: Number(subtotal),
         _shipping: Number(shippingCost),
-      });
+      };
       console.log(
-        `PayPalCheckoutButtons -> onApprove -> sCapturedOrderArgs = \n\t${sCapturedOrderArgs}`
+        `PayPalCheckoutButtons -> onApprove -> captureOrderArgs = \n\t${JSON.stringify(captureOrderArgs, null, 2)}`
       );
       const { data: updateData, error } =
-        await payPalUpdateOrder(sCapturedOrderArgs);
+        await payPalUpdateOrder(captureOrderArgs);
 
       if (error) throw error;
       console.log(
-        `updateData: ${JSON.stringify(updateData, null, "\t")}, error: ${error}`
+        `updateData: ${JSON.stringify(updateData, null, 2)}, error: ${error}`
       );
       // re-retrieve the shopping cart (which should now be empty)
       await getShoppingCart();
@@ -144,8 +140,6 @@ const PayPalCheckoutButtons = ({
   function onError(err) {
     setIsPaying(false);
     console.log(`error: ${err}`);
-
-    console.log(`onError called.`);
   }
 
   const payPalStyle = { layout: "vertical", disableMaxWidth: true };
@@ -187,7 +181,9 @@ const PayPalCheckoutButtons = ({
           <PayPalNameField
             inputEvents={{
               onChange: (data) =>
-                console.log(`PayPalNameField data: ${JSON.stringify(data)}`),
+                console.log(
+                  `PayPalNameField data: ${JSON.stringify(data, null, 2)}`
+                ),
               onFocus: () => setCardErrors({}),
             }}
           />
@@ -197,7 +193,9 @@ const PayPalCheckoutButtons = ({
           <PayPalNumberField
             inputEvents={{
               onChange: (data) =>
-                console.log(`PayPalNumberField data: ${JSON.stringify(data)}`),
+                console.log(
+                  `PayPalNumberField data: ${JSON.stringify(data, null, 2)}`
+                ),
               onFocus: () => setCardErrors({}),
             }}
           />
@@ -212,7 +210,9 @@ const PayPalCheckoutButtons = ({
             onFocus={() => setCardErrors({})}
             inputEvents={{
               onChange: (data) =>
-                console.log(`PayPalExpiryField data: ${JSON.stringify(data)}`),
+                console.log(
+                  `PayPalExpiryField data: ${JSON.stringify(data, null, 2)}`
+                ),
               onFocus: () => setCardErrors({}),
             }}
           />
@@ -223,7 +223,9 @@ const PayPalCheckoutButtons = ({
             onFocus={() => setCardErrors({})}
             inputEvents={{
               onChange: (data) =>
-                console.log(`PayPalCVVField data: ${JSON.stringify(data)}`),
+                console.log(
+                  `PayPalCVVField data: ${JSON.stringify(data, null, 2)}`
+                ),
               onFocus: () => setCardErrors({}),
             }}
           />

@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       throw new Error(`${error.code} - ${error.message}`);
     }
     const data = await response.json();
-    console.log(`tracking response: ${JSON.stringify(data, null, "\t")}`);
+    console.log(`tracking response: ${JSON.stringify(data, null, 2)}`);
     return NextResponse.json(data);
   } catch (error: any) {
     console.log(`PayPal error: ${error}`);

@@ -17,7 +17,7 @@ function BillingProvider({ children }) {
 
   // Will these ever be valid when it first loads?
   const [errors, setErrors] = useState({});
-  const [guestEmail, setGuestEmail] = useState("");
+  const [billingEmail, setBillingEmail] = useState("");
   const [initialized, setInitialized] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -37,9 +37,9 @@ function BillingProvider({ children }) {
   const postalCodeRef = useRef(null);
   const destinationCountryCodeRef = useRef(null);
   // Handler functions for each useState variable (excluding errors)
-  const handleGuestEmail = (e) => {
+  const handleBillingEmail = (e) => {
     setErrors({});
-    setGuestEmail(e.target.value);
+    setBillingEmail(e.target.value);
   };
   const handleBillingFirstName = (e) => {
     setErrors({});
@@ -117,9 +117,7 @@ function BillingProvider({ children }) {
     <BillingContext.Provider
       value={{
         errors,
-        setErrors,
-        guestEmail,
-        setGuestEmail,
+        billingEmail,
         firstName,
         lastName,
         address,
@@ -128,11 +126,15 @@ function BillingProvider({ children }) {
         stateProvince,
         postalCode,
         destinationCountryCode,
+        // setters
+        setErrors,
+        setBillingEmail,
+        setDestinationCountryCode,
         // Handler functions
         handlers: {
           handleBillingFirstName,
           handleBillingLastName,
-          handleGuestEmail,
+          handleBillingEmail,
           handleBillingAddress,
           handleBillingAddressContinued,
           handleBillingCity,
