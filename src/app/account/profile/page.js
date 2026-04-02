@@ -1,9 +1,9 @@
-import Profile from "@/src/app/_components/profile/Profile";
-import NewCustomer from "@/src/app/_components/utilities/NewCustomer";
+import Profile from "@/src/app/components/profile/Profile";
+import NewCustomer from "@/src/app/components/utilities/NewCustomer";
 import {
   serverGetUser,
   serverGetUserOrderList,
-} from "@/src/app/_library/server/user";
+} from "@/src/app/library/server/user";
 async function Page() {
   const { data, error } = await serverGetUser();
   const { data: orderList, error: orderListError } =

@@ -1,8 +1,8 @@
-import { getRedis } from "@/src/app/_library/server/redis";
+import { getRedis } from "@/src/app/library/server/redis";
 import {
   oAuthUSPSRequest,
   getUSPS_ACCESS_TOKEN,
-} from "@/src/app/_library/server/usps";
+} from "@/src/app/library/server/usps";
 import { NextRequest, NextResponse } from "next/server";
 
 const redis = await getRedis();

@@ -1,0 +1,61 @@
+import {
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+} from "@/src/app/components/tailwind/description-list";
+import Link from "next/link";
+import DeleteAccountDialog from "./DeleteAccountDialog";
+
+function ProfileList({ user, userId, setEditProfile }) {
+  const {
+    email,
+    firstName,
+    lastName,
+    postalCode,
+    foreignPostalCode,
+    mailingList,
+    notifyList,
+  } = user;
+
+  return (
+    <>
+      <div className="text-xl/6 lg:text-2xl/6 pb-2 pl-1 mb-4 font-bold">
+        Profile
+      </div>
+      <DescriptionList className="border p-4 rounded-md dark:border-primary-600 dark:bg-primary-900">
+        <DescriptionTerm className="text-base">Customer</DescriptionTerm>
+        <DescriptionDetails className="text-base">
+          {firstName} {lastName}
+        </DescriptionDetails>
+
+        <DescriptionTerm className="text-base">Email</DescriptionTerm>
+        <DescriptionDetails className="text-base">{email}</DescriptionDetails>
+
+        <DescriptionTerm className="text-base">Mailing List</DescriptionTerm>
+        <DescriptionDetails className="text-base">
+          {mailingList ? "Yes" : "No"}
+        </DescriptionDetails>
+
+        <DescriptionTerm className="text-base">
+          Notify me about the grand opening
+        </DescriptionTerm>
+        <DescriptionDetails className="text-base">
+          {notifyList ? "Yes" : "No"}
+        </DescriptionDetails>
+      </DescriptionList>
+      <div className="mt-4">
+        <button
+          onClick={() => {
+            setEditProfile((prev) => !prev);
+          }}
+          className="border border-primary-700 rounded-md text-base py-1 px-6 hover:cursor-pointer inline-block hover:bg-accent-600 transition-all hover:text-primary-50"
+        >
+          Edit
+        </button>
+        <DeleteAccountDialog userId={userId} />
+      </div>
+    </>
+  );
+}
+
+export default ProfileList;

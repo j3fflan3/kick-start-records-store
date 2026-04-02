@@ -1,5 +1,5 @@
-import ResendConfirmation from "@/src/app/_components/login/ResendConfirmation";
-import SignUpConfirmation from "@/src/app/_components/signup/SignUpConfirmation";
+import ResendConfirmation from "@/src/app/components/login/ResendConfirmation";
+import SignUpConfirmation from "@/src/app/components/signup/SignUpConfirmation";
 
 export default async function Page({ params, searchParams }) {
   const { email } = await params;

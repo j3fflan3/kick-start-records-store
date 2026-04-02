@@ -29,8 +29,8 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/app/_components/shopping-cart/CartIcon.js",
-    "src/app/_components/checkout/Checkout.js"
+    "**/*.js",
+    "**/*.jsx"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,7 @@
-import Header from "@/src/app/_components/header/Header";
-import { CheckoutProvider } from "@/src/app/_contexts/CheckoutProvider";
-import { SessionProvider } from "@/src/app/_contexts/SessionProvider";
-import "@/src/app/_styles/global.css";
+import Header from "@/src/app/components/header/Header";
+import { CheckoutProvider } from "@/src/app/contexts/CheckoutProvider";
+import { SessionProvider } from "@/src/app/contexts/SessionProvider";
+import "@/src/app/styles/global.css";
 import { Rubik_Doodle_Shadow } from "next/font/google";
 import localFont from "next/font/local";
 import { DarkModeProvider } from "./_contexts/DarkModeProvider";
@@ -14,12 +14,12 @@ const rubikDoodleShadow = Rubik_Doodle_Shadow({
   subsets: ["symbols"],
 });
 const geistSans = localFont({
-  src: "./_fonts/GeistVF.woff",
+  src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./_fonts/GeistMonoVF.woff",
+  src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });

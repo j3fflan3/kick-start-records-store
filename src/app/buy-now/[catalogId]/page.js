@@ -1,9 +1,9 @@
-import BuyNowCheckout from "@/src/app/_components/buy-now/BuyNowCheckout";
-import { serverGetBuyNowProduct } from "@/src/app/_library/server/product";
-import { getCountries } from "@/src/app/_library/server/countries";
+import BuyNowCheckout from "@/src/app/components/buy-now/BuyNowCheckout";
+import { serverGetBuyNowProduct } from "@/src/app/library/server/product";
+import { getCountries } from "@/src/app/library/server/countries";
 import Error from "@/src/app/error";
 import { Suspense } from "react";
-import Spinner from "../../_components/spinners/Spinner";
+import Spinner from "../../components/spinners/Spinner";
 export const revalidate = 0;
 
 async function Page({ params }) {

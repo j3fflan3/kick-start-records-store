@@ -11,17 +11,17 @@ import {
   PayPalPaymentSource,
   PayPalPurchaseUnit,
   PayPalShipping,
-} from "@/src/app/_library/model/paypal";
+} from "@/src/app/library/model/paypal";
 import {
   getPayPalAmount,
   getPayPalItems,
   handlePayPalResponse,
   oAuthPayPalRequest,
-} from "@/src/app/_library/server/paypal";
-import { getRedis } from "@/src/app/_library/server/redis";
-import { getURL } from "@/src/app/_library/server/utilities";
-import { createClient } from "@/src/app/_library/supabase/server";
-import { itemsTax } from "@/src/app/_library/utilities";
+} from "@/src/app/library/server/paypal";
+import { getRedis } from "@/src/app/library/server/redis";
+import { getURL } from "@/src/app/library/server/utilities";
+import { createClient } from "@/src/app/library/supabase/server";
+import { itemsTax } from "@/src/app/library/utilities";
 import { NextResponse } from "next/server";
 
 const redis = await getRedis();

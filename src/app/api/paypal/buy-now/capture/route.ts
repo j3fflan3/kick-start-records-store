@@ -1,10 +1,10 @@
-import { PAYPAL_TOKEN } from "@/src/app/_library/model/paypal";
+import { PAYPAL_TOKEN, type PayPalCaptureResponse } from "@/src/app/library/model/paypal";
 import {
   handlePayPalResponse,
   oAuthPayPalRequest,
   sendOrderEmail,
-} from "@/src/app/_library/server/paypal";
-import { getRedis } from "@/src/app/_library/server/redis";
+} from "@/src/app/library/server/paypal";
+import { getRedis } from "@/src/app/library/server/redis";
 import { NextResponse } from "next/server";
 
 const redis = await getRedis();
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       method: "POST",
       body: "{}",
     });
-    const paypalResponse = await handlePayPalResponse(response);
+    const paypalResponse = await handlePayPalResponse<PayPalCaptureResponse>(response);
     const { data } = paypalResponse;
     console.log(
       `api/paypal/order/capture -> data = ${JSON.stringify(data, null, 2)} `
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     const { invoice_id: orderNumber } =
       data.purchase_units[0].payments.captures[0];
     const email = data.purchase_units[0].payments.captures[0].custom_id;
-    const fullName = data.payment_source.card.name;
+    const fullName = data.payment_source.card?.name ?? "";
 
     console.log(`api/paypal/order/capture -> fullName=${fullName}`);
     await sendOrderEmail(email, orderId, orderNumber, fullName);
